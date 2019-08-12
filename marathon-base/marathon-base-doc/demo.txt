@@ -1,0 +1,87 @@
+1、对两个嵌套List进行分页：
+public static void main(String[] args) {
+    int start = 0;
+    int end = 10;
+    int endStart = end - start;//总共需要几条
+    int startIndex;//每一组的起点索引
+    boolean flag = false;//
+    int count = 0;
+    List<Test> testList = createData();
+    List<Map<String, String>> result = new ArrayList<>();
+    jump:
+    for (int i = 0; i < testList.size(); i++) {
+        Test test = testList.get(i);
+        int size = test.getDemoList().size();//每组多少条
+        //先判断该组是否有需要的数据
+        if (start >= size) {
+            start -= size;
+            continue;
+        }
+        startIndex = start;
+        if (flag) {
+            startIndex = 0;
+        }
+        for (int j = startIndex; j < size; j++) {
+            Map<String, String> map = new HashMap<>();
+            //开始去ES查询
+            Demo demo = test.getDemoList().get(j);
+            map.put("groupName", test.getGroupName());
+            map.put("id", demo.getId().toString());
+            map.put("name", demo.getName());
+            result.add(map);
+            count++;
+            if (count == endStart) {
+                break jump;
+            }
+        }
+        flag = true;
+    }
+    result.forEach(w -> {
+        System.out.println(w);
+    });
+
+}
+
+public static List<Test> createData() {
+    List<Test> testList = new ArrayList<>();
+    Test test1 = createTest("A", "aa");
+    testList.add(test1);
+    Test test2 = createTest("B", "bb");
+    testList.add(test2);
+    Test test3 = createTest("C", "cc");
+    testList.add(test3);
+    Test test4 = createTest("D", "dd");
+    testList.add(test4);
+    Test test5 = createTest("E", "ee");
+    testList.add(test5);
+    return testList;
+}
+
+public static Test createTest(String groupName, String name) {
+    Test test = new Test();
+    test.setGroupName(groupName);
+    List<Demo> demoList1 = new ArrayList<>();
+    for (int i = 0; i < 10; i++) {
+        Demo demo = new Demo();
+        demo.setId(i);
+        demo.setName(name);
+        demoList1.add(demo);
+    }
+    test.setDemoList(demoList1);
+    return test;
+}
+2、读取json文件
+try {
+    //需要引入commons-io
+    String input = FileUtils.readFileToString(new File("D:\\json.json"), "UTF-8");
+    JSONObject jsonObject = JSONObject.parseObject(input);
+    JSONArray jsonArray = jsonObject.getJSONArray("hits");
+    List<Map> list = jsonArray.toJavaList(Map.class);
+    List<String> result = list.stream().map(w->{
+        JSONObject jsonObject1 = (JSONObject)w.get("_source");
+        return jsonObject1.getString("userName");
+    }).collect(Collectors.toList());
+    System.out.println(result.stream().distinct().count());
+} catch (IOException e) {
+    e.printStackTrace();
+}

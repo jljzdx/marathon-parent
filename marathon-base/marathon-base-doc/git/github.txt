@@ -1,0 +1,4 @@
+github：996041341@qq.com/MicroBin123
+1、SSH
+2、拉去github项目
+3、上传代码

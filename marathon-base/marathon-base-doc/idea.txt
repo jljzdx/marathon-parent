@@ -1,0 +1,39 @@
+1、页面开启热加载需要设置自动编译
+Help->Find Action,输入Registry,勾上 Compiler autoMake allow when app running
+1、回到上次光标处：command + [；下次光标处：command + ]
+2、全文搜索：command + shift + f
+3、查找类：command + shift + o
+4、进入调用的方法：command + option + b
+5、大小写转换：command + shift + u
+6、方法的参数信息：command + p
+7、生成代码（getter、setter、构造函数、hashCode/equals,toString）：command + n
+8、包围代码（使用if..else, try..catch, for, synchronized等包围选中的代码）：command + option + t
+9、格式化代码：command + option + l
+10、展开所有代码块：Command + Shift + 加号；折叠所有代码块：Command + Shift + 减号
+11、显示最近打开的文件记录列表：Command + E
+12、查看哪里调用了该方法：Control + Option + H
+13、将选中的代码提取为方法：Command + Option + M
+14、打开IDEA系统设置：Command + ,
+15、当前文件搜索替换：Command + r
+16、itar、iter、itli
+初始化设置：
+1、Maven
+2、字体
+Appearance & Behavior -> Appearance -> Override default fonts by (not recommended):
+Editor -> Font
+3、禁止自动进入项目
+Appearance & Behavior -> System Settings -> Reopen last project on startup
+4、自动删除无用的import
+Editor -> General -> Auto Import Optimize imports on the fly (for current project)
+5、git显示修改文件上级文件颜色
+version control --> 勾选 "show directories with changed descendants"
+6、代码提示不想区分大小写
+Editor -> General -> Code Completion -> Match case
+7、右下角显示内存
+Appearance & Behavior -> Appearance -> 勾选Show memory indicator
+8、Tab取消单行显示
+Editor -> General -> Editor Tabs -> 取消勾选Show tabs in one row
+9、设置代码检查等级为无
+右下角有个戴帽子的小人，点击然后选择None
+10、安装lombok和.ignore插件
+11、自定义TODO+Live Templates

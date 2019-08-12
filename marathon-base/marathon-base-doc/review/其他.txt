@@ -1,0 +1,192 @@
+网络协议：
+|-7层协议：物理层、数据链路层、网络层、传输层、会话层、表示层和应用层
+|-IP协议属于网络层、TCP属于传输层、HTTP属于应用层
+|-socket是对TCP/IP协议的封装，不是协议，只不过是一个API
+|-TCP是基于IP的，HTTP是基于TCP的
+|-三次握手？
+  |--浏览器（192.168.2.33）向服务器（220.181.50.118）发出连接请求
+  |--服务器（220.181.50.118）回应了浏览器（192.168.2.33）的请求，并要求确认
+  |--浏览器（192.168.2.33）回应了服务器（220.181.50.118）的确认，连接成功
+|-TCP和UDP的区别？
+  |--TCP面向连接，三次握手，所以是可靠传输；UDP是无连接的，所以不能保证可靠
+  |--TCP是点对点；UDP支持一对一，一对多，多对一和多对多的交互通信
+  |--TCP首部开销大20字节，UDP首部开销小8字节
+  |--TCP面向字节流传输；UDP面向报文传输
+http和https的区别：
+|-http不安全，https安全
+|-http默认端口80，https默认端口443
+|-http属于应用层协议，https属于传输层协议
+https的原理：
+|-Client端发送https请求
+|-Server端使用SSL安全认证传输，返回证书和公钥给Client端
+|-Client端生成一个随机数作为对称加密的密钥，然后使用公钥加密随机数传给Server端
+|-Server端使用私钥解密得到随机数（密钥），然后使用该密钥加密数据返回给Client端
+|-Client端使用随机数进行解密得到Server端的数据
+http请求报文和响应报文格式：
+|-请求行：请求方法、URI、http版本信息
+|-请求首部字段：
+  |--Host：请求资源所在服务器
+  |--Accept：可处理的媒体类型
+  |--Accept-Charset：可接收的字符集
+  |--Accept-Encoding：可接受的内容编码
+  |--Accept-Language：可接受的自然语言
+|-通用首部字段（请求和响应公用）：
+  |--Date：创建报文时间
+  |--Connection：连接的管理
+  |--Cache-Control：缓存的控制
+  |--Transfer-Encoding：报文主体的传输编码方式
+|-实体首部字段（请求和响应公用）：
+  |--Allow：资源可支持的HTTP方法
+  |--Content-Type：实体主类的类型
+  |--Content-Encoding：实体主体适用的编码方式
+  |--Content-Language：实体主体的自然语言
+  |--Content-Length：实体主体的的字节数
+  |--Content-Range：实体主体的位置范围，一般用于发出部分请求时使用
+|-状态行：状态码、状态码原因、http版本信息
+|-响应首部字段：
+  |--Accept-Ranges：可接受的字节范围
+  |--Location：令客户端重新定向到的URI
+  |--Server：HTTP服务器的安装信息
+|-HTTP是无状态的：不保留之前一切的请求或响应报文的信息；
+|-HTTP是无连接的：限制每次连接只处理一个请求
+一个完整http请求7个步骤：
+|-建立TCP连接
+|-Web浏览器向Web服务器发送请求行；如：GET /sample/hello.jsp HTTP/1.1
+|-Web浏览器发送请求头
+|-Web服务器应答；如：HTTP/1.1 200 OK
+|-Web服务器发送应答头
+|-Web服务器向浏览器发送数据
+|-Web服务器关闭TCP连接
+常见的http状态码：
+|-200：请求被正常处理
+|-400：请求报文语法有误，服务器无法识别
+|-401：请求需要认证
+|-403：请求的对应资源禁止被访问
+|-404：服务器无法找到对应资源
+|-500：服务器内部错误
+|-503：服务器正忙
+RPC原理：
+1、Client端请求调用服务
+2、Client Stub负责将方法、参数组装成能够进行网络传输的消息体，将消息体对象序列化为二进制
+3、Client端通过Socket将消息发送到Server端
+4、Server Stub收到消息后进行反序列化解码， 然后调用本地服务
+5、本地服务执行并将结果返回给Server Stub
+6、Server Stub将结果组装成能够进行网络传输的消息体，将消息体对象序列化为二进制
+7、Server端通过Socket将消息发送到Client端
+8、Client Stub收到消息后进行反序列化解码， 然后调用本地服务
+9、Client端得到最终结果
+加密算法：
+|-对称加密：使用同一个密钥进行加解密，如：des、3des、aes
+|-非对称加密：公钥加密，私钥解密，如：RSA
+|-不可逆加密：MD5、SHA1
+
+Nginx
+|-Consul+Upsync+Nginx实现动态负载均衡【新浪开源的】
+|-Nginx应用场景【反向代理、负载均衡、静态服务器】
+|-解决防盗链：就是配置在哪个来源的请求才能访问图片
+|-防DDOS攻击：例如控制请求次数、同一个ip请求次数
+|-keepalived【LVS设计的】:做心跳检测的，可达到故障转移和自动重启服务
+
+
+Linux常用命令:
+ps -ef|grep java【System Ｖ风格】ps aux|grep java【BSD风格】
+查看端口被占用并杀掉：netstat -tunlp|grep 1984,kill -9 2408
+ls -al
+硬链接和软链接：
+|-硬链接是存在同一个文件系统中，以文件副本的形式存在，不允许给目录创建硬链接，inode是一样的
+|-软链接却可以跨越不同的文件系统，以路径的形式存在，可以对目录进行链接，inode是不一样的
+|-ln命令会保持每一处链接文件的同步性，也就是说，不论你改动了哪一处，其它的文件都会发生相同的变化
+|-软链接命令：ln –s 源文件 目标文件
+|-硬链接命令：ln 源文件 目标文件
+chmod 777 a.txt = chmod a=rwx a.txt
+chmod ugo+x a.txt = chmod a+x a.txt
+cp -r C /home【C目录中存在多个文件】
+wc -clw【c:字节数；l：行数；w：字符数】
+grep：全称全局正则表达式打印，强大的文本搜索工具，可以使用正则表达式搜索
+cat a.txt
+find . -name ‘A*’ -ls【查找当前目录下所有以A开头的文件，并显示详细信息】
+who -H【显示当前登录系统的用户】who -m -H【只显示当前用户】who -q【精简模式显示】
+history【查看历史执行记录】history 10【查看历史之行记录后10条】!!【执行上一条命令】
+df -hl【磁盘使用情况】df -T【列出文件系统类型】
+netstat -at【列出所有TCP端口】netstat -au【列出所有UDP端口】
+curl ifconfig.me：查看公网IP
+环境变量：
+|-env【查看所有环境变量】
+|-echo $PATH【查看单个环境变量】
+|-vim /etc/profile
+  export JAVA_HOME=/usr/share/jdk1.6.0_14
+  export PATH=$JAVA_HOME/bin:$PATH
+
+接口的幂等性：
+1、防止页面重复提交
+|-使用token+redis机制
+2、对外提供接口的api如何保证幂等；
+|-保证传过来的参数唯一，在执行接口前先查询判断一下
+
+接口安全性：
+1、使用客户端和服务端都能识别的token
+2、对外提供接口的api如何保证安全；
+|-使用MD5或SHA加密防篡改
+非对称加密RSA：
+|-客户端和服务器端：公钥加密，私钥解密
+|-服务器端与服务器端：私钥加密，公钥解密
+
+CSRF:
+CSRF 攻击可以在受害者毫不知情的情况下以受害者名义伪造请求发送给受攻击站点，从而在并未授权的情况下执行在权限保护之下的操作。
+比如说，受害者 Bob 在银行有一笔存款，通过对银行的网站发送请求 http://bank.example/withdraw?account=bob&amount=1000000&for=bob2 可以使 Bob 把 1000000 的存款转到 bob2 的账号下。
+通常情况下，该请求发送到网站后，服务器会先验证该请求是否来自一个合法的 session，并且该 session 的用户 Bob 已经成功登陆。黑客 Mallory 自己在该银行也有账户，他知道上文中的 URL 可以把钱进行转帐操作。
+Mallory 可以自己发送一个请求给银行：http://bank.example/withdraw?account=bob&amount=1000000&for=Mallory。但是这个请求来自 Mallory 而非 Bob，他不能通过安全认证，因此该请求不会起作用。
+这时，Mallory 想到使用 CSRF 的攻击方式，他先自己做一个网站，在网站中放入如下代码： src=”http://bank.example/withdraw?account=bob&amount=1000000&for=Mallory ”，并且通过广告等诱使 Bob 来访问他的网站。
+当 Bob 访问该网站时，上述 url 就会从 Bob 的浏览器发向银行，而这个请求会附带 Bob 浏览器中的 cookie 一起发向银行服务器。大多数情况下，该请求会失败，因为他要求 Bob 的认证信息。
+但是，如果 Bob 当时恰巧刚访问他的银行后不久，他的浏览器与银行网站之间的 session 尚未过期，浏览器的 cookie 之中含有 Bob 的认证信息。这时，悲剧发生了，这个 url 请求就会得到响应，钱将从 Bob 的账号转移到 Mallory 的账号，而 Bob 当时毫不知情。
+等以后 Bob 发现账户钱少了，即使他去银行查询日志，他也只能发现确实有一个来自于他本人的合法请求转移了资金，没有任何被攻击的痕迹。而 Mallory 则可以拿到钱后逍遥法外。
+解决方案：
+1、过滤器判断请求头中的Referer的域名
+2、token
+
+助贷项目：
+背景【助贷平台主要为有资金周转需求的个人/企业保单持有人提供自主申请贷款的平台，以所持有的保单剩余现金价值作为质押物，经助贷平台审核通过后，将借款申请推送给合作银行，由银行直接放款给借款人】
+助贷管理后台：
+|-借款管理【借款管理、流程监控】
+|-产品渠道配置【金融产品（财险保单、寿险保单、车险保单-存量、车险保单-新单批量）、资金（帮融汇、腾宇华通、苏宁银行）产品、渠道（安邦财险、北京二手车服务公司）产品】
+|-资金管理：【服务费结算：当天以及未结算、服务费结算记录：所有】【资金平台服务费、渠道服务费（这里只显示渠道服务费，因为管理后台是给渠道用的）、助贷服务费】
+|-客户管理
+|-系统管理
+助贷录单系统【借款管理、客户管理】
+|-流程：新增借款人、查询保单验真、获取授信额度、确认提交
+助贷平台网站【签约管理】
+|-流程：签约确认->生成三条服务费用信息->保单质押
+定时器：定时查询保单质押结果、审核通过后提交资金机构放款审核
+进件->上传材料->审核通过就放款成功（放款失败要保单解质押）
+
+验签流程：
+	请求示例：
+	http://localhost:5001/nlap/ln/credit/callback?interest=50&loanAmt=11000&repayMode=随借随还&loanApr=0.33&loanExpiryDate=20190130&loanId=22222&loanStatus=00&loanValueDate=20190130&rejectReason=资料不全&termTotal=5&timestamp=1548740982726&transferDate=20190201&sign=1A4EC6BB012A93483F8F4DFD09B15316
+	对参数排序，然后拼接得到
+	String param = "interest=50&loanAmt=11000&loanApr=0.33&loanExpiryDate=20190130&loanId=22222&loanStatus=00&loanValueDate=20190130&rejectReason=资料不全&repayMode=随借随还&termTotal=5&timestamp=1548740982726&transferDate=20190201";
+	String sign = MD5(secretkey+param);
+	把sign也加到请求参数中得到完整的请求地址：
+	http://localhost:5001/nlap/ln/credit/callback?interest=50&loanAmt=11000&repayMode=随借随还&loanApr=0.33&loanExpiryDate=20190130&loanId=22222&loanStatus=00&loanValueDate=20190130&rejectReason=资料不全&termTotal=5&timestamp=1548740982726&transferDate=20190201&sign=1A4EC6BB012A93483F8F4DFD09B15316
+	成功返回：
+	{"transactionStatus":{"errorCode":"0","replyCode":null,"replyText":null,"memo":null,"appName":"zxfit-nlap-server","duration":0,"success":true}}
+	失败返回：
+	{"transactionStatus":{"errorCode":"1","replyCode":"2001","replyText":"验签失败","memo":null,"appName":"zxfit-nlap-server","duration":0,"success":false}}
+token认证：
+用户注册的时候给这个用户随机的产生一个saltCode字段，作为token的密钥和密码的密钥，
+登陆接口的时候将用户id做md5作为key，将saltCode作为value存储在redis里，
+在网关层鉴权的时候 将前端用户传入的已做md5加密的用户id，作为searchkey用来在redis中查找value 找到以后用来解密传入的token，
+解出来以后拿到用户的真实id，并将真实id写入实际业务执行字段，然后转发请求。
+就是我们有些接口需要使用到用户的id字段，id字段给到前端是加密后的 需要使用这个方法拿到真实的id
+
+微服务优缺点：
+
+
+跨域请求：
+|-概念：通过ajax请求的浏览器域名和端口与请求的域名和端口不一致，就会产生跨域问题,跨域是可以请求接口，只不过得不到返回的结果，前端报错
+|-解决方案:
+  |--jsonp（只支持get请求，不推荐）:需要带上一个随机数参数，并且接口还要返回去；如果使用POST请求，会自动转成GET请求
+  |--HttpClient（效率低，不推荐）:
+  |--设置响应头允许跨域（可以使用）:response.setHeader("Access-Control-Allow-Origin","*")
+  |--使用Nginx搭建API接口网关（强烈推荐使用）：使用反向代理
+  |--使用Zuul搭建API接口网关（强烈推荐使用）：和Nginx很像
+

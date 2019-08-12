@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <artifactId>marathon-base-dependencies</artifactId>
+    <groupId>com.newera.marathon</groupId>
+    <version>1.0-SNAPSHOT</version>
+    <modelVersion>4.0.0</modelVersion>
+    <packaging>pom</packaging>
+    <name>Newera Marathon Dependencies</name>
+    <description>Newera Marathon Dependencies</description>
+
+    <properties>
+        <project.newera.marathon.core>1.0-SNAPSHOT</project.newera.marathon.core>
+    </properties>
+    <dependencyManagement>
+        <dependencies>
+            <dependency>
+                <groupId>com.newera.marathon</groupId>
+                <artifactId>marathon-common</artifactId>
+                <version>${project.newera.marathon.core}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.newera.marathon</groupId>
+                <artifactId>marathon-dto</artifactId>
+                <version>${project.newera.marathon.core}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.newera.marathon</groupId>
+                <artifactId>marathon-microface-system</artifactId>
+                <version>${project.newera.marathon.core}</version>
+            </dependency>
+            <!-- commons-codec -->
+            <dependency>
+                <groupId>commons-codec</groupId>
+                <artifactId>commons-codec</artifactId>
+                <version>1.12</version>
+            </dependency>
+        </dependencies>
+    </dependencyManagement>
+</project>

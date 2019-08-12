@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.newera.marathon.service.system.mapper.SysUserMapper">
+    <sql id="SysUserWhere">
+        <if test="null != requestDTO.userName and requestDTO.userName != ''">
+            and user_name LIKE CONCAT('%', '${requestDTO.userName}', '%')
+        </if>
+        <if test="null != requestDTO.startDateTime and requestDTO.startDateTime != ''">
+            and login_time &gt;= #{requestDTO.startDateTime}
+        </if>
+        <if test="null != requestDTO.endDateTime and requestDTO.endDateTime != ''">
+            and login_time &lt;= #{requestDTO.endDateTime}
+        </if>
+    </sql>
+    <select id="querySysUserPage" resultType="com.newera.marathon.dto.system.inquiry.XfaceSysUserInquiryPageResponseSubDTO">
+        select
+        id,
+        sex,
+        user_name userName,
+        real_name realName,
+        mobile mobile,
+        email,
+        last_login_time lastLoginTime,
+        login_time loginTime,
+        login_count loginCount,
+        status,
+        gmt_create gmtCreate
+        from t_sys_user
+        <where>
+            <include refid="SysUserWhere"></include>
+        </where>
+    </select>
+</mapper>

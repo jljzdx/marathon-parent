@@ -1,0 +1,20 @@
+
+<!--相当于把marathon-base-dependencies中的dependencyManagement配置导入并合并到当前POM的dependencyManagement元素中-->
+<dependencyManagement>
+    <dependencies>
+        <dependency>
+            <groupId>com.newera.marathon</groupId>
+            <artifactId>marathon-base-dependencies</artifactId>
+            <version>1.0-SNAPSHOT</version>
+            <type>pom</type>
+            <scope>import</scope>
+        </dependency>
+    </dependencies>
+</dependencyManagement>
+
+<!--optional禁止了依赖传递-->
+<dependency>
+    <groupId>org.projectlombok</groupId>
+    <artifactId>lombok</artifactId>
+    <optional>true</optional>
+</dependency>

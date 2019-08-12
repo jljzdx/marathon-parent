@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <parent>
+        <artifactId>marathon-parent</artifactId>
+        <groupId>com.newera.marathon</groupId>
+        <version>1.0-SNAPSHOT</version>
+    </parent>
+    <modelVersion>4.0.0</modelVersion>
+
+    <artifactId>marathon-service</artifactId>
+    <packaging>pom</packaging>
+    <modules>
+        <module>marathon-service-system</module>
+    </modules>
+
+    <dependencies>
+        <!--spaking-mysql-->
+        <dependency>
+            <groupId>com.spakingframework.boot</groupId>
+            <artifactId>spaking-boot-starter-mysql</artifactId>
+        </dependency>
+        <!--spaking-redis-->
+        <dependency>
+            <groupId>com.spakingframework.boot</groupId>
+            <artifactId>spaking-boot-starter-redis</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-web</artifactId>
+        </dependency>
+        <!--健康检查-->
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-actuator</artifactId>
+        </dependency>
+        <!--openfeign-->
+        <dependency>
+            <groupId>org.springframework.cloud</groupId>
+            <artifactId>spring-cloud-starter-openfeign</artifactId>
+        </dependency>
+        <!--consul-->
+        <dependency>
+            <groupId>org.springframework.cloud</groupId>
+            <artifactId>spring-cloud-starter-consul-discovery</artifactId>
+        </dependency>
+        <!--marathon-common-->
+        <dependency>
+            <groupId>com.newera.marathon</groupId>
+            <artifactId>marathon-common</artifactId>
+        </dependency>
+        <!--marathon-dto-->
+        <dependency>
+            <groupId>com.newera.marathon</groupId>
+            <artifactId>marathon-dto</artifactId>
+        </dependency>
+    </dependencies>
+</project>

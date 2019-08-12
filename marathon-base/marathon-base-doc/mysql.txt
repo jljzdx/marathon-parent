@@ -1,0 +1,19 @@
+select t.* from test t,
+(
+    select g1.a,g1.b,g1.c,g1.d from
+    (
+        select a,b,c,d,count(*) as g1count from test group by a,b,c,d
+    ) g1,
+    (
+        select a,b,c,d,count(*) as g2count from (
+            select a,b,c,d,count(*) from test group by a,b,c,d,e
+        ) g3
+        group by a,b,c,d
+    ) g2
+    where g1.g1count = g2.g2count and g1.a = g2.a and g1.b = g2.b and g1.c = g2.c and g1.d = g2.d
+) g4
+where t.a = g4.a and t.b = g4.b and t.c = g4.c and t.d = g4.d
+
+SELECT count(type) 总数,SUM(CASE issuss WHEN 'C' THEN 1 ELSE 0 END) 成功数,type,issuss
+from t_teb
+group by type
