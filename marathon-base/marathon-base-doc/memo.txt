@@ -1,0 +1,17 @@
+1、DTO字段校验
+@NotEmpty 用在集合类上面
+@NotBlank 用在String上面
+@NotNull  用在基本类型上
+2、
+https://www.baidu.com:com是顶级域名，baidu.com是一级域名，www.baidu.com是二级域名
+3、JS在线格式化
+http://tool.oschina.net/codeformat/js/
+4、CSS padding
+padding:10px 5px 15px 20px;
+上内边距是 10px
+右内边距是 5px
+下内边距是 15px
+左内边距是 20px
+5、起点生产服务器
+144.34.186.85、26939、G3D2s69YNcdM
+后台账号：https://kiwivm.64clouds.com/main.php、144.34.186.85、songliang111
