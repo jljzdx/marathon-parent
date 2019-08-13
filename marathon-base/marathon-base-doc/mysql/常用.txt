@@ -1,0 +1,7 @@
+1、批量删除表数据
+TRUNCATE table t_home_system;
+TRUNCATE table t_org_visit;
+2、
+SELECT count(type) 总数,SUM(CASE issuss WHEN 'C' THEN 1 ELSE 0 END) 成功数,type,issuss
+from t_teb
+group by type

@@ -1,0 +1,312 @@
+primary shard【主分片】replica shard【副本分片：作用就是当主分片挂了，会晋升为主分片的角色】
+1、一个主分片最大能够存储 Integer.MAX_VALUE - 128 个文档【但是实际最大值还需要参考你的使用场景：包括你使用的硬件，文档的大小和复杂程度，索引和查询文档的方式以及你期望的响应时长。】，
+一个副本分片只是一个主分片的拷贝。副本分片作为硬件故障时保护数据不丢失的冗余备份。一个分片的底层即为一个 Lucene 索引，会消耗一定文件句柄、内存、以及 CPU 运转。
+每一个搜索请求都需要命中索引中的每一个分片，如果每一个分片都处于不同的节点还好， 但如果多个分片都需要在同一个节点上竞争使用相同的资源就有些糟糕了。不同的分片评分不一样。
+2、es如何确定这个document放在该index哪个shard上
+每次增删改查一个document的时候，都会带过来一个routing number，他的默认值就是这个document的_id，也可以手动指定routing：PUT /index/type/id?routing=user_id
+路由算法：shard = hash(routing) % number_of_primary_shards【number_of_primary_shards：主分片数量】
+这也正是为什么主分片的数量不能改变的原因。
+假如我们的集群在初始化的时候有5个primary shard，我们望里边加入一个document    id=5，假如hash(5)=23,这时该document 将被加入 (shard=23%5=3)P3这个分片上。如果随后我们给es集群添加一个primary shard ，此时就有6个primary shard，当我们GET id=5 ，这条数据的时候，es会计算该请求的路由信息找到存储他的 primary shard（shard=23%6=5） ，根据计算结果定位到P5分片上。而我们的数据在P3上。所以es集群无法添加primary shard，但是可以扩展replicas shard。
+3、读写操作原理：
+假如我们es集群有3个node，每个node上一个主分片一个副本分片。
+P1 R1  P0 R2  P2 R0
+|-写操作
+<1>、客户端发起一个PUT请求，假如该请求被发送到第一个node节点，那么该节点将成为协调节点，P1所在的节点就是协调节点。他将根据该请求的路由信息计算，该document将被存储到哪个分片。
+<2>、通过计算发现该document被存储到p0分片，那么就将请求转发到node2节点。
+<3>、P0根据请求信息创建document，和相应的索引信息，创建完毕后将信息同步到自己的副本节点R0上。
+<4>、P0和R0将通知我们的协调节点，任务完成情况。
+<5>、协调节点响应客户端最终的处理结果。
+|-读操作
+<1>、当一个节点接收到一个搜索请求，则这个节点就变成了协调节点。
+<2>、协调节点根据请求信息对document进行路由计算，广播请求到索引中每一个节点的分片，查询请求可以被某个主分片或者某个副本分片处理。
+<3>、相应接收到请求的节点(node2或者node3)将处理结果返回给协调节点。
+<4>、协调节点将所有分片的结果汇总，并进行全局排序，得到最终的查询排序结果。
+4、
+主分片的数目定义了这个索引能够存储的最大数据量。（实际大小取决于你的数据、硬件和使用场景。） 但是，读操作——搜索和返回数据——可以同时被主分片或副本分片所处理，所以当你拥有越多的副本分片时，也将拥有越高的吞吐量。
+但是更多的副本分片数提高了数据冗余量：按照上面的节点配置【R0 P1 P2、R0 R1 R2、P0 R1 R2】，我们可以在失去2个节点的情况下不丢失任何数据。
+5、http://10.121.31.143:9200/_cat/shards/log-fltnet-web-20190703【使用该命令查看集群下索引的分片信息】
+6、http://10.121.31.143:9200/_cat/allocation?v【查看集群所在磁盘的分配状况】
+返回如下信息：
+分片数（shards），集群中各节点的分片数相同，都是6，总数为12，所以集群的总分片数为12。
+索引所占空间（disk.indices），该节点中所有索引在该磁盘所用的空间。
+磁盘使用容量（disk.used），已经使用空间41.6gb
+磁盘可用容量（disk.avail），可用空间4.3gb
+磁盘总容量（disk.total），总共容量45.9gb
+磁盘便用率（disk.percent），磁盘使用率90
+7、http://10.121.31.143:9200/_cat/indices?v【查看集群的索引信息】
+返回如下信息：
+store.size：索引主分片和副分片的总占用存储空间
+8、http://10.121.31.143:9200/_cluster/health【查看集群健康：green代表所有主分片和副分片都正常运行】
+9、http://10.121.31.143:9200/_cat/nodes?v【查询节点信息】
+返回如下信息：
+heap.percent：堆内存占用百分比
+ram.percent：内存占用百分比
+cpu：CPU占用百分比
+8、官方推荐：节点的平方>=主分片+副分片
+10、如果写远大于读的场景，最大程度分配主分片个数，一个机器一个，并最大程度减少副本数；读远大于写的场景，可以减少主分片个数，增加副本数，提升读吞吐率。
+11、搜索 1 个有着 50 个分片的索引与搜索 50 个每个都有 1 个分片的索引完全等价：搜索请求均命中 50 个分片。
+12、如何确定一个索引的分片数
+先把分片设置成1，需要先测出1个shard的性能指标，测试直到挂掉，就可以确定一个分片的容量，然后加上一部分预期的增长，除以单个分片的容量，结果就是你需要的主分片个数
+13、Logstash
+不知道你是否有基于日期的索引需求, 并且对索引数据的搜索场景非常少. 也许这些索引量将达到成百上千, 但每个索引的数据量只有1GB甚至更小. 对于这种类似场景, 我建议你只需要为索引分配1个分片.
+如果使用ES的默认配置(5个分片), 并且使用Logstash按天生成索引, 那么6个月下来, 你拥有的分片数将达到890个. 再多的话, 你的集群将难以工作--除非你提供了更多(例如15个或更多)的节点.
+想一下, 大部分的Logstash用户并不会频繁的进行搜索, 甚至每分钟都不会有一次查询. 所以这种场景, 推荐更为经济使用的设置. 在这种场景下, 搜索性能并不是第一要素, 所以并不需要很多副本. 维护单个副本用于数据冗余已经足够. 不过数据被不断载入到内存的比例相应也会变高.
+如果你的索引只需要一个分片, 那么使用Logstash的配置可以在3节点的集群中维持运行6个月. 当然你至少需要使用4GB的内存, 不过建议使用8GB, 因为在多数据云平台中使用8GB内存会有明显的网速以及更少的资源共享.
+14、节点类型
+|-主节点：从【候选主节点】中选举出一个主节点，负责创建索引、删除索引、分配分片、追踪集群中的节点状态等工作。
+一个集群中只有一个A主节点，A主节点因为需要处理的东西太多或者网络过于繁忙，从而导致其他从节点ping不通A主节点，这样其他从节点就会认为A主节点不可用了，就会重新选出一个新的主节点B。过了一会A主节点恢复正常了，这样就出现了两个主节点，导致一部分数据来源于A主节点，另外一部分数据来源于B主节点，出现数据不一致问题，这就是脑裂。
+为了尽量避免此种情况的出现，可以通过discovery.zen.minimum_master_nodes来设置最少可工作的候选主节点个数，建议设置为(候选主节点数 / 2) + 1, 比如，当有三个候选主节点时，该配置项的值为(3/2)+1=2，也就是保证集群中有半数以上的候选主节点。
+候选主节点的设置方法是设置node.mater为true，默认情况下，node.mater和node.data的值都为true，即该节点既可以做候选主节点也可以做数据节点。由于数据节点承载了数据的操作，负载通常都很高，所以随着集群的扩大，建议将二者分离，设置专用的候选主节点。当我们设置node.data为false，就将节点设置为专用的候选主节点了。
+node.master = true
+node.data = false
+|-数据节点：负责数据的存储和相关具体操作，比如CRUD、搜索、聚合
+node.master = false
+node.data = true
+|-客户端节点：就是既不做候选主节点也不做数据节点的节点，只负责请求的分发、汇总等
+这样的工作，其实任何一个节点都可以完成，单独增加这样的节点更多是为了负载均衡
+node.master = false
+node.data = false
+|-协调节点：没有办法通过配置项来配置哪个节点为协调节点。集群中的任何节点，都可以充当协调节点的角色
+15、移动分片
+假设我们有两个节点：es_node_one和es_node_two，ElasticSearch在es_node_one节点上分配了ops索引的两个分片，我们现在希望将第二个分片移动到es_node_two节点上。可以如下操作实现：
+
+# curl -XPOST "http://ESnode:9200/_cluster/reroute' -d  '{
+   "commands" : [ {
+   "move" : {
+   "index" : "ops",
+   "shard" : 1,
+   "from_node" : "es_node_one",
+   "to_node" : "es_node_two"
+   }
+  }]
+  }'
+16、最大内存不要超过32G，修改Elasticsearch堆内存大小三种方式：
+|-修改jvm.option文件：-Xms10g -Xmx10g
+|-指定ES_HEAP_SIZE环境变量：export ES_HEAP_SIZE=10g
+|-通过命令行参数的形式：/bin/elasticsearch -Xmx10g -Xms10g【确保堆内存最小值（ Xms ）与最大值（ Xmx ）的大小是相同的，防止程序在运行时改变堆内存大小， 这是一个很耗系统资源的过程】
+|-优化：
+1、把你的内存的一半给Lucene
+2、不要超过 32 GB！【JVM 在内存小于 32 GB 的时候会采用一个内存对象指针压缩技术，一旦你越过那个神奇的 ~32 GB 的边界，指针就会切回普通对象的指针。】
+意思就是说：即便你有足够的内存，也尽量不要 超过 32 GB。因为它浪费了内存，降低了 CPU 的性能，还要让 GC 应对大内存。
+3、禁用swap【内存交换到磁盘对服务器性能来说是致命的。】
+暂时禁用：sudo swapoff -a
+要永久禁用：修改 /etc/fstab 文件
+降低swappiness的值：sysctl中这样配置：vm.swappiness = 1
+如果上面的方法都不合适，需要打开配置文件中的 mlockall 开关：在你的 elasticsearch.yml 文件中，设置如下：bootstrap.mlockall: true
+
+17、保证shard均匀地分配在所有node上
+18、分片数的设定很重要，需要提前规划好
+过小会导致后续无法通过增加节点实现水平扩容
+过大会导致一个节点上分布过多分片，造成资源浪费，同时会影响查询性能
+19、ES配置：
+cluster.name: mathon
+node.name: mathon1
+node.master: true
+node.data: false
+path.data: /data/es/es_data
+path.logs: /data/es/es_logs
+index.number_of_shards: 5【设置默认索引主分片个数】
+index.number_of_replicas: 1【设置默认的索引副本分片个数】
+bootstrap.memory_lock: true【锁定物理内存地址，防止elasticsearch内存被交换出去,也就是避免es使用swap交换分区】
+http.port: 9200【设置对外服务的 HTTP 端口】
+transport.tcp.port: 9300【集群内部的节点间交互的TCP端口】
+discovery.zen.minimum_master_nodes: 3【选举Master节点时需要参与的最少的候选主节点数；为了防止脑裂现象，建议设置为(候选主节点数 / 2) + 1】
+discovery.zen.ping.timeout: 10s【在集群中自动发现其他节点时Ping连接的超时时间】
+discovery.zen.ping.unicast.hosts: ["192.168.0.1:9300","192.168.0.2:9300","192.168.0.3:9300"]【集群发现，使用单播协议】
+network.host: 0.0.0.0【默认只能通过127.0.0.1 或者localhost才能访问】
+bootstrap.system_call_filter: false【】
+
+
+ES优化：
+1、路由【按系统分片】
+2、添加数据尽量少，有些数据可以到非关系型数据库查
+3、尽量不要超过两层聚合
+4、索引按日期生成的话，尽量不要使用*【如：index-web-*】，避免查询不需要的索引。
+5、分配给Filesystem Cache内存大小应该足够存在所有index的数据的一半，这样查询就基本走内存，走磁盘就比较少了。还可以定时把经常查询的数据搜索一下，把数据刷到Filesystem Cache中。
+
+
+总结：
+1、保存6个月数据【1、定时任务+delete_by_query；2、curator工具】
+|-delete_by_query
+  |--delete_by_query设置检索近100天数据
+  #!/bin/sh
+  curl -H'Content-Type:application/json' -d'{
+      "query": {
+          "range": {
+              "pt": {
+                  "lt": "now-100d",
+                  "format": "epoch_millis"
+              }
+          }
+      }
+  }
+  ' -XPOST "http://192.168.1.101:9200/logstash_*/
+  _delete_by_query?conflicts=proceed"
+  |--执行forcemerge操作，手动释放磁盘空间【curl -XPOST 'http://192.168.1.101:9200/_forcemerge?only_expunge_deletes=true&max_num_segments=1'】
+|-curator
+  |--索引必须按时间命名
+2、防止脑裂现象：discovery.zen.minimum_master_nodes=4
+3、保证分片均匀分配在节点上，因为如果有的节点分片太多，会导致这个节点压力过大。
+4、主节点【创建索引、删除索引、分配分片、追踪集群中的节点状态等】和数据节点【数据的存储和相关具体操作，比如CRUD、搜索、聚合】分开，加一个客户端节点，只负责请求的负载、汇总。网上有3个候选主节点+3个数据节点
+5、缩短索引的滚动周期，这样可以减少分片数量
+6、路由【按日期来？】
+7、适当增大写入buffer和bulk队列长度，提高写入性能和稳定性【threadpool.index.queue_sizef:1000；ndices.memory.index_buffer_size:20%】
+8、默认1秒会将内存中segment数据刷新到操作系统中，所以说ES是近实时搜索功能。如果我们的系统对数据延迟要求不高的话，可以增加Refresh时间间隔【index.refresh_interval:10s】
+9、加大Flush设置：Flush的主要目的是把文件缓存系统中的段持久化到硬盘，当Translog的数据量达到512MB或者30分钟时，会触发一次Flush。index.translog.flush_threshold_size参数的默认值是512MB
+10、可以使用批量提交：Bulk默认设置批量提交的数据量不能超过100M。至于多少条数据提交一次，可以经过测试，加入当数据达到85M和90M的性能没区别，就用85M的时候有多少条
+
+
+
+
+数据统计：
+滚动周期（天）：
+一天：4*12=48（分片）
+一个月：30*48=1440（分片）
+三个月：3*1440=4320（分片）
+滚动周期（半个月）：
+半个月：4*12=48
+一个月：2*48=96
+三个月：3*96=288
+滚动周期（一个月）：
+一个月：4*12=48
+三个月：3*48=144
+六个月：2*144=288
+
+log-fltnet-web-201905：54W
+log-fltnet-web-201906：63W
+log-fltnet-mobile-201905：1Y
+log-fltnet-mobile-201906：1.3Y
+log-fltnet-esb-201905：7600W
+log-fltnet-esb-201906：9691W
+
+
+log-fltnet-esb-20190520    11 p STARTED  263399  200.1mb 10.121.31.143 es1
+log-fltnet-esb-20190520    2  r STARTED  262755  197.5mb 10.121.31.143 es1
+log-fltnet-esb-20190520    10 r STARTED  263294    195mb 10.121.31.143 es1
+log-fltnet-esb-20190520    9  r STARTED  262836  201.4mb 10.121.31.143 es1
+log-fltnet-esb-20190520    7  p STARTED  263278  195.3mb 10.121.31.143 es1
+log-fltnet-esb-20190520    6  r STARTED  263008  201.1mb 10.121.31.143 es1
+
+log-fltnet-esb-20190520    2  r STARTED  262755  197.5mb 10.121.31.144 es2
+log-fltnet-esb-20190520    5  r STARTED  262718  199.9mb 10.121.31.144 es2
+log-fltnet-esb-20190520    4  r STARTED  262811  200.4mb 10.121.31.144 es2
+log-fltnet-esb-20190520    3  r STARTED  261428  201.8mb 10.121.31.144 es2
+log-fltnet-esb-20190520    1  p STARTED  263012  202.9mb 10.121.31.144 es2
+log-fltnet-esb-20190520    0  r STARTED  262132    199mb 10.121.31.144 es2
+
+log-fltnet-esb-20190520    3  r STARTED  261428  201.8mb 10.121.31.145 es3
+log-fltnet-esb-20190520    5  r STARTED  262718  199.9mb 10.121.31.145 es3
+log-fltnet-esb-20190520    2  p STARTED  262755  197.5mb 10.121.31.145 es3
+log-fltnet-esb-20190520    4  p STARTED  262811  200.4mb 10.121.31.145 es3
+log-fltnet-esb-20190520    1  r STARTED  263012  202.9mb 10.121.31.145 es3
+log-fltnet-esb-20190520    0  r STARTED  262132    199mb 10.121.31.145 es3
+
+log-fltnet-esb-20190520    8  r STARTED  263819  201.6mb 10.121.31.146 es4
+log-fltnet-esb-20190520    10 r STARTED  263294  201.9mb 10.121.31.146 es4
+log-fltnet-esb-20190520    9  r STARTED  262836  198.1mb 10.121.31.146 es4
+log-fltnet-esb-20190520    4  r STARTED  262811  200.4mb 10.121.31.146 es4
+log-fltnet-esb-20190520    7  r STARTED  263278  195.3mb 10.121.31.146 es4
+log-fltnet-esb-20190520    6  p STARTED  263008  201.1mb 10.121.31.146 es4
+
+log-fltnet-esb-20190520    5  p STARTED  262718  199.9mb 10.121.31.147 es5
+log-fltnet-esb-20190520    11 r STARTED  263399  200.1mb 10.121.31.147 es5
+log-fltnet-esb-20190520    8  r STARTED  263819  201.6mb 10.121.31.147 es5
+log-fltnet-esb-20190520    6  r STARTED  263008  201.1mb 10.121.31.147 es5
+log-fltnet-esb-20190520    3  p STARTED  261428  201.8mb 10.121.31.147 es5
+log-fltnet-esb-20190520    0  p STARTED  262132    199mb 10.121.31.147 es5
+
+log-fltnet-esb-20190520    11 r STARTED  263399  200.1mb 10.121.31.148 es6
+log-fltnet-esb-20190520    8  p STARTED  263819  201.6mb 10.121.31.148 es6
+log-fltnet-esb-20190520    10 p STARTED  263294  201.2mb 10.121.31.148 es6
+log-fltnet-esb-20190520    9  p STARTED  262836  198.1mb 10.121.31.148 es6
+log-fltnet-esb-20190520    7  r STARTED  263278    202mb 10.121.31.148 es6
+log-fltnet-esb-20190520    1  r STARTED  263012  202.9mb 10.121.31.148 es6
+
+
+
+log-fltnet-mobile-20190523 7  p STARTED 298370   667mb 10.121.31.143 es1
+log-fltnet-mobile-20190523 11 r STARTED 297496 667.7mb 10.121.31.143 es1
+log-fltnet-mobile-20190523 9  r STARTED 298692 671.7mb 10.121.31.143 es1
+log-fltnet-mobile-20190523 10 p STARTED 297978 669.4mb 10.121.31.143 es1
+log-fltnet-mobile-20190523 6  p STARTED 297057 657.8mb 10.121.31.143 es1
+log-fltnet-mobile-20190523 8  r STARTED 298186 668.2mb 10.121.31.143 es1
+
+log-fltnet-mobile-20190523 4  r STARTED 297581   666mb 10.121.31.144 es2
+log-fltnet-mobile-20190523 5  r STARTED 297341 667.1mb 10.121.31.144 es2
+log-fltnet-mobile-20190523 2  p STARTED 297917 665.3mb 10.121.31.144 es2
+log-fltnet-mobile-20190523 1  r STARTED 298855 665.5mb 10.121.31.144 es2
+log-fltnet-mobile-20190523 3  r STARTED 297568   664mb 10.121.31.144 es2
+log-fltnet-mobile-20190523 0  p STARTED 297963 666.9mb 10.121.31.144 es2
+
+log-fltnet-mobile-20190523 4  p STARTED 297581   666mb 10.121.31.145 es3
+log-fltnet-mobile-20190523 5  r STARTED 297341 667.1mb 10.121.31.145 es3
+log-fltnet-mobile-20190523 2  r STARTED 297917 665.3mb 10.121.31.145 es3
+log-fltnet-mobile-20190523 1  r STARTED 298855 665.5mb 10.121.31.145 es3
+log-fltnet-mobile-20190523 3  r STARTED 297568   664mb 10.121.31.145 es3
+log-fltnet-mobile-20190523 0  r STARTED 297963 666.9mb 10.121.31.145 es3
+
+log-fltnet-mobile-20190523 11 p STARTED 297496 666.4mb 10.121.31.146 es4
+log-fltnet-mobile-20190523 9  r STARTED 298692 670.8mb 10.121.31.146 es4
+log-fltnet-mobile-20190523 10 r STARTED 297978 665.4mb 10.121.31.146 es4
+log-fltnet-mobile-20190523 2  r STARTED 297917 665.3mb 10.121.31.146 es4
+log-fltnet-mobile-20190523 6  r STARTED 297057 657.8mb 10.121.31.146 es4
+log-fltnet-mobile-20190523 8  r STARTED 298186 668.2mb 10.121.31.146 es4
+
+log-fltnet-mobile-20190523 7  r STARTED 298370   667mb 10.121.31.147 es5
+log-fltnet-mobile-20190523 10 r STARTED 297978 669.4mb 10.121.31.147 es5
+log-fltnet-mobile-20190523 5  p STARTED 297341 667.1mb 10.121.31.147 es5
+log-fltnet-mobile-20190523 1  p STARTED 298855 665.5mb 10.121.31.147 es5
+log-fltnet-mobile-20190523 3  p STARTED 297568   664mb 10.121.31.147 es5
+log-fltnet-mobile-20190523 6  r STARTED 297057 657.8mb 10.121.31.147 es5
+
+log-fltnet-mobile-20190523 7  r STARTED 298370 660.9mb 10.121.31.148 es6
+log-fltnet-mobile-20190523 4  r STARTED 297581   666mb 10.121.31.148 es6
+log-fltnet-mobile-20190523 11 r STARTED 297496 666.4mb 10.121.31.148 es6
+log-fltnet-mobile-20190523 9  p STARTED 298692 671.7mb 10.121.31.148 es6
+log-fltnet-mobile-20190523 8  p STARTED 298186 668.2mb 10.121.31.148 es6
+log-fltnet-mobile-20190523 0  r STARTED 297963 660.6mb 10.121.31.148 es6
+
+
+
+log-fltnet-mobile-20190701 8  r STARTED 350032   817mb 10.121.31.143 es1
+log-fltnet-mobile-20190701 5  r STARTED 350898 824.7mb 10.121.31.143 es1
+log-fltnet-mobile-20190701 3  r STARTED 349863 824.8mb 10.121.31.143 es1
+log-fltnet-mobile-20190701 7  p STARTED 350118 827.5mb 10.121.31.143 es1
+log-fltnet-mobile-20190701 6  p STARTED 350934 830.5mb 10.121.31.143 es1
+log-fltnet-mobile-20190701 4  r STARTED 349753 818.6mb 10.121.31.143 es1
+
+log-fltnet-mobile-20190701 5  p STARTED 350898 824.7mb 10.121.31.144 es2
+log-fltnet-mobile-20190701 3  p STARTED 349863 826.6mb 10.121.31.144 es2
+log-fltnet-mobile-20190701 2  r STARTED 349919 827.5mb 10.121.31.144 es2
+log-fltnet-mobile-20190701 1  r STARTED 352046 827.2mb 10.121.31.144 es2
+log-fltnet-mobile-20190701 4  r STARTED 349753 818.6mb 10.121.31.144 es2
+log-fltnet-mobile-20190701 0  p STARTED 348729   829mb 10.121.31.144 es2
+
+log-fltnet-mobile-20190701 3  r STARTED 349863 826.6mb 10.121.31.145 es3
+log-fltnet-mobile-20190701 2  r STARTED 349919 827.5mb 10.121.31.145 es3
+log-fltnet-mobile-20190701 6  r STARTED 350934 830.5mb 10.121.31.145 es3
+log-fltnet-mobile-20190701 1  p STARTED 352046 827.2mb 10.121.31.145 es3
+log-fltnet-mobile-20190701 4  p STARTED 349753 818.6mb 10.121.31.145 es3
+log-fltnet-mobile-20190701 0  r STARTED 348729   829mb 10.121.31.145 es3
+
+log-fltnet-mobile-20190701 10 r STARTED 350609 827.2mb 10.121.31.146 es4
+log-fltnet-mobile-20190701 9  r STARTED 350206 823.6mb 10.121.31.146 es4
+log-fltnet-mobile-20190701 7  r STARTED 350118 827.5mb 10.121.31.146 es4
+log-fltnet-mobile-20190701 11 p STARTED 348848 823.2mb 10.121.31.146 es4
+log-fltnet-mobile-20190701 6  r STARTED 350934 828.2mb 10.121.31.146 es4
+log-fltnet-mobile-20190701 1  r STARTED 352046 827.2mb 10.121.31.146 es4
+
+log-fltnet-mobile-20190701 10 r STARTED 350609 833.3mb 10.121.31.147 es5
+log-fltnet-mobile-20190701 8  p STARTED 350032 820.1mb 10.121.31.147 es5
+log-fltnet-mobile-20190701 2  p STARTED 349919 827.5mb 10.121.31.147 es5
+log-fltnet-mobile-20190701 9  r STARTED 350206 825.8mb 10.121.31.147 es5
+log-fltnet-mobile-20190701 7  r STARTED 350118 812.8mb 10.121.31.147 es5
+log-fltnet-mobile-20190701 11 r STARTED 348848 809.9mb 10.121.31.147 es5
+
+log-fltnet-mobile-20190701 10 p STARTED 350609 833.3mb 10.121.31.148 es6
+log-fltnet-mobile-20190701 8  r STARTED 350032   827mb 10.121.31.148 es6
+log-fltnet-mobile-20190701 5  r STARTED 350898 824.7mb 10.121.31.148 es6
+log-fltnet-mobile-20190701 9  p STARTED 350206 825.8mb 10.121.31.148 es6
+log-fltnet-mobile-20190701 11 r STARTED 348848 823.2mb 10.121.31.148 es6
+log-fltnet-mobile-20190701 0  r STARTED 348729   829mb 10.121.31.148 es6
+

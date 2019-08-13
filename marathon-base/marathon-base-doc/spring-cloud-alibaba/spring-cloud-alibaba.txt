@@ -1,3 +1,5 @@
+https://github.com/alibaba/spring-cloud-alibaba
+https://segmentfault.com/a/1190000018700536?utm_source=tag-newest
 1、主要功能：
 服务限流降级：默认支持 Servlet、Feign、RestTemplate、Dubbo 和 RocketMQ 限流降级功能的接入，可以在运行时通过控制台实时修改限流降级规则，还支持查看限流降级 Metrics 监控。
 
