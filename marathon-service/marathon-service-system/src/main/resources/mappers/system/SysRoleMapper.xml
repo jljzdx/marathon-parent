@@ -11,7 +11,7 @@
         id,
         role_name roleName,
         remark,
-        status,
+        available,
         gmt_create gmtCreate
         from t_sys_role
         <where>

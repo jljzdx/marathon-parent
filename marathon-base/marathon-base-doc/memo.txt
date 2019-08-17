@@ -15,3 +15,11 @@ padding:10px 5px 15px 20px;
 5、起点生产服务器
 144.34.186.85、26939、G3D2s69YNcdM
 后台账号：https://kiwivm.64clouds.com/main.php、144.34.186.85、songliang111
+6、vue项目安装、运行
+npm install：下载package.json中的依赖，放到bode_modules目录下。这样做是为了防止项目太大，易于别人git clone
+npm run：package.json文件中的字段script的每一个属性都是一个自定义的脚本命令
+{
+  "script":{
+    "dev": "webpack -w"
+  }
+}

@@ -45,7 +45,7 @@ public class SysServiceImpl implements SysService {
         //验证用户名和密码
         QueryWrapper<SysUser> wrapper = new QueryWrapper<>();
         wrapper.eq("user_name",requestDTO.getUserName());
-        wrapper.eq("status", SysUserStatus._1.getCode());
+        wrapper.eq("locked", SysUserStatus._1.getCode());
         SysUser sysUser = sysUserMapper.selectOne(wrapper);
         if(null == sysUser){
             throw new BaseException(ApplicationError.USER_NAME_OR_PASSWORD_ERROR.getMessage(), ApplicationError.USER_NAME_OR_PASSWORD_ERROR.getCode());
@@ -67,7 +67,6 @@ public class SysServiceImpl implements SysService {
         updateSysUser.setLastLoginTime(sysUser.getLoginTime());
         updateSysUser.setLoginTime(date);
         updateSysUser.setLoginCount(sysUser.getLoginCount()+1);
-        updateSysUser.setGmtModify(date);
         //更新
         sysUserMapper.updateById(updateSysUser);
         //返回用户信息

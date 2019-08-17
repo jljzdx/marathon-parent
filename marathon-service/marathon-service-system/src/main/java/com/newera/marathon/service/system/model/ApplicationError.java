@@ -10,7 +10,9 @@ public enum  ApplicationError {
     CAPTCHA_ERROR("图形验证码有误", "100007"),
     OLD_PASSWORD_ERROR("原密码有误", "100008"),
     TWO_PASSWORD_ERROR("两次密码输入不一致", "100009"),
-    USERID_STATUS_INVALID("无效的用户", "100010")
+    USERID_STATUS_INVALID("无效的用户", "100010"),
+    NOT_EXIST_PARENTID("父节点不存在", "100011"),
+    NAME_SAME("同级资源名称不能重复", "100011")
     ;
     private String message;
     private String code;

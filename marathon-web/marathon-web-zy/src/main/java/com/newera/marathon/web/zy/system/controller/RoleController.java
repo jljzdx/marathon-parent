@@ -48,7 +48,7 @@ public class RoleController {
             map.put("value", w.getId());
             map.put("name", w.getName());
             map.put("selected", "");
-            if(w.getStatus()==0){
+            if(w.getAvailable()==0){
                 map.put("disabled", "disabled");
             }else {
                 map.put("disabled", "");

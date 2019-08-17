@@ -18,7 +18,7 @@ public class CodeGenerator {
 
         // 全局配置
         GlobalConfig gc = new GlobalConfig();
-        String projectPath = "D:\\project\\newera\\marathon-parent\\marathon-base\\marathon-base-generator";
+        String projectPath = "/Users/microbin/Desktop/project/newera/marathon-parent/marathon-base/marathon-base-generator";
         gc.setOutputDir(projectPath + "/src/main/java");
         gc.setAuthor("MicroBin");
         gc.setServiceName("%sService");
@@ -34,7 +34,7 @@ public class CodeGenerator {
         // dsc.setSchemaName("public");
         dsc.setDriverName("com.mysql.jdbc.Driver");
         dsc.setUsername("root");
-        dsc.setPassword("MicroBin");
+        dsc.setPassword("microbin");
         mpg.setDataSource(dsc);
 
         // 包配置
@@ -78,7 +78,7 @@ public class CodeGenerator {
         strategy.setNaming(NamingStrategy.underline_to_camel);
         strategy.setColumnNaming(NamingStrategy.underline_to_camel);
         strategy.setEntityLombokModel(true);
-        strategy.setInclude("t_sys_user_role");
+        strategy.setInclude("t_sys_resource");
         strategy.setRestControllerStyle(true);
         strategy.setControllerMappingHyphenStyle(true);
         strategy.setTablePrefix("t_");

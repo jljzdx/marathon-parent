@@ -5,3 +5,8 @@ TRUNCATE table t_org_visit;
 SELECT count(type) 总数,SUM(CASE issuss WHEN 'C' THEN 1 ELSE 0 END) 成功数,type,issuss
 from t_teb
 group by type
+3、每个表必加字段
+ALTER TABLE t_sys_role_resource ADD COLUMN gmt_create datetime NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间';
+ALTER TABLE t_sys_role_resource ADD COLUMN create_operator varchar(255) CHARACTER SET utf8 COLLATE utf8_bin NOT NULL DEFAULT '' COMMENT '创建人';
+ALTER TABLE t_sys_role_resource ADD COLUMN gmt_modify datetime DEFAULT NULL ON UPDATE CURRENT_TIMESTAMP COMMENT '更新时间';
+ALTER TABLE t_sys_role_resource ADD COLUMN modify_operator varchar(255) CHARACTER SET utf8 COLLATE utf8_bin NOT NULL DEFAULT '' COMMENT '更新人';

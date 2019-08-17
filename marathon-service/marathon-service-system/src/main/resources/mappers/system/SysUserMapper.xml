@@ -15,7 +15,7 @@
     <select id="querySysUserPage" resultType="com.newera.marathon.dto.system.inquiry.XfaceSysUserInquiryPageResponseSubDTO">
         select
         id,
-        sex,
+        gender,
         user_name userName,
         real_name realName,
         mobile mobile,
@@ -23,7 +23,7 @@
         last_login_time lastLoginTime,
         login_time loginTime,
         login_count loginCount,
-        status,
+        locked,
         gmt_create gmtCreate
         from t_sys_user
         <where>

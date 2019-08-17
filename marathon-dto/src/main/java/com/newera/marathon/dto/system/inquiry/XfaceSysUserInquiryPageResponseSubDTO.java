@@ -7,7 +7,7 @@ public class XfaceSysUserInquiryPageResponseSubDTO {
 
     private Integer id;
 
-    private Integer sex;
+    private Integer gender;
 
     private String userName;
 
@@ -23,7 +23,7 @@ public class XfaceSysUserInquiryPageResponseSubDTO {
 
     private Integer loginCount;
 
-    private Integer status;
+    private Integer locked;
 
     private String gmtCreate;
 

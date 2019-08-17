@@ -5,7 +5,6 @@ import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.newera.marathon.common.utils.DateUtils;
-import com.newera.marathon.dto.system.enumeration.SysUserStatus;
 import com.newera.marathon.dto.system.inquiry.*;
 import com.newera.marathon.dto.system.maintenance.*;
 import com.newera.marathon.service.system.entity.SysRole;
@@ -23,7 +22,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 
 /**
@@ -55,7 +53,7 @@ public class SysRoleServiceImpl extends ServiceImpl<SysRoleMapper, SysRole> impl
         if(StringUtils.isNotBlank(requestDTO.getRoleName())){
             wrapper.like("role_name",requestDTO.getRoleName());
         }
-        wrapper.select("id","role_name","status","remark","gmt_create");
+        wrapper.select("id","role_name","available","remark","gmt_create");
         IPage<SysRole> iPage = page(page,wrapper);
         List<XfaceSysRoleInquiryPageResponseSubDTO> dataList = new ArrayList<>();
         iPage.getRecords().forEach(w->{
@@ -99,13 +97,13 @@ public class SysRoleServiceImpl extends ServiceImpl<SysRoleMapper, SysRole> impl
         TransactionStatus transactionStatus = new TransactionStatus();
         List<XfaceSysRoleInquirySelectResponseSubDTO> responseSubDTOS = new ArrayList<>();
         QueryWrapper<SysRole> wrapper = new QueryWrapper<>();
-        wrapper.select("id","role_name","status");
+        wrapper.select("id","role_name","available");
         List<SysRole> sysRoles = list(wrapper);
         sysRoles.forEach(w->{
             XfaceSysRoleInquirySelectResponseSubDTO responseSubDTO = new XfaceSysRoleInquirySelectResponseSubDTO();
             responseSubDTO.setId(w.getId());
             responseSubDTO.setName(w.getRoleName());
-            responseSubDTO.setStatus(w.getStatus());
+            responseSubDTO.setAvailable(w.getAvailable());
             responseSubDTOS.add(responseSubDTO);
         });
         responseDTO.setDataList(responseSubDTOS);
@@ -130,10 +128,6 @@ public class SysRoleServiceImpl extends ServiceImpl<SysRoleMapper, SysRole> impl
         //组装用户数据
         SysRole sysRole = new SysRole();
         BeanUtils.copyProperties(requestDTO,sysRole);
-        Date date = new Date();
-        sysRole.setGmtCreate(date);
-        sysRole.setGmtModify(date);
-        sysRole.setStatus(SysUserStatus._1.getCode());
         //添加操作
         Boolean result = save(sysRole);
         if(!result){
@@ -153,7 +147,6 @@ public class SysRoleServiceImpl extends ServiceImpl<SysRoleMapper, SysRole> impl
         //组装用户数据
         SysRole sysRole = new SysRole();
         BeanUtils.copyProperties(requestDTO, sysRole);
-        sysRole.setGmtModify(new Date());
         //更新操作
         Boolean result = updateById(sysRole);
         if(!result){
@@ -173,7 +166,6 @@ public class SysRoleServiceImpl extends ServiceImpl<SysRoleMapper, SysRole> impl
         //组装用户数据
         SysRole sysRole = new SysRole();
         BeanUtils.copyProperties(requestDTO, sysRole);
-        sysRole.setGmtModify(new Date());
         //更新操作
         Boolean result = updateById(sysRole);
         if(!result){

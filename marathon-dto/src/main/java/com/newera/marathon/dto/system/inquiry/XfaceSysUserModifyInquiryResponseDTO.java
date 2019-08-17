@@ -11,7 +11,7 @@ public class XfaceSysUserModifyInquiryResponseDTO extends GenericResponseDTO {
 
     private Integer id;
 
-    private Integer sex;
+    private Integer gender;
 
     private String userName;
 

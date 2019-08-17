@@ -9,5 +9,5 @@ public class XfaceSysRoleInquirySelectResponseSubDTO {
 
     private String name;
 
-    private Integer status;
+    private Integer available;
 }

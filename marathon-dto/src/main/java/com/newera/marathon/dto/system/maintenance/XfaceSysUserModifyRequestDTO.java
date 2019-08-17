@@ -10,11 +10,11 @@ import javax.validation.constraints.Size;
 public class XfaceSysUserModifyRequestDTO {
 
 
-    @NotNull(message = "用户ID不能为空")
+    @NotNull(message = "ID不能为空")
     private Integer id;
 
-    @NotNull(message = "用户名不能为空")
-    private Integer sex;
+    @NotNull(message = "性别不能为空")
+    private Integer gender;
 
     @NotBlank(message = "手机号不能为空")
     @Size(max = 15, message= "手机号长度不能超过15位")
@@ -27,6 +27,10 @@ public class XfaceSysUserModifyRequestDTO {
     @NotBlank(message = "邮箱不能为空")
     @Size(max = 75, message= "邮箱长度不能超过75位")
     private String email;
+
+    @NotBlank(message = "更新人不能为空")
+    @Size(max = 255, message= "更新人长度不能超过255位")
+    private String modifyOperator;
 
     private String roles;
 }

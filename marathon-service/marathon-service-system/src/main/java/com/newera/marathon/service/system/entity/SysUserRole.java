@@ -3,6 +3,7 @@ package com.newera.marathon.service.system.entity;
 import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
+import com.newera.marathon.common.model.BaseEntity;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.experimental.Accessors;
@@ -21,7 +22,7 @@ import java.io.Serializable;
 @EqualsAndHashCode(callSuper = false)
 @Accessors(chain = true)
 @TableName("t_sys_user_role")
-public class SysUserRole implements Serializable {
+public class SysUserRole extends BaseEntity implements Serializable {
 
     private static final long serialVersionUID = 1L;
 
@@ -31,7 +32,5 @@ public class SysUserRole implements Serializable {
     private Integer userId;
 
     private Integer roleId;
-
-    private String operator;
 
 }

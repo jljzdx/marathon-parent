@@ -19,14 +19,13 @@ import com.spaking.boot.starter.core.exception.BaseException;
 import com.spaking.boot.starter.core.model.PageModel;
 import com.spaking.boot.starter.core.model.TransactionStatus;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -80,7 +79,7 @@ public class SysUserServiceImpl extends ServiceImpl<SysUserMapper, SysUser> impl
         //查询用户信息
         QueryWrapper<SysUser> wrapper = new QueryWrapper<>();
         wrapper.eq("id",requestDTO.getId());
-        wrapper.select("id","sex","user_name","mobile","real_name","email");
+        wrapper.select("id","gender","user_name","mobile","real_name","email");
         SysUser sysUser = getOne(wrapper);
         if(null != sysUser){
             BeanUtils.copyProperties(sysUser,responseDTO);
@@ -115,10 +114,6 @@ public class SysUserServiceImpl extends ServiceImpl<SysUserMapper, SysUser> impl
         //组装用户数据
         SysUser sysUser = new SysUser();
         BeanUtils.copyProperties(requestDTO,sysUser);
-//        Date date = new Date();
-//        sysUser.setGmtCreate(date);
-//        sysUser.setGmtModify(date);
-//        sysUser.setStatus(SysUserStatus._1.getCode());
         sysUser.setPassword(PasswordUtil.generate(sysUser.getUserName()));
         //添加操作
         Boolean result = save(sysUser);
@@ -128,12 +123,15 @@ public class SysUserServiceImpl extends ServiceImpl<SysUserMapper, SysUser> impl
         //组装用户角色数据
         List<SysUserRole> sysUserRoles = new ArrayList<>();
         String roles = requestDTO.getRoles();
-        Stream.of(roles.split(",")).filter(x-> StringUtils.isNotBlank(x)).forEach(w->{
-            SysUserRole sysUserRole = new SysUserRole();
-            sysUserRole.setRoleId(Integer.parseInt(w));
-            sysUserRole.setUserId(sysUser.getId());
-            sysUserRoles.add(sysUserRole);
-        });
+        if(StringUtils.isNotBlank(roles)){
+            Stream.of(roles.split(",")).filter(x-> StringUtils.isNotBlank(x)).forEach(w->{
+                SysUserRole sysUserRole = new SysUserRole();
+                sysUserRole.setRoleId(Integer.parseInt(w));
+                sysUserRole.setUserId(sysUser.getId());
+                sysUserRoles.add(sysUserRole);
+            });
+        }
+
         //批量插入用户角色
         if(sysUserRoles.size() > 0){
             sysUserRoleService.doSysUserRoleBatchAddition(sysUserRoles);
@@ -151,7 +149,6 @@ public class SysUserServiceImpl extends ServiceImpl<SysUserMapper, SysUser> impl
         //组装用户数据
         SysUser sysUser = new SysUser();
         BeanUtils.copyProperties(requestDTO, sysUser);
-        sysUser.setGmtModify(new Date());
         //更新操作
         Boolean result = updateById(sysUser);
         if(!result){
@@ -161,12 +158,15 @@ public class SysUserServiceImpl extends ServiceImpl<SysUserMapper, SysUser> impl
         sysUserRoleMapper.deleteByUserId(requestDTO.getId());
         List<SysUserRole> sysUserRoles = new ArrayList<>();
         String roles = requestDTO.getRoles();
-        Stream.of(roles.split(",")).filter(x-> StringUtils.isNotBlank(x)).forEach(w->{
-            SysUserRole sysUserRole = new SysUserRole();
-            sysUserRole.setRoleId(Integer.parseInt(w));
-            sysUserRole.setUserId(sysUser.getId());
-            sysUserRoles.add(sysUserRole);
-        });
+        if(StringUtils.isNotBlank(roles)){
+            Stream.of(roles.split(",")).filter(x-> StringUtils.isNotBlank(x)).forEach(w->{
+                SysUserRole sysUserRole = new SysUserRole();
+                sysUserRole.setRoleId(Integer.parseInt(w));
+                sysUserRole.setUserId(sysUser.getId());
+                sysUserRoles.add(sysUserRole);
+            });
+        }
+
         //批量插入用户角色
         if(sysUserRoles.size() > 0){
             sysUserRoleService.doSysUserRoleBatchAddition(sysUserRoles);
@@ -185,7 +185,6 @@ public class SysUserServiceImpl extends ServiceImpl<SysUserMapper, SysUser> impl
         //组装用户数据
         SysUser sysUser = new SysUser();
         BeanUtils.copyProperties(requestDTO, sysUser);
-        sysUser.setGmtModify(new Date());
         //更新操作
         Boolean result = updateById(sysUser);
         if(!result){
@@ -215,7 +214,6 @@ public class SysUserServiceImpl extends ServiceImpl<SysUserMapper, SysUser> impl
         //更新密码
         SysUser updateUser = new SysUser();
         updateUser.setId(requestDTO.getId());
-        updateUser.setGmtModify(new Date());
         updateUser.setPassword(PasswordUtil.generate(requestDTO.getNewPassword()));
         sysUserMapper.updateById(updateUser);
         responseDTO.setTransactionStatus(transactionStatus);
@@ -231,7 +229,7 @@ public class SysUserServiceImpl extends ServiceImpl<SysUserMapper, SysUser> impl
         //判断ID是否存在
         QueryWrapper<SysUser> wrapper = new QueryWrapper<>();
         wrapper.eq("id",requestDTO.getId());
-        wrapper.eq("status",1);
+        wrapper.eq("locked",1);
         wrapper.select("id","user_name");
         SysUser sysUser = getOne(wrapper);
         if(null == sysUser){

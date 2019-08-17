@@ -9,7 +9,7 @@ public class XfaceSysRoleInquiryPageResponseSubDTO {
 
     private String roleName;
 
-    private Integer status;
+    private Integer available;
 
     private String remark;
 

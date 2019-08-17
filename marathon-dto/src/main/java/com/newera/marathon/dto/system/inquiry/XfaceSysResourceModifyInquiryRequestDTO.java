@@ -5,7 +5,7 @@ import lombok.Data;
 import javax.validation.constraints.NotNull;
 
 @Data
-public class XfaceSysRoleModifyInquiryRequestDTO {
+public class XfaceSysResourceModifyInquiryRequestDTO {
 
     @NotNull(message = "ID不能为空")
     private Integer id;

@@ -16,4 +16,15 @@ public class ListResponseConverter {
         map.put("data",dataList);
         return map;
     }
+    public static Map listResponseConverter(boolean success, String code, String msg, Object dataList){
+        Map map = new HashMap();
+        if(success){
+            map.put("code",0);
+        }else{
+            map.put("code",code);
+        }
+        map.put("msg",msg);
+        map.put("data",dataList);
+        return map;
+    }
 }
