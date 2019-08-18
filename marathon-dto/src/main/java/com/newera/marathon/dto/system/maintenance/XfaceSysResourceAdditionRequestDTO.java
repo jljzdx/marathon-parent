@@ -15,7 +15,7 @@ public class XfaceSysResourceAdditionRequestDTO {
     private String name;
 
     @NotNull(message = "父节点不能为空")
-        private Integer parentId;
+    private Integer parentId;
 
     @Size(max = 255, message= "权限码长度不能超过255位")
     private String permission;

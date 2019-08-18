@@ -15,7 +15,6 @@ import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.Date;
 import java.util.List;
 
 /**
@@ -34,13 +33,13 @@ public class SysResourceServiceImpl extends ServiceImpl<SysResourceMapper, SysRe
 
 
     @Override
-    public XfaceSysResourceInquiryLoopResponseDTO doSysResourceInquiryLoop(XfaceSysResourceInquiryLoopRequestDTO requestDTO) {
+    public XfaceSysResourceLoopInquiryResponseDTO doSysResourceInquiryLoop(XfaceSysResourceLoopInquiryRequestDTO requestDTO) {
         log.info("doSysResourceInquiryPage start");
-        XfaceSysResourceInquiryLoopResponseDTO responseDTO = new XfaceSysResourceInquiryLoopResponseDTO();
+        XfaceSysResourceLoopInquiryResponseDTO responseDTO = new XfaceSysResourceLoopInquiryResponseDTO();
         TransactionStatus transactionStatus = new TransactionStatus();
 
         Integer parentId = requestDTO.getParentId();
-        List<XfaceSysResourceInquiryLoopResponseSubDTO> result = sysResourceMapper.querySysResourceLoop(parentId);
+        List<XfaceSysResourceLoopInquiryResponseSubDTO> result = sysResourceMapper.querySysResourceLoop(parentId);
 
         responseDTO.setDataList(result);
         responseDTO.setTransactionStatus(transactionStatus);

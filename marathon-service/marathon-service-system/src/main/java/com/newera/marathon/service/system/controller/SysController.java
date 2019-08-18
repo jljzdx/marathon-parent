@@ -15,8 +15,8 @@ public class SysController {
     private SysService sysService;
 
     @PostMapping("/sys/login/auth")
-    public XfaceSysLoginAuthResponseDTO sysLoginAuth(@Valid @RequestBody XfaceSysLoginAuthRequestDTO requestDTO){
-        XfaceSysLoginAuthResponseDTO responseDTO = sysService.doSysLoginAuth(requestDTO);
+    public XfaceSysLoginResponseDTO sysLoginAuth(@Valid @RequestBody XfaceSysLoginRequestDTO requestDTO){
+        XfaceSysLoginResponseDTO responseDTO = sysService.doSysLoginAuth(requestDTO);
         return responseDTO;
     }
     @PostMapping("/sys/generate/captcha")

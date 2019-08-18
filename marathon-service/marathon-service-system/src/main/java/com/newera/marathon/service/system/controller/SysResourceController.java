@@ -1,8 +1,8 @@
 package com.newera.marathon.service.system.controller;
 
 
-import com.newera.marathon.dto.system.inquiry.XfaceSysResourceInquiryLoopRequestDTO;
-import com.newera.marathon.dto.system.inquiry.XfaceSysResourceInquiryLoopResponseDTO;
+import com.newera.marathon.dto.system.inquiry.XfaceSysResourceLoopInquiryRequestDTO;
+import com.newera.marathon.dto.system.inquiry.XfaceSysResourceLoopInquiryResponseDTO;
 import com.newera.marathon.dto.system.inquiry.XfaceSysResourceModifyInquiryRequestDTO;
 import com.newera.marathon.dto.system.inquiry.XfaceSysResourceModifyInquiryResponseDTO;
 import com.newera.marathon.dto.system.maintenance.*;
@@ -31,8 +31,8 @@ public class SysResourceController {
     private SysResourceService sysResourceService;
 
     @PostMapping("/inquiry/loop")
-    public XfaceSysResourceInquiryLoopResponseDTO sysResourceInquiryLoop(@Valid @RequestBody XfaceSysResourceInquiryLoopRequestDTO requestDTO){
-        XfaceSysResourceInquiryLoopResponseDTO responseDTO = sysResourceService.doSysResourceInquiryLoop(requestDTO);
+    public XfaceSysResourceLoopInquiryResponseDTO sysResourceInquiryLoop(@Valid @RequestBody XfaceSysResourceLoopInquiryRequestDTO requestDTO){
+        XfaceSysResourceLoopInquiryResponseDTO responseDTO = sysResourceService.doSysResourceInquiryLoop(requestDTO);
         return responseDTO;
     }
 

@@ -1,8 +1,8 @@
 package com.newera.marathon.service.system.service;
 
 import com.baomidou.mybatisplus.extension.service.IService;
-import com.newera.marathon.dto.system.inquiry.XfaceSysResourceInquiryLoopRequestDTO;
-import com.newera.marathon.dto.system.inquiry.XfaceSysResourceInquiryLoopResponseDTO;
+import com.newera.marathon.dto.system.inquiry.XfaceSysResourceLoopInquiryRequestDTO;
+import com.newera.marathon.dto.system.inquiry.XfaceSysResourceLoopInquiryResponseDTO;
 import com.newera.marathon.dto.system.inquiry.XfaceSysResourceModifyInquiryRequestDTO;
 import com.newera.marathon.dto.system.inquiry.XfaceSysResourceModifyInquiryResponseDTO;
 import com.newera.marathon.dto.system.maintenance.*;
@@ -18,7 +18,7 @@ import com.newera.marathon.service.system.entity.SysResource;
  */
 public interface SysResourceService extends IService<SysResource> {
 
-    XfaceSysResourceInquiryLoopResponseDTO doSysResourceInquiryLoop(XfaceSysResourceInquiryLoopRequestDTO requestDTO);
+    XfaceSysResourceLoopInquiryResponseDTO doSysResourceInquiryLoop(XfaceSysResourceLoopInquiryRequestDTO requestDTO);
 
     XfaceSysResourceAdditionResponseDTO doSysResourceAddition(XfaceSysResourceAdditionRequestDTO requestDTO);
 

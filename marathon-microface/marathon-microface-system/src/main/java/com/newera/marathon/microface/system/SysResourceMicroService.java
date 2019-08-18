@@ -1,7 +1,7 @@
 package com.newera.marathon.microface.system;
 
-import com.newera.marathon.dto.system.inquiry.XfaceSysResourceInquiryLoopRequestDTO;
-import com.newera.marathon.dto.system.inquiry.XfaceSysResourceInquiryLoopResponseDTO;
+import com.newera.marathon.dto.system.inquiry.XfaceSysResourceLoopInquiryRequestDTO;
+import com.newera.marathon.dto.system.inquiry.XfaceSysResourceLoopInquiryResponseDTO;
 import com.newera.marathon.dto.system.inquiry.XfaceSysResourceModifyInquiryRequestDTO;
 import com.newera.marathon.dto.system.inquiry.XfaceSysResourceModifyInquiryResponseDTO;
 import com.newera.marathon.dto.system.maintenance.*;
@@ -22,7 +22,7 @@ import javax.validation.Valid;
 )
 public interface SysResourceMicroService {
     @PostMapping("/sys/resource/inquiry/loop")
-    XfaceSysResourceInquiryLoopResponseDTO sysResourceInquiryLoop(@Valid @RequestBody XfaceSysResourceInquiryLoopRequestDTO requestDTO);
+    XfaceSysResourceLoopInquiryResponseDTO sysResourceInquiryLoop(@Valid @RequestBody XfaceSysResourceLoopInquiryRequestDTO requestDTO);
 
     @PostMapping("/sys/resource/addition")
     public XfaceSysResourceAdditionResponseDTO sysResourceAddition(@Valid @RequestBody XfaceSysResourceAdditionRequestDTO requestDTO);
@@ -44,8 +44,8 @@ public interface SysResourceMicroService {
             logger.error("fallback reason:{}",throwable.getMessage());
             return new SysResourceMicroService(){
                 @Override
-                public XfaceSysResourceInquiryLoopResponseDTO sysResourceInquiryLoop(@Valid XfaceSysResourceInquiryLoopRequestDTO requestDTO) {
-                    XfaceSysResourceInquiryLoopResponseDTO responseDTO = new XfaceSysResourceInquiryLoopResponseDTO();
+                public XfaceSysResourceLoopInquiryResponseDTO sysResourceInquiryLoop(@Valid XfaceSysResourceLoopInquiryRequestDTO requestDTO) {
+                    XfaceSysResourceLoopInquiryResponseDTO responseDTO = new XfaceSysResourceLoopInquiryResponseDTO();
                     TransactionStatus transactionStatus = new TransactionStatus();
                     transactionStatus.setError("Call remote(sysResourceInquiryPage) service error.",SysServer.APPLICATION_NAME);
                     responseDTO.setTransactionStatus(transactionStatus);

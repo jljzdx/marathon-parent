@@ -78,7 +78,7 @@ public class CodeGenerator {
         strategy.setNaming(NamingStrategy.underline_to_camel);
         strategy.setColumnNaming(NamingStrategy.underline_to_camel);
         strategy.setEntityLombokModel(true);
-        strategy.setInclude("t_sys_resource");
+        strategy.setInclude("t_sys_role_resource");
         strategy.setRestControllerStyle(true);
         strategy.setControllerMappingHyphenStyle(true);
         strategy.setTablePrefix("t_");

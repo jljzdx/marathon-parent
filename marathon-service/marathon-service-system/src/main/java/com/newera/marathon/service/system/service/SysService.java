@@ -4,7 +4,7 @@ import com.newera.marathon.dto.system.maintenance.*;
 
 public interface SysService {
 
-    XfaceSysLoginAuthResponseDTO doSysLoginAuth(XfaceSysLoginAuthRequestDTO requestDTO);
+    XfaceSysLoginResponseDTO doSysLoginAuth(XfaceSysLoginRequestDTO requestDTO);
 
     XfaceGenearteCaptchaResponseDTO doGenerateCaptcha();
 }

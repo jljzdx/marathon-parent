@@ -21,11 +21,11 @@ public class XfaceSysUserModifyRequestDTO {
     private String mobile;
 
     @NotBlank(message = "真实姓名不能为空")
-    @Size(max = 75, message= "真实姓名长度不能超过75位")
+    @Size(max = 255, message= "真实姓名长度不能超过255位")
     private String realName;
 
     @NotBlank(message = "邮箱不能为空")
-    @Size(max = 75, message= "邮箱长度不能超过75位")
+    @Size(max = 255, message= "邮箱长度不能超过255位")
     private String email;
 
     @NotBlank(message = "更新人不能为空")

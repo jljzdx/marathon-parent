@@ -7,8 +7,8 @@ import com.newera.marathon.common.utils.PasswordUtil;
 import com.newera.marathon.common.utils.RandomUtil;
 import com.newera.marathon.dto.system.enumeration.SysUserStatus;
 import com.newera.marathon.dto.system.maintenance.XfaceGenearteCaptchaResponseDTO;
-import com.newera.marathon.dto.system.maintenance.XfaceSysLoginAuthRequestDTO;
-import com.newera.marathon.dto.system.maintenance.XfaceSysLoginAuthResponseDTO;
+import com.newera.marathon.dto.system.maintenance.XfaceSysLoginRequestDTO;
+import com.newera.marathon.dto.system.maintenance.XfaceSysLoginResponseDTO;
 import com.newera.marathon.service.system.entity.SysUser;
 import com.newera.marathon.service.system.mapper.SysUserMapper;
 import com.newera.marathon.service.system.model.ApplicationError;
@@ -37,9 +37,9 @@ public class SysServiceImpl implements SysService {
 
     @Transactional
     @Override
-    public XfaceSysLoginAuthResponseDTO doSysLoginAuth(XfaceSysLoginAuthRequestDTO requestDTO) {
+    public XfaceSysLoginResponseDTO doSysLoginAuth(XfaceSysLoginRequestDTO requestDTO) {
         log.info("doSysLoginAuth start");
-        XfaceSysLoginAuthResponseDTO responseDTO = new XfaceSysLoginAuthResponseDTO();
+        XfaceSysLoginResponseDTO responseDTO = new XfaceSysLoginResponseDTO();
         TransactionStatus transactionStatus = new TransactionStatus();
 
         //验证用户名和密码
