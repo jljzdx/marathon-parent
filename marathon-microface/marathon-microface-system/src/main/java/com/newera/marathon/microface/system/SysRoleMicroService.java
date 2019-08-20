@@ -36,6 +36,12 @@ public interface SysRoleMicroService {
     @PostMapping("/sys/role/modify/status")
     public XfaceSysRoleModifyStatusResponseDTO sysRoleModifyStatus(@Valid @RequestBody XfaceSysRoleModifyStatusRequestDTO requestDTO);
 
+    @PostMapping("/auth/inquiry")
+    public XfaceSysRoleAuthInquiryResponseDTO sysRoleAuthInquiry(@Valid @RequestBody XfaceSysRoleAuthInquiryRequestDTO requestDTO);
+
+    @PostMapping("/auth")
+    public XfaceSysRoleAuthResponseDTO sysRoleAuth(@Valid @RequestBody XfaceSysRoleAuthRequestDTO requestDTO);
+
     @Component
     class SysUserMicroServiceImpl implements FallbackFactory<SysRoleMicroService> {
         private Logger logger = LoggerFactory.getLogger(SysUserMicroServiceImpl.class);
@@ -47,7 +53,7 @@ public interface SysRoleMicroService {
                 public XfaceSysRoleInquirySelectResponseDTO sysRoleInquirySelect() {
                     XfaceSysRoleInquirySelectResponseDTO responseDTO = new XfaceSysRoleInquirySelectResponseDTO();
                     TransactionStatus transactionStatus = new TransactionStatus();
-                    transactionStatus.setError("Call remote(sysUserInquiryPage) service error.",SysServer.APPLICATION_NAME);
+                    transactionStatus.setError("Call remote(sysRoleInquirySelect) service error.",SysServer.APPLICATION_NAME);
                     responseDTO.setTransactionStatus(transactionStatus);
                     return responseDTO;
                 }
@@ -56,7 +62,7 @@ public interface SysRoleMicroService {
                 public XfaceSysRoleInquiryPageResponseDTO sysRoleInquiryPage(@Valid XfaceSysRoleInquiryPageRequestDTO requestDTO) {
                     XfaceSysRoleInquiryPageResponseDTO responseDTO = new XfaceSysRoleInquiryPageResponseDTO();
                     TransactionStatus transactionStatus = new TransactionStatus();
-                    transactionStatus.setError("Call remote(sysUserInquiryPage) service error.",SysServer.APPLICATION_NAME);
+                    transactionStatus.setError("Call remote(sysRoleInquiryPage) service error.",SysServer.APPLICATION_NAME);
                     responseDTO.setTransactionStatus(transactionStatus);
                     return responseDTO;
                 }
@@ -65,7 +71,7 @@ public interface SysRoleMicroService {
                 public XfaceSysRoleAdditionResponseDTO sysRoleAddition(@Valid XfaceSysRoleAdditionRequestDTO requestDTO) {
                     XfaceSysRoleAdditionResponseDTO responseDTO = new XfaceSysRoleAdditionResponseDTO();
                     TransactionStatus transactionStatus = new TransactionStatus();
-                    transactionStatus.setError("Call remote(sysUserInquiryPage) service error.",SysServer.APPLICATION_NAME);
+                    transactionStatus.setError("Call remote(sysRoleAddition) service error.",SysServer.APPLICATION_NAME);
                     responseDTO.setTransactionStatus(transactionStatus);
                     return responseDTO;
                 }
@@ -74,7 +80,7 @@ public interface SysRoleMicroService {
                 public XfaceSysRoleModifyInquiryResponseDTO sysRoleModifyInquiry(@Valid XfaceSysRoleModifyInquiryRequestDTO requestDTO) {
                     XfaceSysRoleModifyInquiryResponseDTO responseDTO = new XfaceSysRoleModifyInquiryResponseDTO();
                     TransactionStatus transactionStatus = new TransactionStatus();
-                    transactionStatus.setError("Call remote(sysUserInquiryPage) service error.",SysServer.APPLICATION_NAME);
+                    transactionStatus.setError("Call remote(sysRoleModifyInquiry) service error.",SysServer.APPLICATION_NAME);
                     responseDTO.setTransactionStatus(transactionStatus);
                     return responseDTO;
                 }
@@ -83,7 +89,7 @@ public interface SysRoleMicroService {
                 public XfaceSysRoleModifyResponseDTO sysRoleModify(@Valid XfaceSysRoleModifyRequestDTO requestDTO) {
                     XfaceSysRoleModifyResponseDTO responseDTO = new XfaceSysRoleModifyResponseDTO();
                     TransactionStatus transactionStatus = new TransactionStatus();
-                    transactionStatus.setError("Call remote(sysUserInquiryPage) service error.",SysServer.APPLICATION_NAME);
+                    transactionStatus.setError("Call remote(sysRoleModify) service error.",SysServer.APPLICATION_NAME);
                     responseDTO.setTransactionStatus(transactionStatus);
                     return responseDTO;
                 }
@@ -92,7 +98,25 @@ public interface SysRoleMicroService {
                 public XfaceSysRoleModifyStatusResponseDTO sysRoleModifyStatus(@Valid XfaceSysRoleModifyStatusRequestDTO requestDTO) {
                     XfaceSysRoleModifyStatusResponseDTO responseDTO = new XfaceSysRoleModifyStatusResponseDTO();
                     TransactionStatus transactionStatus = new TransactionStatus();
-                    transactionStatus.setError("Call remote(sysUserInquiryPage) service error.",SysServer.APPLICATION_NAME);
+                    transactionStatus.setError("Call remote(sysRoleModifyStatus) service error.",SysServer.APPLICATION_NAME);
+                    responseDTO.setTransactionStatus(transactionStatus);
+                    return responseDTO;
+                }
+
+                @Override
+                public XfaceSysRoleAuthInquiryResponseDTO sysRoleAuthInquiry(@Valid XfaceSysRoleAuthInquiryRequestDTO requestDTO) {
+                    XfaceSysRoleAuthInquiryResponseDTO responseDTO = new XfaceSysRoleAuthInquiryResponseDTO();
+                    TransactionStatus transactionStatus = new TransactionStatus();
+                    transactionStatus.setError("Call remote(sysRoleAuthInquiry) service error.",SysServer.APPLICATION_NAME);
+                    responseDTO.setTransactionStatus(transactionStatus);
+                    return responseDTO;
+                }
+
+                @Override
+                public XfaceSysRoleAuthResponseDTO sysRoleAuth(@Valid XfaceSysRoleAuthRequestDTO requestDTO) {
+                    XfaceSysRoleAuthResponseDTO responseDTO = new XfaceSysRoleAuthResponseDTO();
+                    TransactionStatus transactionStatus = new TransactionStatus();
+                    transactionStatus.setError("Call remote(sysRoleAuth) service error.",SysServer.APPLICATION_NAME);
                     responseDTO.setTransactionStatus(transactionStatus);
                     return responseDTO;
                 }

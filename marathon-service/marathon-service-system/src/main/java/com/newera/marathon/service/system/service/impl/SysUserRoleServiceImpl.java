@@ -8,6 +8,7 @@ import com.newera.marathon.service.system.service.SysUserRoleService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
@@ -25,6 +26,7 @@ public class SysUserRoleServiceImpl extends ServiceImpl<SysUserRoleMapper, SysUs
     @Autowired
     private SysRoleMapper sysRoleMapper;
 
+    @Transactional
     @Override
     public void doSysUserRoleBatchAddition(List<SysUserRole> sysUserRoles) {
         saveBatch(sysUserRoles);

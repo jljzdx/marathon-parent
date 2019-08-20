@@ -69,7 +69,7 @@ public interface SysUserMicroService {
                 public XfaceSysUserModifyInquiryResponseDTO sysUserModifyInquiry(@Valid XfaceSysUserModifyInquiryRequestDTO requestDTO) {
                     XfaceSysUserModifyInquiryResponseDTO responseDTO = new XfaceSysUserModifyInquiryResponseDTO();
                     TransactionStatus transactionStatus = new TransactionStatus();
-                    transactionStatus.setError("Call remote(sysUserModify) service error.",SysServer.APPLICATION_NAME);
+                    transactionStatus.setError("Call remote(sysUserModifyInquiry) service error.",SysServer.APPLICATION_NAME);
                     responseDTO.setTransactionStatus(transactionStatus);
                     return responseDTO;
                 }

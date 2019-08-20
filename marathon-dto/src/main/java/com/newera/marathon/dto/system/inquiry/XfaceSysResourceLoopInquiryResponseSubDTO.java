@@ -32,12 +32,12 @@ public class XfaceSysResourceLoopInquiryResponseSubDTO {
     /**
      * 显示顺序
      */
-    private String priority;
+    private Integer priority;
 
     /**
      * 资源类型
      */
-    private String type;
+    private Integer type;
 
     /**
      * 是否可用

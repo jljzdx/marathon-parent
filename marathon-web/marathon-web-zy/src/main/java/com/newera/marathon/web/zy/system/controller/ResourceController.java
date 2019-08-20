@@ -26,8 +26,6 @@ public class ResourceController {
     @ResponseBody
     public Map sysResourceInquiryPage(Integer SystemId, Integer parentId){
         XfaceSysResourceLoopInquiryRequestDTO requestDTO = new XfaceSysResourceLoopInquiryRequestDTO();
-        //查询条件
-        requestDTO.setParentId(parentId);
         //调用微服务
         XfaceSysResourceLoopInquiryResponseDTO responseDTO = sysResourceMicroService.sysResourceInquiryLoop(requestDTO);
         //重组响应对象

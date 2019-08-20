@@ -46,7 +46,7 @@ public class SysRoleController {
     }
 
     @PostMapping("/modify/inquiry")
-    public XfaceSysRoleModifyInquiryResponseDTO sysRoleModify(@Valid @RequestBody XfaceSysRoleModifyInquiryRequestDTO requestDTO){
+    public XfaceSysRoleModifyInquiryResponseDTO sysRoleModifyInquiry(@Valid @RequestBody XfaceSysRoleModifyInquiryRequestDTO requestDTO){
         XfaceSysRoleModifyInquiryResponseDTO responseDTO = sysRoleService.doSysRoleModifyInquiry(requestDTO);
         return responseDTO;
     }
@@ -60,6 +60,17 @@ public class SysRoleController {
     @PostMapping("/modify/status")
     public XfaceSysRoleModifyStatusResponseDTO sysRoleModifyStatus(@Valid @RequestBody XfaceSysRoleModifyStatusRequestDTO requestDTO){
         XfaceSysRoleModifyStatusResponseDTO responseDTO = sysRoleService.doSysRoleModifyStatus(requestDTO);
+        return responseDTO;
+    }
+
+    @PostMapping("/auth/inquiry")
+    public XfaceSysRoleAuthInquiryResponseDTO sysRoleAuthInquiry(@Valid @RequestBody XfaceSysRoleAuthInquiryRequestDTO requestDTO){
+        XfaceSysRoleAuthInquiryResponseDTO responseDTO = sysRoleService.doSysRoleAuthInquiry(requestDTO);
+        return responseDTO;
+    }
+    @PostMapping("/auth")
+    public XfaceSysRoleAuthResponseDTO sysRoleAuth(@Valid @RequestBody XfaceSysRoleAuthRequestDTO requestDTO){
+        XfaceSysRoleAuthResponseDTO responseDTO = sysRoleService.doSysRoleAuth(requestDTO);
         return responseDTO;
     }
 }

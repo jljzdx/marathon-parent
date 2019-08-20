@@ -28,4 +28,7 @@ public interface SysRoleService extends IService<SysRole> {
 
     XfaceSysRoleModifyInquiryResponseDTO doSysRoleModifyInquiry(XfaceSysRoleModifyInquiryRequestDTO requestDTO);
 
+    XfaceSysRoleAuthInquiryResponseDTO doSysRoleAuthInquiry(XfaceSysRoleAuthInquiryRequestDTO requestDTO);
+
+    XfaceSysRoleAuthResponseDTO doSysRoleAuth(XfaceSysRoleAuthRequestDTO requestDTO);
 }

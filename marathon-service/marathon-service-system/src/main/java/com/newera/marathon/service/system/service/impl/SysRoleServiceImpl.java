@@ -4,12 +4,18 @@ import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import com.newera.marathon.common.constant.OtherConstant;
 import com.newera.marathon.common.utils.DateUtils;
 import com.newera.marathon.dto.system.inquiry.*;
 import com.newera.marathon.dto.system.maintenance.*;
+import com.newera.marathon.service.system.entity.SysResource;
 import com.newera.marathon.service.system.entity.SysRole;
+import com.newera.marathon.service.system.entity.SysRoleResource;
+import com.newera.marathon.service.system.mapper.SysResourceMapper;
 import com.newera.marathon.service.system.mapper.SysRoleMapper;
+import com.newera.marathon.service.system.mapper.SysRoleResourceMapper;
 import com.newera.marathon.service.system.model.ApplicationError;
+import com.newera.marathon.service.system.service.SysRoleResourceService;
 import com.newera.marathon.service.system.service.SysRoleService;
 import com.spaking.boot.starter.core.exception.BaseException;
 import com.spaking.boot.starter.core.model.PageModel;
@@ -20,9 +26,11 @@ import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.util.CollectionUtils;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  * <p>
@@ -37,6 +45,13 @@ import java.util.List;
 public class SysRoleServiceImpl extends ServiceImpl<SysRoleMapper, SysRole> implements SysRoleService {
     @Autowired
     private SysRoleMapper sysRoleMapper;
+    @Autowired
+    private SysRoleResourceMapper sysRoleResourceMapper;
+    @Autowired
+    private SysResourceMapper sysResourceMapper;
+    @Autowired
+    private SysRoleResourceService sysRoleResourceService;
+
     @Override
     public XfaceSysRoleInquiryPageResponseDTO doSysRoleInquiryPage(XfaceSysRoleInquiryPageRequestDTO requestDTO) {
         log.info("doSysRoleInquiryPage start");
@@ -88,6 +103,90 @@ public class SysRoleServiceImpl extends ServiceImpl<SysRoleMapper, SysRole> impl
         responseDTO.setTransactionStatus(transactionStatus);
         log.info("doSysRoleModifyInquiry end");
         return responseDTO;
+    }
+
+    @Override
+    public XfaceSysRoleAuthInquiryResponseDTO doSysRoleAuthInquiry(XfaceSysRoleAuthInquiryRequestDTO requestDTO) {
+        log.info("doSysRoleAuthInquiry start");
+        XfaceSysRoleAuthInquiryResponseDTO responseDTO = new XfaceSysRoleAuthInquiryResponseDTO();
+        TransactionStatus transactionStatus = new TransactionStatus();
+        //查询所有资源
+        QueryWrapper<SysResource> wrapper = new QueryWrapper<>();
+        //wrapper.eq("system_id",requestDTO.getSystemId());
+        wrapper.select("id","parent_id","name","available");
+        wrapper.orderByAsc("priority");
+        List<SysResource> all = sysResourceMapper.selectList(wrapper);
+        //查询已授权的资源
+        QueryWrapper<SysRoleResource> roleResourceWrapper = new QueryWrapper<>();
+        roleResourceWrapper.eq("role_id",requestDTO.getRoleId());
+        roleResourceWrapper.select("resource_id");
+        List<SysRoleResource> roleResourceList = sysRoleResourceMapper.selectList(roleResourceWrapper);
+        //循环所有资源，标记已授权的资源，并递归生成树
+        List<XfaceSysRoleAuthInquiryResponseSubDTO> result = createTree(all, roleResourceList);
+        responseDTO.setDataList(result);
+        responseDTO.setTransactionStatus(transactionStatus);
+        log.info("doSysRoleAuthInquiry end");
+        return responseDTO;
+    }
+
+    @Transactional
+    @Override
+    public XfaceSysRoleAuthResponseDTO doSysRoleAuth(XfaceSysRoleAuthRequestDTO requestDTO) {
+        log.info("doSysRoleAuth start");
+        XfaceSysRoleAuthResponseDTO responseDTO = new XfaceSysRoleAuthResponseDTO();
+        TransactionStatus transactionStatus = new TransactionStatus();
+        //查询已授权的资源
+        QueryWrapper<SysRoleResource> roleResourceWrapper = new QueryWrapper<>();
+        roleResourceWrapper.eq("role_id",requestDTO.getRoleId());
+        roleResourceWrapper.select("id","resource_id");
+        //原来的
+        List<SysRoleResource> original = sysRoleResourceMapper.selectList(roleResourceWrapper);
+        //现在的
+        List<Integer> now = requestDTO.getResourceIds();
+
+        if(!CollectionUtils.isEmpty(original) && !CollectionUtils.isEmpty(now)){
+            //original中不存在now的，删除
+            List<SysRoleResource> deleteList = original.stream().filter(w->{
+                return now.stream().noneMatch(x->x==w.getResourceId());
+            }).collect(Collectors.toList());
+            if(!CollectionUtils.isEmpty(deleteList)){
+                //需要被删除的ids
+                List<Integer> deleteIds = deleteList.stream().map(w->w.getId()).collect(Collectors.toList());
+                //批量删除
+                Boolean deleteSuccess = sysRoleResourceService.removeByIds(deleteIds);
+            }
+            //now中不存在original的，添加
+            List<Integer> addResourceIdList = now.stream().filter(w->{
+                return original.stream().noneMatch(x->x.getResourceId()==w);
+            }).collect(Collectors.toList());
+            if(!CollectionUtils.isEmpty(addResourceIdList)){
+                //需要添加的数据
+                Boolean addSuccess = batchInsertRoleResource(addResourceIdList, requestDTO.getRoleId(), requestDTO.getOperator());
+            }
+        }else if(CollectionUtils.isEmpty(original) && !CollectionUtils.isEmpty(now)){
+            //直接添加数据
+            Boolean addSuccess = batchInsertRoleResource(now, requestDTO.getRoleId(), requestDTO.getOperator());
+        }else if(!CollectionUtils.isEmpty(original) && CollectionUtils.isEmpty(now)){
+            //直接删除数据
+            List<Integer> deleteIds = original.stream().map(w->w.getId()).collect(Collectors.toList());
+            //批量删除
+            Boolean deleteSuccess = sysRoleResourceService.removeByIds(deleteIds);
+        }
+        responseDTO.setTransactionStatus(transactionStatus);
+        log.info("doSysRoleAuth end");
+        return responseDTO;
+    }
+    public Boolean batchInsertRoleResource(List<Integer> resourceIdList,Integer roleId,String operator){
+        List<SysRoleResource> addList = new ArrayList<>();
+        resourceIdList.forEach(w->{
+            SysRoleResource sysRoleResource = new SysRoleResource();
+            sysRoleResource.setRoleId(roleId);
+            sysRoleResource.setResourceId(w);
+            sysRoleResource.setCreateOperator(operator);
+            addList.add(sysRoleResource);
+        });
+        //批量添加
+        return sysRoleResourceService.saveBatch(addList);
     }
 
     @Override
@@ -174,5 +273,40 @@ public class SysRoleServiceImpl extends ServiceImpl<SysRoleMapper, SysRole> impl
         responseDTO.setTransactionStatus(transactionStatus);
         log.info("doSysRoleDelete end");
         return responseDTO;
+    }
+
+    public List<XfaceSysRoleAuthInquiryResponseSubDTO> createTree(List<SysResource> sysResourceList, List<SysRoleResource> roleResourceList){
+        List<XfaceSysRoleAuthInquiryResponseSubDTO> list = new ArrayList<>();
+        for (SysResource resource : sysResourceList) {
+            if(resource.getParentId() == OtherConstant.RESOURCE_TOP_PARENT_ID){//判断是否是一级菜单
+                XfaceSysRoleAuthInquiryResponseSubDTO treeObject = new XfaceSysRoleAuthInquiryResponseSubDTO();
+                Boolean checked = roleResourceList.stream().anyMatch(w->w.getResourceId() == resource.getId());
+                treeObject.setChecked(checked);
+                treeObject.setId(resource.getId());
+                treeObject.setName(resource.getName());
+                treeObject.setAvailable(resource.getAvailable());
+                treeObject.setSpread(true);
+                treeObject.setChild(getChildren(resource.getId(),sysResourceList,roleResourceList));
+                list.add(treeObject);
+            }
+        }
+        return list;
+    }
+    public List<XfaceSysRoleAuthInquiryResponseSubDTO> getChildren(Integer parentId,List<SysResource> sysResourceList, List<SysRoleResource> roleResourceList){
+        List<XfaceSysRoleAuthInquiryResponseSubDTO> list = new ArrayList<>();
+        for (SysResource resource : sysResourceList) {
+            if(resource.getParentId().equals(parentId)){
+                XfaceSysRoleAuthInquiryResponseSubDTO treeObject = new XfaceSysRoleAuthInquiryResponseSubDTO();
+                Boolean checked = roleResourceList.stream().anyMatch(w->w.getResourceId() == resource.getId());
+                treeObject.setChecked(checked);
+                treeObject.setId(resource.getId());
+                treeObject.setName(resource.getName());
+                treeObject.setAvailable(resource.getAvailable());
+                treeObject.setSpread(true);
+                treeObject.setChild(getChildren(resource.getId(),sysResourceList,roleResourceList));
+                list.add(treeObject);
+            }
+        }
+        return list;
     }
 }
