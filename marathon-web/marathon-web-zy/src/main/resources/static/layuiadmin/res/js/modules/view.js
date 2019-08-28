@@ -228,5 +228,5 @@ function(e) {
     return this.done = e,
     this
   },
-  e("view", i)
+  e("view", i)//这里的e，其实就是exports
 });

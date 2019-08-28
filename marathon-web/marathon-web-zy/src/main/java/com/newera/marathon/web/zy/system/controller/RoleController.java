@@ -4,6 +4,8 @@ import com.newera.marathon.common.web.ListResponseConverter;
 import com.newera.marathon.dto.system.inquiry.*;
 import com.newera.marathon.dto.system.maintenance.*;
 import com.newera.marathon.microface.system.SysRoleMicroService;
+import com.spaking.boot.starter.cas.model.SsoUser;
+import com.spaking.boot.starter.cas.utils.SsoConstant;
 import com.spaking.boot.starter.core.model.PageModel;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -11,6 +13,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 
+import javax.servlet.http.HttpServletRequest;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -81,7 +84,9 @@ public class RoleController {
 
     @PostMapping("/sys/role/addition")
     @ResponseBody
-    public XfaceSysRoleAdditionResponseDTO sysRoleAddition(XfaceSysRoleAdditionRequestDTO requestDTO){
+    public XfaceSysRoleAdditionResponseDTO sysRoleAddition(XfaceSysRoleAdditionRequestDTO requestDTO, HttpServletRequest request){
+        SsoUser user = (SsoUser) request.getAttribute(SsoConstant.SSO_USER);
+        requestDTO.setCreateOperator(user.getUserName());
         XfaceSysRoleAdditionResponseDTO responseDTO = sysRoleMicroService.sysRoleAddition(requestDTO);
         return responseDTO;
     }
@@ -93,13 +98,17 @@ public class RoleController {
     }
     @PostMapping("/sys/role/modify")
     @ResponseBody
-    public XfaceSysRoleModifyResponseDTO sysRoleModify(XfaceSysRoleModifyRequestDTO requestDTO){
+    public XfaceSysRoleModifyResponseDTO sysRoleModify(XfaceSysRoleModifyRequestDTO requestDTO, HttpServletRequest request){
+        SsoUser user = (SsoUser) request.getAttribute(SsoConstant.SSO_USER);
+        requestDTO.setModifyOperator(user.getUserName());
         XfaceSysRoleModifyResponseDTO responseDTO = sysRoleMicroService.sysRoleModify(requestDTO);
         return responseDTO;
     }
     @PostMapping("/sys/role/modify/status")
     @ResponseBody
-    public XfaceSysRoleModifyStatusResponseDTO sysRoleModifyStatus(XfaceSysRoleModifyStatusRequestDTO requestDTO){
+    public XfaceSysRoleModifyStatusResponseDTO sysRoleModifyStatus(XfaceSysRoleModifyStatusRequestDTO requestDTO, HttpServletRequest request){
+        SsoUser user = (SsoUser) request.getAttribute(SsoConstant.SSO_USER);
+        requestDTO.setModifyOperator(user.getUserName());
         XfaceSysRoleModifyStatusResponseDTO responseDTO = sysRoleMicroService.sysRoleModifyStatus(requestDTO);
         return responseDTO;
     }

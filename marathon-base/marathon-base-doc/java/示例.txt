@@ -15,3 +15,5 @@ List<Person> result =  list.stream().collect(
         )
 );
 result.forEach(System.out::println);
+2、List分组
+Map<String, List<Map>> grouping1 = list.stream().collect(Collectors.groupingBy(w->(String)w.get("secondaryDimensionName")));

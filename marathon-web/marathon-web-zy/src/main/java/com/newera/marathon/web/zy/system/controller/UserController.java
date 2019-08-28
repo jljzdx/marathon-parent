@@ -85,7 +85,9 @@ public class UserController {
 
     @PostMapping("/sys/user/addition")
     @ResponseBody
-    public XfaceSysUserAdditionResponseDTO sysUserAddition(XfaceSysUserAdditionRequestDTO requestDTO){
+    public XfaceSysUserAdditionResponseDTO sysUserAddition(XfaceSysUserAdditionRequestDTO requestDTO, HttpServletRequest request){
+        SsoUser user = (SsoUser) request.getAttribute(SsoConstant.SSO_USER);
+        requestDTO.setCreateOperator(user.getUserName());
         XfaceSysUserAdditionResponseDTO responseDTO = sysUserMicroService.sysUserAddition(requestDTO);
         return responseDTO;
     }
@@ -101,13 +103,17 @@ public class UserController {
     }
     @PostMapping("/sys/user/modify")
     @ResponseBody
-    public XfaceSysUserModifyResponseDTO sysUserModify(XfaceSysUserModifyRequestDTO requestDTO){
+    public XfaceSysUserModifyResponseDTO sysUserModify(XfaceSysUserModifyRequestDTO requestDTO, HttpServletRequest request){
+        SsoUser user = (SsoUser) request.getAttribute(SsoConstant.SSO_USER);
+        requestDTO.setModifyOperator(user.getUserName());
         XfaceSysUserModifyResponseDTO responseDTO = sysUserMicroService.sysUserModify(requestDTO);
         return responseDTO;
     }
     @PostMapping("/sys/user/modify/status")
     @ResponseBody
-    public XfaceSysUserModifyStatusResponseDTO sysUserModify(XfaceSysUserModifyStatusRequestDTO requestDTO){
+    public XfaceSysUserModifyStatusResponseDTO sysUserModify(XfaceSysUserModifyStatusRequestDTO requestDTO, HttpServletRequest request){
+        SsoUser user = (SsoUser) request.getAttribute(SsoConstant.SSO_USER);
+        requestDTO.setModifyOperator(user.getUserName());
         XfaceSysUserModifyStatusResponseDTO responseDTO = sysUserMicroService.sysUserModifyStatus(requestDTO);
         return responseDTO;
     }

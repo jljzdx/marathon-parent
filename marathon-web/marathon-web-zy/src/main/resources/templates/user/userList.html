@@ -6,7 +6,7 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=0">
     <link rel="stylesheet" href="${request.contextPath}/layuiadmin/layui/css/layui.css" media="all">
-    <link rel="stylesheet" href="${request.contextPath}/layuiadmin/style/admin.css" media="all">
+    <link rel="stylesheet" href="${request.contextPath}/myself/style/admin.css" media="all">
 </head>
 <body>
 <div class="layui-fluid">
@@ -44,14 +44,14 @@
                 </div>
             </script>
             <script type="text/html" id="sexTpl">
-                {{#  if(d.sex == 0){ }}
+                {{#  if(d.gender == 0){ }}
                 <span style="color: #F581B1;">女</span>
                 {{#  } else { }}
                 男
                 {{#  } }}
             </script>
             <script type="text/html" id="statusTpl">
-                {{#  if(d.status == 1){ }}
+                {{#  if(d.locked == 1){ }}
                 <input type="checkbox" name="lock" value="{{d.id}}" title="锁定" lay-filter="userLock">
                 {{#  } else { }}
                 <input type="checkbox" name="lock" value="{{d.id}}" title="锁定" lay-filter="userLock" checked>
@@ -69,10 +69,10 @@
 <script src="${request.contextPath}/layuiadmin/layui/layui.js" charset="utf-8"></script>
 <script>
 layui.config({
-  base: '/layuiadmin/' //静态资源所在路径
+  base: '${request.contextPath}/layuiadmin/'
 }).extend({
-  index: 'lib/index' //主入口模块
-}).use(['index', 'form', 'system'],{})
+    userList: 'res/js/modules/user/userList'
+}).use('userList',{})
 </script>
 </body>
 </html>

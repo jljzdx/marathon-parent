@@ -29,17 +29,10 @@
 <script src="${request.contextPath}/layuiadmin/layui/layui.js" charset="utf-8"></script>
 <script>
 layui.config({
-  base: '/layuiadmin/' //静态资源所在路径
+    base: '${request.contextPath}/layuiadmin/'
 }).extend({
-  index: 'lib/index',
-  //主入口模块
-}).use(['index', 'form'],
-function() {
-  var $ = layui.$,
-  form = layui.form;
-  //获取第一个input焦点
-  $("input:first").focus();
-});
+    roleAdd: 'res/js/modules/role/roleAdd',
+}).use('roleAdd', {});
 </script>
 </body>
 </html>

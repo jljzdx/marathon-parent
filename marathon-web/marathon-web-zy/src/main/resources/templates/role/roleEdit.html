@@ -31,11 +31,10 @@
 <script>
 //初始化
 function initData(result) {
-  //多选下拉框
   layui.use(['form', 'jquery'],
   function() {
-    var form = layui.form;
-    var $ = layui.jquery;
+    var $ = layui.$,
+    form = layui.form;
     form.val("role-edit-form", {
       "id": result.id,
       "roleName": result.roleName,

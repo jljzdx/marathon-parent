@@ -1,10 +1,10 @@
 /** layuiAdmin.std-v1.2.1 LPPL License By http://www.layui.com/admin/ */
-;
-layui.extend({
+;//这个分号的作用：避免多个js文件压缩在一起时引起的错误
+layui.extend({//这个extend其实是可以不要的，只是为了让我们知道setter代表config.js模块
   setter: "config",
-  admin: "lib/admin",
-  view: "lib/view"
-}).define(["setter", "admin"],
+  admin: "res/js/modules/admin",
+  view: "res/js/modules/view"
+}).define(["setter", "admin"],//定义index.js模块，依赖于config.js和admin.js模块，因为admin.js模块依赖于view.js模块，所以这里没有引路view
 function(a) {
   var e = layui.setter,
   i = layui.element,
@@ -35,7 +35,7 @@ function(a) {
   },
   s = "#LAY_app_body",
   o = "layadmin-layout-tabs",
-  r = layui.$;
+  r = layui.$;//由于config.js依赖util.js，util.js依赖jquery.js，所以这里不需要引入jquery
   r(window);
   n.screen() < 2 && n.sideFlexible(),
   layui.config({
@@ -44,7 +44,7 @@ function(a) {
   layui.each(e.extend,
   function(a, i) {
     var n = {};
-    n[i] = "{/}" + e.base + "lib/extend/" + i,
+    n[i] = "{/}" + e.base + "res/js/component/" + i,
     layui.extend(n)
   }),
   d().autoRender(),
