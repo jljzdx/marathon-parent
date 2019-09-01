@@ -21,7 +21,7 @@ import com.spaking.boot.starter.core.exception.BaseException;
 import com.spaking.boot.starter.core.model.PageModel;
 import com.spaking.boot.starter.core.model.TransactionStatus;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -29,6 +29,7 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.CollectionUtils;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -59,7 +60,7 @@ public class SysRoleServiceImpl extends ServiceImpl<SysRoleMapper, SysRole> impl
         TransactionStatus transactionStatus = new TransactionStatus();
         PageModel pageModel = requestDTO.getPage();
         Page<SysRole> page = new Page<>(pageModel.getCurrent(), pageModel.getSize());
-        page.setDesc("id");
+        page.setDesc("gmt_create");
         //方式一
         //Page<XfaceSysRoleInquiryPageResponseSubDTO> page = new Page<>(pageModel.getCurrent(), pageModel.getSize());
         //List<XfaceSysRoleInquiryPageResponseSubDTO> dataList = sysRoleMapper.querySysRolePage(page, requestDTO);
@@ -129,6 +130,11 @@ public class SysRoleServiceImpl extends ServiceImpl<SysRoleMapper, SysRole> impl
         return responseDTO;
     }
 
+    public static void main(String[] args) {
+        List<String> ids = new ArrayList<>();
+        List<Integer> now = ids.stream().map(w->Integer.parseInt(w)).collect(Collectors.toList());
+        now.forEach(System.out::println);
+    }
     @Transactional
     @Override
     public XfaceSysRoleAuthResponseDTO doSysRoleAuth(XfaceSysRoleAuthRequestDTO requestDTO) {
@@ -142,8 +148,8 @@ public class SysRoleServiceImpl extends ServiceImpl<SysRoleMapper, SysRole> impl
         //原来的
         List<SysRoleResource> original = sysRoleResourceMapper.selectList(roleResourceWrapper);
         //现在的
-        List<Integer> now = requestDTO.getResourceIds();
-
+        List<String> ids = Arrays.asList(requestDTO.getResourceIds().split(","));
+        List<Integer> now = ids.stream().filter(x->StringUtils.isNotBlank(x)).map(w->Integer.parseInt(w)).collect(Collectors.toList());
         if(!CollectionUtils.isEmpty(original) && !CollectionUtils.isEmpty(now)){
             //original中不存在now的，删除
             List<SysRoleResource> deleteList = original.stream().filter(w->{
@@ -283,10 +289,10 @@ public class SysRoleServiceImpl extends ServiceImpl<SysRoleMapper, SysRole> impl
                 Boolean checked = roleResourceList.stream().anyMatch(w->w.getResourceId() == resource.getId());
                 treeObject.setChecked(checked);
                 treeObject.setId(resource.getId());
-                treeObject.setName(resource.getName());
-                treeObject.setAvailable(resource.getAvailable());
+                treeObject.setTitle(resource.getName());
+                treeObject.setDisabled(resource.getAvailable()==0 ? true : false);
                 treeObject.setSpread(true);
-                treeObject.setChild(getChildren(resource.getId(),sysResourceList,roleResourceList));
+                treeObject.setChildren(getChildren(resource.getId(),sysResourceList,roleResourceList));
                 list.add(treeObject);
             }
         }
@@ -300,10 +306,10 @@ public class SysRoleServiceImpl extends ServiceImpl<SysRoleMapper, SysRole> impl
                 Boolean checked = roleResourceList.stream().anyMatch(w->w.getResourceId() == resource.getId());
                 treeObject.setChecked(checked);
                 treeObject.setId(resource.getId());
-                treeObject.setName(resource.getName());
-                treeObject.setAvailable(resource.getAvailable());
+                treeObject.setTitle(resource.getName());
+                treeObject.setDisabled(resource.getAvailable()==0 ? true : false);
                 treeObject.setSpread(true);
-                treeObject.setChild(getChildren(resource.getId(),sysResourceList,roleResourceList));
+                treeObject.setChildren(getChildren(resource.getId(),sysResourceList,roleResourceList));
                 list.add(treeObject);
             }
         }

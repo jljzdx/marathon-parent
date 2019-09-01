@@ -2,7 +2,6 @@ package com.newera.marathon.service.system.service.impl;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
-import com.newera.marathon.common.constant.OtherConstant;
 import com.newera.marathon.dto.system.inquiry.*;
 import com.newera.marathon.dto.system.maintenance.*;
 import com.newera.marathon.service.system.entity.SysResource;
@@ -46,49 +45,16 @@ public class SysResourceServiceImpl extends ServiceImpl<SysResourceMapper, SysRe
         wrapper.select("id","parent_id","name","permission","icon","url","priority","type","available");
         wrapper.orderByAsc("priority");
         List<SysResource> all = list(wrapper);
-        List<XfaceSysResourceLoopInquiryResponseSubDTO> result = createTree(all);
+        List<XfaceSysResourceLoopInquiryResponseSubDTO> result = new ArrayList<>();
+        all.forEach(w->{
+            XfaceSysResourceLoopInquiryResponseSubDTO responseSubDTO = new XfaceSysResourceLoopInquiryResponseSubDTO();
+            BeanUtils.copyProperties(w,responseSubDTO);
+            result.add(responseSubDTO);
+        });
         responseDTO.setDataList(result);
         responseDTO.setTransactionStatus(transactionStatus);
         log.info("doSysResourceInquiryPage end");
         return responseDTO;
-    }
-    public List<XfaceSysResourceLoopInquiryResponseSubDTO> createTree(List<SysResource> sysResourceList){
-        List<XfaceSysResourceLoopInquiryResponseSubDTO> list = new ArrayList<>();
-        for (SysResource resource : sysResourceList) {
-            if(resource.getParentId() == OtherConstant.RESOURCE_TOP_PARENT_ID){//判断是否是一级菜单
-                XfaceSysResourceLoopInquiryResponseSubDTO treeObject = new XfaceSysResourceLoopInquiryResponseSubDTO();
-                treeObject.setId(resource.getId());
-                treeObject.setName(resource.getName());
-                treeObject.setPermission(resource.getPermission());
-                treeObject.setIcon(resource.getIcon());
-                treeObject.setUrl(resource.getUrl());
-                treeObject.setPriority(resource.getPriority());
-                treeObject.setType(resource.getType());
-                treeObject.setAvailable(resource.getAvailable());
-                treeObject.setChild(getChildren(resource.getId(),sysResourceList));
-                list.add(treeObject);
-            }
-        }
-        return list;
-    }
-    public List<XfaceSysResourceLoopInquiryResponseSubDTO> getChildren(Integer parentId,List<SysResource> sysResourceList){
-        List<XfaceSysResourceLoopInquiryResponseSubDTO> list = new ArrayList<>();
-        for (SysResource resource : sysResourceList) {
-            if(resource.getParentId().equals(parentId)){
-                XfaceSysResourceLoopInquiryResponseSubDTO treeObject = new XfaceSysResourceLoopInquiryResponseSubDTO();
-                treeObject.setId(resource.getId());
-                treeObject.setName(resource.getName());
-                treeObject.setPermission(resource.getPermission());
-                treeObject.setIcon(resource.getIcon());
-                treeObject.setUrl(resource.getUrl());
-                treeObject.setPriority(resource.getPriority());
-                treeObject.setType(resource.getType());
-                treeObject.setAvailable(resource.getAvailable());
-                treeObject.setChild(getChildren(resource.getId(),sysResourceList));
-                list.add(treeObject);
-            }
-        }
-        return list;
     }
 
     @Transactional
@@ -102,6 +68,7 @@ public class SysResourceServiceImpl extends ServiceImpl<SysResourceMapper, SysRe
         QueryWrapper<SysResource> wrapper = new QueryWrapper<>();
         wrapper.eq("parent_id",requestDTO.getParentId());
         wrapper.eq("name",requestDTO.getName());
+        wrapper.eq("available",1);
         SysResource resource1 = getOne(wrapper);
         if(null != resource1){
             throw new BaseException(ApplicationError.NAME_SAME.getMessage(), ApplicationError.NAME_SAME.getCode());

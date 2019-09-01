@@ -1,92 +1,128 @@
 ;
-layui.define(['jquery', 'table', 'form', 'layer','tree'],
+layui.extend({
+    treetable: 'res/js/component/treetable',
+}).define(['form', 'treetable'],
 function(exports) {
     var $ = layui.$,
     form = layui.form,
-    tree = layui.tree,
+    treetable = layui.treetable,
     layer = layui.layer,
     table = layui.table;
-    table.render({
-        elem: '#role-table',
-        url: '/sys/role/inquiry/page',
-        method: 'post',
-        page: {
-            layout: ['limit', 'count', 'prev', 'page', 'next', 'refresh', 'skip']
-            ,
-            groups: 5 //只显示 1 个连续页码
-        },
-        limit: 30,
-        limits: [30,60,90,120,150,180],
-        autoSort: false,
-        //开启分页
-        toolbar: '#role-toolbar',
-        defaultToolbar: ['filter'],
-        title: '用户数据表',
-        height: 'full-130',
-        loading: true,
-        cols: [[{
-            type: 'numbers',
-            fixed: 'center',
-            title: "序号列",
-            width: 50
-        },
-        {
-            type: 'checkbox',
-            fixed: 'left'
-        },
-        {
-            field: 'roleName',
-            title: '角色名称',
-            minWidth: 200
-        },
-        {
-            field: 'available',
-            title: '状态',
-            minWidth: 110,
-            unresize: true,
-            templet: '#statusTpl'
-        },
-        {
-            field: 'gmtCreate',
-            title: '创建时间',
-            width: 170
-        },
-        {
-            field: 'remark',
-            title: '描述',
-            width: 500
-        },
-        {
-            fixed: 'right',
-            title: "操作",
-            width: 170,
-            align: 'center',
-            toolbar: '#role-bar'
-        }]]
-    });
-    table.on('toolbar(role-table)',
+    var renderTable = function () {
+        layer.load(2);
+        treetable.render({
+            elem: '#resource-tree-table',
+            url: '/sys/resource/inquiry/loop',
+            method: 'post',
+            treeColIndex: 1,
+            treeSpid: -1,
+            treeIdName: 'id',
+            treePidName: 'parentId',
+            page: false,
+            toolbar: '#resource-toolbar',
+            defaultToolbar: ['filter'],
+            title: '资源数据表',
+            height: 'full-60',
+            loading: true,
+            cols: [[{
+                type: 'numbers',
+                title: "序号列",
+                width: 50
+            },
+            {
+                field: 'name',
+                title: '资源名称',
+                minWidth: 300
+            },
+            {
+                field: 'permission',
+                title: '权限码',
+                minWidth: 100
+            },
+            {
+                field: 'icon',
+                title: '图标',
+                minWidth: 120
+            },
+            {
+                field: 'url',
+                title: '访问路径',
+                minWidth: 250
+            },
+            {
+                field: 'priority',
+                title: '显示顺序',
+                minWidth: 50
+            },
+            {
+                field: 'type',
+                title: '资源类型',
+                minWidth: 50,
+                templet: '#typeTpl'
+            },
+            {
+                field: 'available',
+                title: '状态',
+                minWidth: 110,
+                unresize: true,
+                templet: '#statusTpl'
+            },
+            {
+                title: "操作",
+                width: 170,
+                align: 'center',
+                toolbar: '#resource-bar'
+            }]],
+            done: function() {
+                layer.closeAll('loading');
+            }
+        });
+    }
+    renderTable();
+    table.on('toolbar(resource-tree-table)',
     function(obj) {
         switch (obj.event) {
-        case 'add':
+        case 'expand':
+            treetable.expandAll('#resource-tree-table');
+            break;
+        case 'fold':
+            treetable.foldAll('#resource-tree-table');
+            break;
+        case 'refresh':
+            renderTable();
+            break;
+        };
+    });
+    table.on('tool(resource-tree-table)',
+    function(obj) {
+        var data = obj.data;
+        if (obj.event === 'del') {
+            layer.confirm('真的删除行么',
+            function(index) {
+                layer.close(index);
+            });
+        } else if (obj.event === 'add') {
             layer.open({
                 type:
                 2,
-                title: '添加角色信息',
-                content: '/role/add/html',
+                title: '添加资源信息',
+                content: '/resource/add/html',
                 maxmin: true,
-                area: ['450px', '300px'],
+                area: ['450px', '480px'],
                 btn: ['确定', '取消'],
                 yes: function(index, layero) {
                     var iframeWindow = window['layui-layer-iframe' + index],
-                    submitID = 'role-add-submit',
+                    submitID = 'resource-add-submit',
                     submit = layero.find('iframe').contents().find('#' + submitID);
+                    var parentId = data.id;
                     //监听提交
                     iframeWindow.layui.form.on('submit(' + submitID + ')',
                     function(data) {
                         var field = data.field; //获取提交的字段
+                        field.parentId = parentId;
                         //提交 Ajax 成功后，静态更新表格中的数据
                         $.ajax({
-                            url: '/sys/role/addition',
+                            url: '/sys/resource/addition',
                             type: 'post',
                             dataType: 'text',
                             data: field,
@@ -94,7 +130,7 @@ function(exports) {
                                 var result = JSON.parse(data);
                                 if (result.transactionStatus.success) {
                                     layer.msg("添加成功");
-                                    table.reload('role-table'); //数据刷新
+                                    renderTable(); //数据刷新
                                     layer.close(index); //关闭弹层
                                 } else {
                                     layer.msg(result.transactionStatus.replyText);
@@ -105,36 +141,27 @@ function(exports) {
                     submit.trigger('click');
                 }
             });
-            break;
-        };
-    });
-    table.on('tool(role-table)',
-    function(obj) {
-        var data = obj.data;
-        if (obj.event === 'del') {
-            layer.confirm('真的删除行么',
-            function(index) {
-                layer.close(index);
-            });
         } else if (obj.event === 'edit') {
             layer.open({
                 type: 2,
-                title: '修改用户信息',
-                content: '/role/edit/html',
+                title: '修改资源信息',
+                content: '/resource/edit/html',
                 maxmin: true,
-                area: ['450px', '300px'],
+                area: ['450px', '480px'],
                 btn: ['确定', '取消'],
                 yes: function(index, layero) {
                     var iframeWindow = window['layui-layer-iframe' + index],
-                    submitID = 'role-edit-submit',
+                    submitID = 'resource-edit-submit',
                     submit = layero.find('iframe').contents().find('#' + submitID);
+                    var resourceId = data.id;
                     //监听提交
                     iframeWindow.layui.form.on('submit(' + submitID + ')',
                     function(data) {
                         var field = data.field; //获取提交的字段
+                        field.id = resourceId;
                         //提交 Ajax 成功后，静态更新表格中的数据
                         $.ajax({
-                            url: '/sys/role/modify',
+                            url: '/sys/resource/modify',
                             type: 'post',
                             dataType: 'text',
                             data: field,
@@ -142,7 +169,7 @@ function(exports) {
                                 var result = JSON.parse(data);
                                 if (result.transactionStatus.success) {
                                     layer.msg("修改成功");
-                                    table.reload('role-table'); //数据刷新
+                                    renderTable(); //数据刷新
                                     layer.close(index); //关闭弹层
                                 } else {
                                     layer.msg(result.transactionStatus.replyText);
@@ -154,7 +181,7 @@ function(exports) {
                 },
                 success: function(layero, index) {
                     $.ajax({
-                        url: '/sys/role/modify/inquiry',
+                        url: '/sys/resource/modify/inquiry',
                         type: 'post',
                         dataType: 'text',
                         data: {
@@ -172,52 +199,9 @@ function(exports) {
                     });
                 }
             });
-        }else if(obj.event === 'auth'){
-            layer.open({
-                type: 2,
-                title: '授权',
-                content: '/role/auth/html',
-                maxmin: true,
-                area: ['450px', '600px'],
-                btn: ['确定', '取消'],
-                yes: function(index, layero) {
-                    var iframeWindow = window['layui-layer-iframe' + index];
-                    iframeWindow.submitData(data.id);
-                    table.reload('role-table'); //数据刷新
-                    layer.close(index); //关闭弹层
-                },
-                success: function(layero, index) {
-                    $.ajax({
-                        url: '/sys/role/auth/inquiry',
-                        type: 'post',
-                        dataType: 'text',
-                        data: {
-                            "roleId": data.id
-                        },
-                        success: function(data) {
-                            var result = JSON.parse(data);
-                            if (result.transactionStatus.success) {
-                                var iframeWindow = window['layui-layer-iframe' + index];
-                                iframeWindow.initData(result);
-                            } else {
-                                layer.msg(result.transactionStatus.replyText);
-                            }
-                        }
-                    });
-                }
-            });
         }
     });
-    form.on('submit(role-search)',
-    function(data) {
-        var field = data.field;
-        //执行重载
-        table.reload('role-table', {
-            where: field
-        });
-        return false;
-    });
-    form.on('checkbox(roleLock)',
+    form.on('checkbox(resourceLock)',
     function(obj) {
         var id = this.value;
         var status;
@@ -227,7 +211,7 @@ function(exports) {
             status = 1;
         }
         $.ajax({
-            url: '/sys/role/modify/status',
+            url: '/sys/resource/modify/status',
             type: 'post',
             dataType: 'text',
             data: {
@@ -238,13 +222,13 @@ function(exports) {
                 var result = JSON.parse(data);
                 if (result.transactionStatus.success) {
                     layer.msg("修改成功");
-                    table.reload('role-table'); //数据刷新
+                    renderTable(); //数据刷新
                 } else {
                     layer.msg(result.transactionStatus.replyText);
                 }
             }
         });
     });
-    exports('roleList',
+    exports('resourceList',
     function() {});
 });

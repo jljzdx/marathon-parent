@@ -4,20 +4,9 @@ spring:
   application:
     name: marathon-base-sso
   cloud:
-    consul:
-      host: localhost
-      port: 8500
-      enabled: true
+    nacos:
       discovery:
-        register: true
-        enabled: true
-        prefer-ip-address: true
-        format: YAML
-        service-name: ${spring.application.name}
-        port: ${server.port}
-        healthCheckInterval: 60s
-        healthCheckCriticalTimeout: 5m
-        instanceId: ${spring.application.name}:${vcap.application.instance_id:${spring.application.instance_id:${random.value}}}
+        server-addr: 127.0.0.1:8848
   freemarker:
     template-loader-path: classpath:/templates
     cache: false

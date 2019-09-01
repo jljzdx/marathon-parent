@@ -2,12 +2,15 @@ package com.newera.marathon.dto.system.inquiry;
 
 import lombok.Data;
 
-import java.util.List;
-
 @Data
 public class XfaceSysResourceLoopInquiryResponseSubDTO {
 
     private Integer id;
+
+    /**
+     * 父节点ID
+     */
+    private Integer parentId;
 
     /**
      * 资源名称
@@ -43,10 +46,5 @@ public class XfaceSysResourceLoopInquiryResponseSubDTO {
      * 是否可用
      */
     private Integer available;
-
-    /**
-     * 子列表
-     */
-    private List<XfaceSysResourceLoopInquiryResponseSubDTO> child;
 
 }

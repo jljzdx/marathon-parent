@@ -7,26 +7,65 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=0">
     <link rel="stylesheet" href="${request.contextPath}/layuiadmin/layui/css/layui.css" media="all">
     <link rel="stylesheet" href="${request.contextPath}/myself/style/admin.css" media="all">
+    <style>
+        /** 箭头未展开 */
+        #resource-tree-table + .treeTable .treeTable-icon .layui-icon-triangle-d:before {
+            content: "\e602";
+        }
+
+        /** 箭头展开 */
+        #resource-tree-table + .treeTable .treeTable-icon.open .layui-icon-triangle-d:before {
+            content: "\e61a";
+        }
+
+        /** 文件图标 */
+        #resource-tree-table + .treeTable .treeTable-icon .layui-icon-file:before {
+            content: "\e60d";
+        }
+
+        /** 文件夹未展开 */
+        #resource-tree-table + .treeTable .treeTable-icon .layui-icon-layer:before {
+            content: "\e637";
+        }
+
+        /** 文件夹展开 */
+        #resource-tree-table + .treeTable .treeTable-icon.open .layui-icon-layer:before {
+            content: "\e638";
+        }
+    </style>
 </head>
 <body>
 <div class="layui-fluid">
     <div class="layui-card">
         <div class="layui-card-body">
-            <table class="layui-hidden" id="treeTable" lay-filter="treeTable"></table>
-            <table id="role-table" lay-filter="role-table"></table>
-            <script type="text/html" id="role-toolbar">
+            <table id="resource-tree-table" class="layui-table" lay-filter="resource-tree-table"></table>
+            <script type="text/html" id="resource-toolbar">
                 <div class="layui-btn-container">
-                    <button class="layui-btn layui-btn-sm" lay-event="add">添加</button>
+                    <button class="layui-btn layui-btn-sm" lay-event="expand">全部展开</button>
+                    <button class="layui-btn layui-btn-sm" lay-event="fold">全部折叠</button>
+                    <button class="layui-btn layui-btn-sm" lay-event="refresh">刷新表格</button>
                 </div>
             </script>
-            <script type="text/html" id="statusTpl">
-                {{#  if(d.status == 1){ }}
-                <input type="checkbox" name="lock" value="{{d.id}}" title="锁定" lay-filter="roleLock">
+            <script type="text/html" id="typeTpl">
+                {{#  if(d.type == 1){ }}
+                <button class="layui-btn layui-btn-sm layui-btn-danger">系统</button>
+                {{#  } else if (d.type == 2){ }}
+                <button class="layui-btn layui-btn-sm">目录</button>
+                {{#  } else if (d.type == 3){ }}
+                <button class="layui-btn layui-btn-sm layui-btn-normal">菜单</button>
                 {{#  } else { }}
-                <input type="checkbox" name="lock" value="{{d.id}}" title="锁定" lay-filter="roleLock" checked>
+                <button class="layui-btn layui-btn-sm layui-btn-warm">功能</button>
                 {{#  } }}
             </script>
-            <script type="text/html" id="role-bar">
+            <script type="text/html" id="statusTpl">
+                {{#  if(d.available == 1){ }}
+                <input type="checkbox" name="lock" value="{{d.id}}" title="锁定" lay-filter="resourceLock">
+                {{#  } else { }}
+                <input type="checkbox" name="lock" value="{{d.id}}" title="锁定" lay-filter="resourceLock" checked>
+                {{#  } }}
+            </script>
+            <script type="text/html" id="resource-bar">
+                <a class="layui-btn layui-btn-normal layui-btn-xs" lay-event="add"><i class="layui-icon layui-icon-add-1"></i>新增</a>
                 <a class="layui-btn layui-btn-normal layui-btn-xs" lay-event="edit"><i class="layui-icon layui-icon-edit"></i>编辑</a>
             </script>
         </div>
@@ -37,10 +76,10 @@
 <script src="${request.contextPath}/layuiadmin/layui/layui.js" charset="utf-8"></script>
 <script>
 layui.config({
-  base: '/layuiadmin/' //静态资源所在路径
+  base: '${request.contextPath}/layuiadmin/'
 }).extend({
-  index: 'lib/index' //主入口模块
-}).use(['index', 'form', 'system'],{})
+    resourceList: 'res/js/modules/resource/resourceList'
+}).use('resourceList',{})
 </script>
 </body>
 </html>

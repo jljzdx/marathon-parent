@@ -16,6 +16,8 @@ public interface SysUserService  extends IService<SysUser> {
 
     XfaceSysUserModifyResponseDTO doSysUserModify(XfaceSysUserModifyRequestDTO requestDTO);
 
+    XfaceSysUserBaseInfoModifyResponseDTO doSysUserBaseInfoModify(XfaceSysUserBaseInfoModifyRequestDTO requestDTO);
+
     XfaceSysUserModifyStatusResponseDTO doSysUserModifyStatus(XfaceSysUserModifyStatusRequestDTO requestDTO);
 
     XfaceSysUserModifyInquiryResponseDTO doSysUserModifyInquiry(XfaceSysUserModifyInquiryRequestDTO requestDTO);

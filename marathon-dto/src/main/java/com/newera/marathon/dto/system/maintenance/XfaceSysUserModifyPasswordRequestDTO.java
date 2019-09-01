@@ -24,4 +24,8 @@ public class XfaceSysUserModifyPasswordRequestDTO {
     @NotBlank(message = "确认新密码不能为空")
     @Size(max = 16, message= "确认新密码长度不能超过16位")
     private String repeatNewPassword;
+
+    @NotBlank(message = "更新人不能为空")
+    @Size(max = 255, message= "更新人长度不能超过255位")
+    private String modifyOperator;
 }

@@ -33,6 +33,9 @@ public interface SysUserMicroService {
     @PostMapping("/sys/user/modify")
     XfaceSysUserModifyResponseDTO sysUserModify(@Valid @RequestBody XfaceSysUserModifyRequestDTO requestDTO);
 
+    @PostMapping("/sys/user/modify/base/info")
+    public XfaceSysUserBaseInfoModifyResponseDTO sysUserBaseInfoModify(@Valid @RequestBody XfaceSysUserBaseInfoModifyRequestDTO requestDTO);
+
     @PostMapping("/sys/user/modify/status")
     XfaceSysUserModifyStatusResponseDTO sysUserModifyStatus(@Valid @RequestBody XfaceSysUserModifyStatusRequestDTO requestDTO);
 
@@ -79,6 +82,15 @@ public interface SysUserMicroService {
                     XfaceSysUserModifyResponseDTO responseDTO = new XfaceSysUserModifyResponseDTO();
                     TransactionStatus transactionStatus = new TransactionStatus();
                     transactionStatus.setError("Call remote(sysUserModify) service error.",SysServer.APPLICATION_NAME);
+                    responseDTO.setTransactionStatus(transactionStatus);
+                    return responseDTO;
+                }
+
+                @Override
+                public XfaceSysUserBaseInfoModifyResponseDTO sysUserBaseInfoModify(@Valid XfaceSysUserBaseInfoModifyRequestDTO requestDTO) {
+                    XfaceSysUserBaseInfoModifyResponseDTO responseDTO = new XfaceSysUserBaseInfoModifyResponseDTO();
+                    TransactionStatus transactionStatus = new TransactionStatus();
+                    transactionStatus.setError("Call remote(sysUserBaseInfoModify) service error.",SysServer.APPLICATION_NAME);
                     responseDTO.setTransactionStatus(transactionStatus);
                     return responseDTO;
                 }

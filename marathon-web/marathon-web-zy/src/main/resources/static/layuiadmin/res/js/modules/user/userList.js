@@ -1,5 +1,5 @@
 ;
-layui.define(['jquery', 'table', 'form', 'laydate', 'layer'],
+layui.define(['table', 'form', 'laydate', 'layer'],
 function(exports) {
     var $ = layui.$,
     form = layui.form,
@@ -15,8 +15,13 @@ function(exports) {
         elem: '#user-table',
         url: '/sys/user/inquiry/page',
         method: 'post',
-        page: true,
-        //开启分页
+        page: {
+            layout: ['limit', 'count', 'prev', 'page', 'next', 'refresh', 'skip'],
+            groups: 5 //只显示 1 个连续页码
+        },
+        limit: 30,
+        limits: [30, 60, 90, 120, 150, 180],
+        autoSort: false,
         toolbar: '#user-toolbar',
         defaultToolbar: ['filter'],
         title: '用户数据表',
@@ -74,6 +79,7 @@ function(exports) {
         {
             field: 'gmtCreate',
             title: '创建时间',
+            //sort: true,
             width: 170
         },
         {
@@ -98,6 +104,21 @@ function(exports) {
             toolbar: '#user-bar'
         }]]
     });
+    //排序
+    table.on('sort(user-table)',
+    function(obj) {
+        console.log(obj.field); //当前排序的字段名
+        console.log(obj.type); //当前排序类型：desc（降序）、asc（升序）、null（空对象，默认排序）
+        console.log(this); //当前排序的 th 对象
+        table.reload('user-table', {
+            initSort: obj,
+            where: {
+                field: obj.field //排序字段
+                ,
+                type: obj.type //排序方式
+            }
+        });
+    });
     //工具栏事件
     table.on('toolbar(user-table)',
     function(obj) {
@@ -109,7 +130,7 @@ function(exports) {
                 title: '添加用户信息',
                 content: '/user/add/html',
                 maxmin: true,
-                area: ['450px', '440px'],
+                area: ['450px', '470px'],
                 btn: ['确定', '取消'],
                 yes: function(index, layero) {
                     var iframeWindow = window['layui-layer-iframe' + index],
@@ -174,7 +195,7 @@ function(exports) {
                 title: '修改用户信息',
                 content: '/user/edit/html',
                 maxmin: true,
-                area: ['450px', '440px'],
+                area: ['450px', '470px'],
                 btn: ['确定', '取消'],
                 yes: function(index, layero) {
                     var iframeWindow = window['layui-layer-iframe' + index],
@@ -214,9 +235,6 @@ function(exports) {
                         },
                         success: function(data) {
                             var result = JSON.parse(data);
-                            //var body = layer.getChildFrame('body', index);
-                            //给表单赋值
-                            //body.contents().find("#userId").val(result.id);
                             if (result.transactionStatus.success) {
                                 var iframeWindow = window['layui-layer-iframe' + index];
                                 iframeWindow.initData(result);

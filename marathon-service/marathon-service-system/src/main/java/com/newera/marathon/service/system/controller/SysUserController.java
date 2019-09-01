@@ -43,6 +43,11 @@ public class SysUserController {
         XfaceSysUserModifyResponseDTO responseDTO = sysUserService.doSysUserModify(requestDTO);
         return responseDTO;
     }
+    @PostMapping("/modify/base/info")
+    public XfaceSysUserBaseInfoModifyResponseDTO sysUserBaseInfoModify(@Valid @RequestBody XfaceSysUserBaseInfoModifyRequestDTO requestDTO){
+        XfaceSysUserBaseInfoModifyResponseDTO responseDTO = sysUserService.doSysUserBaseInfoModify(requestDTO);
+        return responseDTO;
+    }
 
     @PostMapping("/modify/status")
     public XfaceSysUserModifyStatusResponseDTO sysUserModifyStatus(@Valid @RequestBody XfaceSysUserModifyStatusRequestDTO requestDTO){

@@ -26,7 +26,7 @@ public class RoleController {
     private SysRoleMicroService sysRoleMicroService;
 
 
-    @GetMapping("/sys/role/list/html")
+    @GetMapping("/role/list/html")
     public String roleListHtml(){
         return "role/roleList";
     }
@@ -37,6 +37,10 @@ public class RoleController {
     @GetMapping("/role/edit/html")
     public String roleEditHtml(){
         return "role/roleEdit";
+    }
+    @GetMapping("/role/auth/html")
+    public String roleAuthHtml(){
+        return "role/roleAuth";
     }
     @GetMapping("/sys/role/inquiry/select")
     @ResponseBody
@@ -110,6 +114,20 @@ public class RoleController {
         SsoUser user = (SsoUser) request.getAttribute(SsoConstant.SSO_USER);
         requestDTO.setModifyOperator(user.getUserName());
         XfaceSysRoleModifyStatusResponseDTO responseDTO = sysRoleMicroService.sysRoleModifyStatus(requestDTO);
+        return responseDTO;
+    }
+    @PostMapping("/sys/role/auth/inquiry")
+    @ResponseBody
+    public XfaceSysRoleAuthInquiryResponseDTO sysRoleModifyStatus(XfaceSysRoleAuthInquiryRequestDTO requestDTO){
+        XfaceSysRoleAuthInquiryResponseDTO responseDTO = sysRoleMicroService.sysRoleAuthInquiry(requestDTO);
+        return responseDTO;
+    }
+    @PostMapping("/sys/role/auth")
+    @ResponseBody
+    public XfaceSysRoleAuthResponseDTO sysRoleModifyStatus(XfaceSysRoleAuthRequestDTO requestDTO, HttpServletRequest request){
+        SsoUser user = (SsoUser) request.getAttribute(SsoConstant.SSO_USER);
+        requestDTO.setOperator(user.getUserName());
+        XfaceSysRoleAuthResponseDTO responseDTO = sysRoleMicroService.sysRoleAuth(requestDTO);
         return responseDTO;
     }
 }

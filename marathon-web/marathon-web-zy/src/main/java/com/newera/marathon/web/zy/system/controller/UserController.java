@@ -7,6 +7,7 @@ import com.newera.marathon.dto.system.inquiry.XfaceSysUserModifyInquiryRequestDT
 import com.newera.marathon.dto.system.inquiry.XfaceSysUserModifyInquiryResponseDTO;
 import com.newera.marathon.dto.system.maintenance.*;
 import com.newera.marathon.microface.system.SysUserMicroService;
+import com.newera.marathon.web.zy.model.WebPage;
 import com.spaking.boot.starter.cas.model.SsoUser;
 import com.spaking.boot.starter.cas.utils.SsoConstant;
 import com.spaking.boot.starter.core.model.PageModel;
@@ -17,6 +18,7 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
+
 import javax.servlet.http.HttpServletRequest;
 import java.util.Map;
 
@@ -58,12 +60,14 @@ public class UserController {
 
     @PostMapping("/sys/user/inquiry/page")
     @ResponseBody
-    public Map sysUserInquiryPage(Long page, Long limit, String userName, String loginTime){
+    public Map sysUserInquiryPage(WebPage page, String userName, String loginTime){
         XfaceSysUserInquiryPageRequestDTO requestDTO = new XfaceSysUserInquiryPageRequestDTO();
         //组装分页对象
         PageModel pageModel = new PageModel();
-        pageModel.setCurrent(page);
-        pageModel.setSize(limit);
+        pageModel.setCurrent(page.getPage());
+        pageModel.setSize(page.getLimit());
+        pageModel.setField(page.getField());
+        pageModel.setOrder(page.getType());
         requestDTO.setPage(pageModel);
         //查询条件
         requestDTO.setUserName(userName);
@@ -101,6 +105,14 @@ public class UserController {
         XfaceSysUserModifyInquiryResponseDTO responseDTO = sysUserMicroService.sysUserModifyInquiry(requestDTO);
         return responseDTO;
     }
+    @PostMapping("/sys/user/modify/base/info")
+    public XfaceSysUserBaseInfoModifyResponseDTO sysUserBaseInfoModify(XfaceSysUserBaseInfoModifyRequestDTO requestDTO, HttpServletRequest request){
+        SsoUser user = (SsoUser) request.getAttribute(SsoConstant.SSO_USER);
+        requestDTO.setId(user.getUserId());
+        requestDTO.setModifyOperator(user.getUserName());
+        XfaceSysUserBaseInfoModifyResponseDTO responseDTO = sysUserMicroService.sysUserBaseInfoModify(requestDTO);
+        return responseDTO;
+    }
     @PostMapping("/sys/user/modify")
     @ResponseBody
     public XfaceSysUserModifyResponseDTO sysUserModify(XfaceSysUserModifyRequestDTO requestDTO, HttpServletRequest request){
@@ -125,12 +137,15 @@ public class UserController {
         if(null != user){
             requestDTO.setId(user.getUserId());
         }
+        requestDTO.setModifyOperator(user.getUserName());
         XfaceSysUserModifyPasswordResponseDTO responseDTO = sysUserMicroService.sysUserModifyPassword(requestDTO);
         return responseDTO;
     }
     @PostMapping("/sys/user/reset/password")
     @ResponseBody
-    public XfaceSysUserResetPasswordResponseDTO sysUserModifyPassword(XfaceSysUserResetPasswordRequestDTO requestDTO){
+    public XfaceSysUserResetPasswordResponseDTO sysUserModifyPassword(XfaceSysUserResetPasswordRequestDTO requestDTO,HttpServletRequest request){
+        SsoUser user = (SsoUser) request.getAttribute(SsoConstant.SSO_USER);
+        requestDTO.setModifyOperator(user.getUserName());
         XfaceSysUserResetPasswordResponseDTO responseDTO = sysUserMicroService.sysUserResetPassword(requestDTO);
         return responseDTO;
     }

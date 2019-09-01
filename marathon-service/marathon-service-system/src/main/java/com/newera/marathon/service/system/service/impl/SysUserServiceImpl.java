@@ -48,7 +48,7 @@ public class SysUserServiceImpl extends ServiceImpl<SysUserMapper, SysUser> impl
         //分页查询
         PageModel pageModel = requestDTO.getPage();
         Page<XfaceSysUserInquiryPageResponseSubDTO> page = new Page<>(pageModel.getCurrent(), pageModel.getSize());
-        page.setDesc("id");
+        page.setDesc("gmt_create");
         List<XfaceSysUserInquiryPageResponseSubDTO> result = sysUserMapper.querySysUserPage(page, requestDTO);
         //查询角色名称
         result.forEach(w->{
@@ -175,6 +175,24 @@ public class SysUserServiceImpl extends ServiceImpl<SysUserMapper, SysUser> impl
         log.info("doSysUserModify end");
         return responseDTO;
     }
+    @Transactional
+    @Override
+    public XfaceSysUserBaseInfoModifyResponseDTO doSysUserBaseInfoModify(XfaceSysUserBaseInfoModifyRequestDTO requestDTO) {
+        log.info("doSysUserBaseInfoModify start");
+        XfaceSysUserBaseInfoModifyResponseDTO responseDTO = new XfaceSysUserBaseInfoModifyResponseDTO();
+        TransactionStatus transactionStatus = new TransactionStatus();
+        //组装用户数据
+        SysUser sysUser = new SysUser();
+        BeanUtils.copyProperties(requestDTO, sysUser);
+        //更新操作
+        Boolean result = updateById(sysUser);
+        if(!result){
+            throw new BaseException(ApplicationError.SYS_MODIFY_FAILED.getMessage(), ApplicationError.SYS_MODIFY_FAILED.getCode());
+        }
+        responseDTO.setTransactionStatus(transactionStatus);
+        log.info("doSysUserBaseInfoModify end");
+        return responseDTO;
+    }
 
     @Transactional
     @Override
@@ -215,6 +233,7 @@ public class SysUserServiceImpl extends ServiceImpl<SysUserMapper, SysUser> impl
         SysUser updateUser = new SysUser();
         updateUser.setId(requestDTO.getId());
         updateUser.setPassword(PasswordUtil.generate(requestDTO.getNewPassword()));
+        updateUser.setModifyOperator(requestDTO.getModifyOperator());
         sysUserMapper.updateById(updateUser);
         responseDTO.setTransactionStatus(transactionStatus);
         log.info("doSysUserModifyPassword start");
@@ -239,6 +258,7 @@ public class SysUserServiceImpl extends ServiceImpl<SysUserMapper, SysUser> impl
         SysUser sysUser2 = new SysUser();
         sysUser2.setId(requestDTO.getId());
         sysUser2.setPassword(PasswordUtil.generate(sysUser.getUserName()));
+        sysUser2.setModifyOperator(requestDTO.getModifyOperator());
         updateById(sysUser2);
         responseDTO.setTransactionStatus(transactionStatus);
         log.info("doSysUserResetPassword start");

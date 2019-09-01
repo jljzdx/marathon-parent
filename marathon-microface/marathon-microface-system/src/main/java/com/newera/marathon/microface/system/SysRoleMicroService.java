@@ -36,10 +36,10 @@ public interface SysRoleMicroService {
     @PostMapping("/sys/role/modify/status")
     public XfaceSysRoleModifyStatusResponseDTO sysRoleModifyStatus(@Valid @RequestBody XfaceSysRoleModifyStatusRequestDTO requestDTO);
 
-    @PostMapping("/auth/inquiry")
+    @PostMapping("/sys/role/auth/inquiry")
     public XfaceSysRoleAuthInquiryResponseDTO sysRoleAuthInquiry(@Valid @RequestBody XfaceSysRoleAuthInquiryRequestDTO requestDTO);
 
-    @PostMapping("/auth")
+    @PostMapping("/sys/role/auth")
     public XfaceSysRoleAuthResponseDTO sysRoleAuth(@Valid @RequestBody XfaceSysRoleAuthRequestDTO requestDTO);
 
     @Component

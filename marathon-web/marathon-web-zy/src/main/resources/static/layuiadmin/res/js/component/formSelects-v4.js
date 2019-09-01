@@ -1786,6 +1786,6 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
 			}, true);
 		}
 	};
-
+	layui.link(layui.cache.base + 'res/css/component/formSelectsv4.css');
 	return new Select4();
 });
