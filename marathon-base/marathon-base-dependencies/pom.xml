@@ -11,24 +11,24 @@
     <description>Newera Marathon Dependencies</description>
 
     <properties>
-        <project.newera.marathon.core>1.0-SNAPSHOT</project.newera.marathon.core>
+        <project.newera.marathon.version>1.0-SNAPSHOT</project.newera.marathon.version>
     </properties>
     <dependencyManagement>
         <dependencies>
             <dependency>
                 <groupId>com.newera.marathon</groupId>
                 <artifactId>marathon-common</artifactId>
-                <version>${project.newera.marathon.core}</version>
+                <version>${project.newera.marathon.version}</version>
             </dependency>
             <dependency>
                 <groupId>com.newera.marathon</groupId>
                 <artifactId>marathon-dto</artifactId>
-                <version>${project.newera.marathon.core}</version>
+                <version>${project.newera.marathon.version}</version>
             </dependency>
             <dependency>
                 <groupId>com.newera.marathon</groupId>
                 <artifactId>marathon-microface-system</artifactId>
-                <version>${project.newera.marathon.core}</version>
+                <version>${project.newera.marathon.version}</version>
             </dependency>
             <!-- commons-codec -->
             <dependency>

@@ -1,0 +1,45 @@
+1、安装
+官网下载：https://nacos.io/zh-cn/docs/what-is-nacos.html
+启动：sh startup.sh -m standalone
+访问：http://127.0.0.1:8848/nacos/
+默认用户名/密码：nacos/nacos
+2、RestTemplate和WebClient比较
+RestTemplate 采用 Java Servlet API，因而是阻塞式同步调用。相反，WebClient 是异步的，等待响应的同时不会阻塞正在执行的线程。
+只有在响应结果准备就绪时，才会发起通知。
+3、Nacos两个依赖
+实现服务的注册与发现：spring-cloud-starter-alibaba-nacos-discovery
+实现配置的动态变更：spring-cloud-starter-alibaba-nacos-config
+4、dataId的完整格式如下：
+${prefix}-${spring.profile.active}.${file-extension}
+prefix 默认为spring.application.name的值，也可以通过配置项spring.cloud.nacos.config.prefix来配置。
+file-exetension为配置内容的数据格式，可以通过配置项spring.cloud.nacos.config.file-extension来配置。目前只支持properties和yaml类型。
+5、配置中心
+|-引入依赖
+<dependency>
+    <groupId>com.alibaba.cloud</groupId>
+    <artifactId>spring-cloud-starter-alibaba-nacos-config</artifactId>
+</dependency>
+|-配置
+spring:
+  cloud:
+    nacos:
+      config:
+        server-addr: 127.0.0.1:8848
+        file-extension: yaml
+        namespace: 0e4e7c74-9b28-40ac-a604-47b902b64aee
+      discovery:
+        server-addr: 127.0.0.1:8848
+|-测试
+@RestController
+@RefreshScope
+public class ConfigController {
+    @Value("${env:unknow}")
+    private String env;
+
+    @GetMapping("/test/config")
+    public String testConfig(){
+        return env;
+    }
+}
+
+

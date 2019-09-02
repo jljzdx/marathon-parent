@@ -11,7 +11,7 @@ import com.newera.marathon.web.zy.model.WebPage;
 import com.spaking.boot.starter.cas.model.SsoUser;
 import com.spaking.boot.starter.cas.utils.SsoConstant;
 import com.spaking.boot.starter.core.model.PageModel;
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;

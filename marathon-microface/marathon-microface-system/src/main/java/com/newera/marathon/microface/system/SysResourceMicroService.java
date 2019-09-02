@@ -18,7 +18,7 @@ import javax.validation.Valid;
 
 @FeignClient(
         name = SysServer.APPLICATION_NAME,
-        fallbackFactory = SysResourceMicroService.SysUserMicroServiceImpl.class
+        fallbackFactory = SysResourceMicroService.SysResourceMicroServiceImpl.class
 )
 public interface SysResourceMicroService {
     @PostMapping("/sys/resource/inquiry/loop")
@@ -37,8 +37,8 @@ public interface SysResourceMicroService {
     public XfaceSysResourceModifyStatusResponseDTO sysResourceModifyStatus(@Valid @RequestBody XfaceSysResourceModifyStatusRequestDTO requestDTO);
 
     @Component
-    class SysUserMicroServiceImpl implements FallbackFactory<SysResourceMicroService> {
-        private Logger logger = LoggerFactory.getLogger(SysUserMicroServiceImpl.class);
+    class SysResourceMicroServiceImpl implements FallbackFactory<SysResourceMicroService> {
+        private Logger logger = LoggerFactory.getLogger(SysResourceMicroServiceImpl.class);
         @Override
         public SysResourceMicroService create(Throwable throwable) {
             logger.error("fallback reason:{}",throwable.getMessage());

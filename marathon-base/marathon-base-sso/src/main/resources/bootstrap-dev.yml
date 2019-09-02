@@ -1,25 +1,14 @@
 server:
-  port: 8081
+  port: 8083
 spring:
-  application:
-    name: marathon-web-zy
   cloud:
     nacos:
+      config:
+        server-addr: 127.0.0.1:8848
+        file-extension: yaml
+        namespace: 0e4e7c74-9b28-40ac-a604-47b902b64aee
       discovery:
         server-addr: 127.0.0.1:8848
-  freemarker:
-    template-loader-path: classpath:/templates
-    cache: false
-    charset: UTF-8
-    content-type: text/html
-    check-template-location: true
-    expose-request-attributes: false
-    expose-session-attributes: false
-    expose-spring-macro-helpers: true
-    request-context-attribute: request
-    suffix: .html
-  main:
-    allow-bean-definition-overriding: true
   redis:
     database: 0
     host: 127.0.0.1
@@ -60,9 +49,3 @@ hystrix:
         isolation:
           thread:
             timeoutInMilliseconds: 10000
-sso:
-  server: http://127.0.0.1:8082
-  logout:
-    path: /logout
-  excluded:
-    paths: /static/**,/actuator/health
