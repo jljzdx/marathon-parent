@@ -27,6 +27,8 @@ spring:
         server-addr: 127.0.0.1:8848
         file-extension: yaml
         namespace: 0e4e7c74-9b28-40ac-a604-47b902b64aee
+        group: DEV_GROUP
+        prefix: example
       discovery:
         server-addr: 127.0.0.1:8848
 |-测试
@@ -41,5 +43,10 @@ public class ConfigController {
         return env;
     }
 }
+|-注意：对于指定环境的配置（spring.profiles.active=DEV、spring.cloud.nacos.config.group=DEV_GROUP、
+  spring.cloud.nacos.config.namespace=83eed625-d166-4619-b923-93df2088883a），
+  都不要配置在应用的bootstrap.properties中。而是在发布脚本的启动命令中，用-Dspring.profiles.active=DEV的方式来动态指定，会更加灵活！。
+|-加载共享配置
+
 
 

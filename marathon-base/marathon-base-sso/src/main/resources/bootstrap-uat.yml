@@ -1,24 +1,24 @@
 server:
-  port: 8082
+  port: 8083
 spring:
   cloud:
     nacos:
       config:
         server-addr: 127.0.0.1:8848
         file-extension: yaml
-        namespace: 0e4e7c74-9b28-40ac-a604-47b902b64aee
-        group: DEV_GROUP
+        namespace: e2410465-3d3b-4e36-9cfb-53d455b3481e
+        group: UAT_GROUP
         ext-config[0]:
-          data-id: freemarker-dev.yaml
-          group: DEV_GROUP
+          data-id: freemarker-uat.yaml
+          group: UAT_GROUP
           refresh: true
         ext-config[1]:
-          data-id: feign-ribbon-hystrix-dev.yaml
-          group: DEV_GROUP
+          data-id: feign-ribbon-hystrix-uat.yaml
+          group: UAT_GROUP
           refresh: true
         ext-config[2]:
-          data-id: redis-dev.yaml
-          group: DEV_GROUP
+          data-id: redis-uat.yaml
+          group: UAT_GROUP
           refresh: true
       discovery:
         server-addr: 127.0.0.1:8848

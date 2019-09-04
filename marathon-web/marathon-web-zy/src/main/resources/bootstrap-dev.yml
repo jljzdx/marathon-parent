@@ -7,45 +7,18 @@ spring:
         server-addr: 127.0.0.1:8848
         file-extension: yaml
         namespace: 0e4e7c74-9b28-40ac-a604-47b902b64aee
+        group: DEV_GROUP
+        ext-config[0]:
+          data-id: freemarker-dev.yaml
+          group: DEV_GROUP
+          refresh: true
+        ext-config[1]:
+          data-id: feign-ribbon-hystrix-dev.yaml
+          group: DEV_GROUP
+          refresh: true
+        ext-config[2]:
+          data-id: redis-dev.yaml
+          group: DEV_GROUP
+          refresh: true
       discovery:
         server-addr: 127.0.0.1:8848
-  redis:
-    database: 0
-    host: 127.0.0.1
-    port: 6379
-    password:
-      jedis:
-        pool:
-          max-active: 100 #连接池最大连接数（使用负值表示没有限制）
-          max-idle: 100 # 连接池中的最大空闲连接
-          min-idle: 0 # 连接池中的最小空闲连接
-          max-wait: -1 # 连接池最大阻塞等待时间（使用负值表示没有限制）
-feign:
-  hystrix:
-    enabled: true
-ribbon:
-  ReadTimeout: 6000
-  ConnectTimeout: 6000
-  MaxAutoRetriesNextServer: 0
-  OkToRetryOnAllOperations: false
-hystrix:
-  threadpool:
-    default:
-      coreSize: 1000
-      #最大排队长度。默认-1，使用SynchronousQueue。其他值则使用 LinkedBlockingQueue
-      maxQueueSize: 100
-      #排队线程数量阈值，默认为5，达到时拒绝,maxQueueSize == -1，该字段将不起作用
-      queueSizeRejectionThreshold: 20
-  command:
-    default:
-      circuitBreaker:
-        #短路多久以后开始尝试是否恢复，默认5s
-        sleepWindowInMilliseconds: 5
-        #当在配置时间窗口内达到此数量的失败后，进行短路。默认20个
-        requestVolumeThreshold: 20
-        #出错百分比阈值，当达到此阈值后，开始短路。默认50%
-        errorThresholdPercentage: 50%
-      execution:
-        isolation:
-          thread:
-            timeoutInMilliseconds: 10000
