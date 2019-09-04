@@ -1,24 +1,21 @@
 server:
-  port: 8083
+  port: 8082
 spring:
   cloud:
     nacos:
       config:
         server-addr: 127.0.0.1:8848
         file-extension: yaml
-        namespace: e2410465-3d3b-4e36-9cfb-53d455b3481e
-        group: UAT_GROUP
+        namespace: 29166183-5551-4341-a070-1924106f53d8
+        group: MARATHON_GROUP
         ext-config[0]:
-          data-id: freemarker-uat.yaml
-          group: UAT_GROUP
+          data-id: freemarker.yaml
           refresh: true
         ext-config[1]:
-          data-id: feign-ribbon-hystrix-uat.yaml
-          group: UAT_GROUP
+          data-id: feign-ribbon-hystrix.yaml
           refresh: true
         ext-config[2]:
-          data-id: redis-uat.yaml
-          group: UAT_GROUP
+          data-id: redis.yaml
           refresh: true
       discovery:
         server-addr: 127.0.0.1:8848

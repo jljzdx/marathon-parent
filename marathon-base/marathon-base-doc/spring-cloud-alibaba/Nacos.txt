@@ -1,6 +1,6 @@
 1、安装
 官网下载：https://nacos.io/zh-cn/docs/what-is-nacos.html
-启动：sh startup.sh -m standalone
+启动：sh startup.sh -m standalone【如果不带参数，就是集群模式】
 访问：http://127.0.0.1:8848/nacos/
 默认用户名/密码：nacos/nacos
 2、RestTemplate和WebClient比较
@@ -47,6 +47,24 @@ public class ConfigController {
   spring.cloud.nacos.config.namespace=83eed625-d166-4619-b923-93df2088883a），
   都不要配置在应用的bootstrap.properties中。而是在发布脚本的启动命令中，用-Dspring.profiles.active=DEV的方式来动态指定，会更加灵活！。
 |-加载共享配置
-
-
+6、持久化配置
+|-导入%nacos_home%/conf/nacos-mysql.sql
+|-修改%nacos_home%/conf/application.properties
+spring.datasource.platform=mysql
+db.num=1
+db.url.0=jdbc:mysql://localhost:3306/nacos?characterEncoding=utf8&connectTimeout=1000&socketTimeout=3000&autoReconnect=true
+db.user=root
+db.password=root
+|-问题：启动报错连不上mysql
+  |--下载源码
+  |--把pom.xml中的mysql-connector-java版本换成自己合适的
+  |--打包:mvn -Prelease-nacos clean install -U
+  |--直接进入distribution/target/nacos-server-1.1.3/nacos/bin目录启动Nacos
+7、Nacos集群
+|-修改conf/cluster.conf
+127.0.0.1:8841
+127.0.0.1:8842
+127.0.0.1:8843
+|-可以使用Nginx作入口负载均衡。
+|-问题：Nacos的持久化和集群的缺点：成本和可用性
 
