@@ -1,9 +1,6 @@
 package com.newera.marathon.microface.system;
 
-import com.newera.marathon.dto.system.inquiry.XfaceSysUserInquiryPageRequestDTO;
-import com.newera.marathon.dto.system.inquiry.XfaceSysUserInquiryPageResponseDTO;
-import com.newera.marathon.dto.system.inquiry.XfaceSysUserModifyInquiryRequestDTO;
-import com.newera.marathon.dto.system.inquiry.XfaceSysUserModifyInquiryResponseDTO;
+import com.newera.marathon.dto.system.inquiry.*;
 import com.newera.marathon.dto.system.maintenance.*;
 import com.spaking.boot.starter.core.model.TransactionStatus;
 import feign.hystrix.FallbackFactory;
@@ -41,8 +38,13 @@ public interface SysUserMicroService {
 
     @PostMapping("/sys/user/modify/password")
     XfaceSysUserModifyPasswordResponseDTO sysUserModifyPassword(@Valid @RequestBody XfaceSysUserModifyPasswordRequestDTO requestDTO);
+
     @PostMapping("/sys/user/reset/password")
     public XfaceSysUserResetPasswordResponseDTO sysUserResetPassword(@Valid @RequestBody XfaceSysUserResetPasswordRequestDTO requestDTO);
+
+    @PostMapping("/sys/user/left/menu/inquiry")
+    public XfaceSysLeftMenuInquiryResponseDTO sysLeftMenuInquiry(@Valid @RequestBody XfaceSysLeftMenuInquiryRequestDTO requestDTO);
+
     @Component
     class SysUserMicroServiceImpl implements FallbackFactory<SysUserMicroService> {
         private Logger logger = LoggerFactory.getLogger(SysUserMicroServiceImpl.class);
@@ -118,6 +120,15 @@ public interface SysUserMicroService {
                     XfaceSysUserResetPasswordResponseDTO responseDTO = new XfaceSysUserResetPasswordResponseDTO();
                     TransactionStatus transactionStatus = new TransactionStatus();
                     transactionStatus.setError("Call remote(sysUserResetPassword) service error.",SysServer.APPLICATION_NAME);
+                    responseDTO.setTransactionStatus(transactionStatus);
+                    return responseDTO;
+                }
+
+                @Override
+                public XfaceSysLeftMenuInquiryResponseDTO sysLeftMenuInquiry(@Valid XfaceSysLeftMenuInquiryRequestDTO requestDTO) {
+                    XfaceSysLeftMenuInquiryResponseDTO responseDTO = new XfaceSysLeftMenuInquiryResponseDTO();
+                    TransactionStatus transactionStatus = new TransactionStatus();
+                    transactionStatus.setError("Call remote(sysLeftMenuInquiry) service error.",SysServer.APPLICATION_NAME);
                     responseDTO.setTransactionStatus(transactionStatus);
                     return responseDTO;
                 }

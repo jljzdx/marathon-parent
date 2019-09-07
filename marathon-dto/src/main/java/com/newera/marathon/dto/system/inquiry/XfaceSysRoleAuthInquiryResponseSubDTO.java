@@ -10,22 +10,18 @@ public class XfaceSysRoleAuthInquiryResponseSubDTO {
     /**
      * 资源ID
      */
-    private Integer id;
+    private Integer value;
 
     /**
      * 资源名称
      */
-    private String title;
+    private String name;
+
 
     /**
      * 是否选中
      */
     private Boolean checked;
-
-    /**
-     * 是否展开
-     */
-    private Boolean spread;
 
     /**
      * 是否禁用
@@ -35,6 +31,6 @@ public class XfaceSysRoleAuthInquiryResponseSubDTO {
     /**
      * 子列表
      */
-    private List<XfaceSysRoleAuthInquiryResponseSubDTO> children;
+    private List<XfaceSysRoleAuthInquiryResponseSubDTO> list;
 
 }

@@ -23,7 +23,7 @@ function(e) {
   g = "layui-icon-shrink-right",
   x = "layui-icon-spread-left",
   C = "layadmin-side-shrink",
-  k = "LAY-system-side-menu",
+  k = "LAY-system-side-menu",//377行
   P = {
     v: "1.2.1 std",
     req: l.req,

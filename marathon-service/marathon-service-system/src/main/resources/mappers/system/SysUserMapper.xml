@@ -30,4 +30,19 @@
             <include refid="SysUserWhere"></include>
         </where>
     </select>
+    <select id="queryLeftMenu" parameterType="java.lang.String" resultType="com.newera.marathon.service.system.vo.LeftMenuListVO">
+        select
+        r.id,r.`name`,r.parent_id parentId,r.parent_ids parentIds,r.icon,r.url
+        from t_sys_user u,t_sys_user_role ur,t_sys_role role,t_sys_role_resource rr,t_sys_resource r
+        where
+        u.id = ur.user_id
+        and ur.role_id = rr.role_id
+        and rr.resource_id = r.id
+        and role.id = ur.role_id
+        and r.type in (2,3)
+        and r.available = 1
+        and role.available = 1
+        and u.user_name = #{value}
+        order by priority
+    </select>
 </mapper>

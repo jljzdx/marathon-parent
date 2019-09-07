@@ -1,9 +1,6 @@
 package com.newera.marathon.service.system.controller;
 
-import com.newera.marathon.dto.system.inquiry.XfaceSysUserInquiryPageRequestDTO;
-import com.newera.marathon.dto.system.inquiry.XfaceSysUserInquiryPageResponseDTO;
-import com.newera.marathon.dto.system.inquiry.XfaceSysUserModifyInquiryRequestDTO;
-import com.newera.marathon.dto.system.inquiry.XfaceSysUserModifyInquiryResponseDTO;
+import com.newera.marathon.dto.system.inquiry.*;
 import com.newera.marathon.dto.system.maintenance.*;
 import com.newera.marathon.service.system.service.SysUserService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -62,6 +59,11 @@ public class SysUserController {
     @PostMapping("/reset/password")
     public XfaceSysUserResetPasswordResponseDTO sysUserResetPassword(@Valid @RequestBody XfaceSysUserResetPasswordRequestDTO requestDTO){
         XfaceSysUserResetPasswordResponseDTO responseDTO = sysUserService.doSysUserResetPassword(requestDTO);
+        return responseDTO;
+    }
+    @PostMapping("/left/menu/inquiry")
+    public XfaceSysLeftMenuInquiryResponseDTO sysLeftMenuInquiry(@Valid @RequestBody XfaceSysLeftMenuInquiryRequestDTO requestDTO){
+        XfaceSysLeftMenuInquiryResponseDTO responseDTO = sysUserService.doSysLeftMenuInquiry(requestDTO);
         return responseDTO;
     }
 }

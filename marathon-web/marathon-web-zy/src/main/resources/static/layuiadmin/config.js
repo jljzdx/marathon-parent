@@ -42,7 +42,7 @@ function(exports) {
 
         //第三方组件
         ,
-        extend: ['formSelects-v4']
+        extend: ['formSelects-v4','treetable']
 
         //主题配置
         ,

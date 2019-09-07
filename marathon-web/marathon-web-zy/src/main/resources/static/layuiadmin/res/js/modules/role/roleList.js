@@ -178,7 +178,7 @@ function(exports) {
                 title: '授权',
                 content: '/role/auth/html',
                 maxmin: true,
-                area: ['450px', '600px'],
+                area: ['900px', '600px'],
                 btn: ['确定', '取消'],
                 yes: function(index, layero) {
                     var iframeWindow = window['layui-layer-iframe' + index];

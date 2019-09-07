@@ -3,6 +3,7 @@ package com.newera.marathon.service.system.service.impl;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import com.newera.marathon.common.constant.OtherConstant;
 import com.newera.marathon.common.utils.PasswordUtil;
 import com.newera.marathon.common.utils.StringBlankFormat;
 import com.newera.marathon.dto.system.inquiry.*;
@@ -15,6 +16,7 @@ import com.newera.marathon.service.system.mapper.SysUserRoleMapper;
 import com.newera.marathon.service.system.model.ApplicationError;
 import com.newera.marathon.service.system.service.SysUserRoleService;
 import com.newera.marathon.service.system.service.SysUserService;
+import com.newera.marathon.service.system.vo.LeftMenuListVO;
 import com.spaking.boot.starter.core.exception.BaseException;
 import com.spaking.boot.starter.core.model.PageModel;
 import com.spaking.boot.starter.core.model.TransactionStatus;
@@ -263,5 +265,51 @@ public class SysUserServiceImpl extends ServiceImpl<SysUserMapper, SysUser> impl
         responseDTO.setTransactionStatus(transactionStatus);
         log.info("doSysUserResetPassword start");
         return responseDTO;
+    }
+    @Override
+    public XfaceSysLeftMenuInquiryResponseDTO doSysLeftMenuInquiry(XfaceSysLeftMenuInquiryRequestDTO requestDTO) {
+        log.info("doSysLeftMenuInquiry start");
+        XfaceSysLeftMenuInquiryResponseDTO responseDTO = new XfaceSysLeftMenuInquiryResponseDTO();
+        TransactionStatus transactionStatus = new TransactionStatus();
+        //查询菜单
+        List<LeftMenuListVO> list = sysUserMapper.queryLeftMenu(requestDTO.getUserName());
+        //循环所有资源，标记已授权的资源，并递归生成树
+        List<XfaceSysLeftMenuInquiryResponseSubDTO> responseSubDTOS = createTree(list);
+        responseDTO.setDataList(responseSubDTOS);
+        responseDTO.setTransactionStatus(transactionStatus);
+        log.info("doSysLeftMenuInquiry start");
+        return responseDTO;
+    }
+
+    public List<XfaceSysLeftMenuInquiryResponseSubDTO> createTree(List<LeftMenuListVO> sysResourceList){
+        List<XfaceSysLeftMenuInquiryResponseSubDTO> list = new ArrayList<>();
+        for (LeftMenuListVO resource : sysResourceList) {
+            String[] levels = resource.getParentIds().split("/");
+            if(levels.length == OtherConstant.MENU_LEVEL){//判断是否是一级菜单
+                XfaceSysLeftMenuInquiryResponseSubDTO treeObject = new XfaceSysLeftMenuInquiryResponseSubDTO();
+                treeObject.setId(resource.getId());
+                treeObject.setName(resource.getName());
+                treeObject.setIcon(resource.getIcon());
+                treeObject.setUrl(resource.getUrl());
+                treeObject.setChildren(getChildren(resource.getId(),sysResourceList));
+                list.add(treeObject);
+            }
+        }
+        return list;
+    }
+    public List<XfaceSysLeftMenuInquiryResponseSubDTO> getChildren(Integer parentId,List<LeftMenuListVO> sysResourceList){
+        List<XfaceSysLeftMenuInquiryResponseSubDTO> list = new ArrayList<>();
+        for (LeftMenuListVO resource : sysResourceList) {
+            if(resource.getParentId().equals(parentId)){
+                XfaceSysLeftMenuInquiryResponseSubDTO treeObject = new XfaceSysLeftMenuInquiryResponseSubDTO();
+                treeObject.setId(resource.getId());
+                treeObject.setName(resource.getName());
+                treeObject.setIcon(resource.getIcon());
+                treeObject.setUrl(resource.getUrl());
+                treeObject.setChildren(getChildren(resource.getId(),sysResourceList));
+                list.add(treeObject);
+            }
+        }
+        return list;
     }
 }

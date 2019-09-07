@@ -48,13 +48,15 @@
             </script>
             <script type="text/html" id="typeTpl">
                 {{#  if(d.type == 1){ }}
-                <button class="layui-btn layui-btn-sm layui-btn-danger">系统</button>
+                <button class="layui-btn layui-btn-sm layui-bg-red">系统</button>
                 {{#  } else if (d.type == 2){ }}
-                <button class="layui-btn layui-btn-sm">目录</button>
+                <button class="layui-btn layui-btn-sm layui-bg-blue">目录</button>
                 {{#  } else if (d.type == 3){ }}
-                <button class="layui-btn layui-btn-sm layui-btn-normal">菜单</button>
+                <button class="layui-btn layui-btn-sm layui-bg-green">菜单</button>
+                {{#  } else if (d.type == 4){ }}
+                <button class="layui-btn layui-btn-sm layui-bg-gray">功能</button>
                 {{#  } else { }}
-                <button class="layui-btn layui-btn-sm layui-btn-warm">功能</button>
+                <button class="layui-btn layui-btn-sm layui-bg-black">根节点</button>
                 {{#  } }}
             </script>
             <script type="text/html" id="statusTpl">

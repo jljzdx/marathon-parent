@@ -12,6 +12,7 @@ function(a) {
   t = n.tabsPage,
   d = layui.view,
   l = function(a, d) {
+    console.log("-----------");
     var l, b = r("#LAY_app_tabsheader>li"),
     y = a.replace(/(^http(s*):)|(\?[\s\S]*$)/g, "");
     if (b.each(function(e) {
@@ -37,8 +38,12 @@ function(a) {
   o = "layadmin-layout-tabs",
   r = layui.$;//由于config.js依赖util.js，util.js依赖jquery.js，所以这里不需要引入jquery
   r(window);
+  //console.log(layui.cache);
+  //base:"/layuiadmin/"
+  //dir: "http://localhost:8081/layuiadmin/layui/"
+  //host: "//localhost:8081/"
   n.screen() < 2 && n.sideFlexible(),
-  layui.config({
+  /**layui.config({
     base: e.base + "modules/"
   }),
   layui.each(e.extend,
@@ -46,7 +51,7 @@ function(a) {
     var n = {};
     n[i] = "{/}" + e.base + "res/js/component/" + i,
     layui.extend(n)
-  }),
+  }),*/
   d().autoRender(),
   a("index", {
     openTabsPage: l
