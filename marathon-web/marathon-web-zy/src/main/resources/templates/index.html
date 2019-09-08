@@ -8,6 +8,8 @@
     <meta name="viewport"
           content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=0">
     <link rel="stylesheet" href="${request.contextPath}/layuiadmin/layui/css/layui.css" media="all">
+    <!--阿里巴巴矢量图标-->
+    <link rel="stylesheet" href="${request.contextPath}/layuiadmin/layui/css/modules/layui-icon-extend/iconfont.css" media="all">
     <link rel="stylesheet" href="${request.contextPath}/myself/style/admin.css" media="all">
 </head>
 <body class="layui-layout-body">
@@ -33,8 +35,8 @@
                         <img src="/myself/images/defaultPic.jpg"
                              class="layui-nav-img">
                         <#if user?exists>
-                            ${user.realName}
-                        </#if>
+                        ${user.realName}
+                    </#if>
                     </a>
                     <dl class="layui-nav-child">
                         <dd><a lay-href="${request.contextPath}/user/base/info/html">基本资料</a></dd>
@@ -53,24 +55,26 @@
 
                 <ul class="layui-nav layui-nav-tree" lay-shrink="all" id="LAY-system-side-menu"
                     lay-filter="layadmin-system-side-menu">
-
-                    <li data-name="user" class="layui-nav-item layui-nav-itemed">
+                    <!--<li data-name="user" class="layui-nav-item layui-nav-itemed">
                         <a href="javascript:;" lay-tips="系统管理" lay-direction="2">
                             <i class="layui-icon layui-icon-set"></i>
                             <cite>系统管理</cite>
                         </a>
                         <dl class="layui-nav-child">
                             <dd>
+                                <i class="layui-icon layui-icon-set"></i>
                                 <a lay-href="${request.contextPath}/user/list/html">用户管理</a>
                             </dd>
                             <dd>
+                                <i class="layui-icon layui-icon-set"></i>
                                 <a lay-href="${request.contextPath}/role/list/html">角色管理</a>
                             </dd>
                             <dd>
+                                <i class="layui-icon layui-icon-set"></i>
                                 <a lay-href="${request.contextPath}/resource/list/html">资源管理</a>
                             </dd>
                         </dl>
-                    </li>
+                    </li>-->
                 </ul>
             </div>
         </div>
@@ -112,11 +116,62 @@
 </div>
 <script src="${request.contextPath}/layuiadmin/layui/layui.js" charset="utf-8"></script>
 <script>
-layui.config({
-    base: '${request.contextPath}/layuiadmin/'
-}).extend({
-    index: 'res/js/modules/index' //主入口模块
-}).use('index');
+layui.use(['jquery','layer'],
+function() {
+    var $ = layui.$,
+    layer = layui.layer;
+    $.ajax({
+        url: '/sys/user/left/menu/inquiry',
+        type: 'post',
+        dataType: 'text',
+        success: function(data) {
+            var result = JSON.parse(data);
+            if (result.transactionStatus.success) {
+                $.each(result.dataList,function(i,obj){
+                    var content='<li data-name="user" class="layui-nav-item layui-nav-itemed">';
+                    content+='<a href="javascript:;" lay-tips="'+obj.name+'" lay-direction="2"><i class="iconfont layui-icon-extend'+obj.icon+'"></i><cite>'+obj.name+'</cite></a> ';
+                    //这里是添加所有的子菜单
+                    content+=loadchild(obj);
+                    content+='</li>';
+                    $(".layui-nav-tree").append(content);
+                });
+            } else {
+                layer.msg(result.transactionStatus.replyText);
+            }
+            layui.config({
+                base: '${request.contextPath}/layuiadmin/'
+            }).extend({
+                index: 'res/js/modules/index' //主入口模块
+            }).use('index',{});
+        }
+    });
+    function loadchild(obj){
+        if(obj==null){
+            return;
+        }
+        var content='';
+        if(obj.children!=null && obj.children.length>0){
+            content+='<dl class="layui-nav-child">';
+        }else{
+            content+='<dl>';
+        }
+
+        if(obj.children!=null && obj.children.length>0){
+            $.each(obj.children,function(i,note){
+                content+='<dd>';
+                content+='<i class="iconfont layui-icon-extend'+note.icon+'"></i>';
+                content+='<a lay-href="'+note.url+'">'+note.name+'</a> ';
+                if(note.children==null){
+                    return;
+                }
+                content+=loadchild(note);
+                content+=' </dd>';
+            });
+            content+='</dl> ';
+        }
+        return content;
+    }
+});
 </script>
 </body>
 </html>

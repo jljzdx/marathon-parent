@@ -304,10 +304,10 @@ html {
 }
 
 .layui-side-menu .layui-nav .layui-nav-itemed>.layui-nav-child {
-	padding: 5px 0
+	padding: 5px 0 0 15px
 }
 
-.layui-side-menu .layui-nav .layui-nav-item .layui-icon {
+.layui-side-menu .layui-nav .layui-nav-item .iconfont {
 	position: absolute;
 	top: 50%;
 	left: 20px;

@@ -189,9 +189,7 @@ layui.define(['layer', 'table'], function (exports) {
             });
         }
     };
-
     layui.link(layui.cache.base + 'res/css/component/treetable.css');
-
     // 给图标列绑定事件
     $('body').on('click', '.treeTable .treeTable-icon', function () {
         var treeLinkage = $(this).parents('.treeTable').attr('treeLinkage');

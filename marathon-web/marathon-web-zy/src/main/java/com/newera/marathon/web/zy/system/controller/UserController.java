@@ -1,10 +1,7 @@
 package com.newera.marathon.web.zy.system.controller;
 
 import com.newera.marathon.common.web.ListResponseConverter;
-import com.newera.marathon.dto.system.inquiry.XfaceSysUserInquiryPageRequestDTO;
-import com.newera.marathon.dto.system.inquiry.XfaceSysUserInquiryPageResponseDTO;
-import com.newera.marathon.dto.system.inquiry.XfaceSysUserModifyInquiryRequestDTO;
-import com.newera.marathon.dto.system.inquiry.XfaceSysUserModifyInquiryResponseDTO;
+import com.newera.marathon.dto.system.inquiry.*;
 import com.newera.marathon.dto.system.maintenance.*;
 import com.newera.marathon.microface.system.SysUserMicroService;
 import com.newera.marathon.web.zy.model.WebPage;
@@ -147,6 +144,14 @@ public class UserController {
         SsoUser user = (SsoUser) request.getAttribute(SsoConstant.SSO_USER);
         requestDTO.setModifyOperator(user.getUserName());
         XfaceSysUserResetPasswordResponseDTO responseDTO = sysUserMicroService.sysUserResetPassword(requestDTO);
+        return responseDTO;
+    }
+    @PostMapping("/sys/user/left/menu/inquiry")
+    @ResponseBody
+    public XfaceSysLeftMenuInquiryResponseDTO sysLeftMenuInquiry(XfaceSysLeftMenuInquiryRequestDTO requestDTO,HttpServletRequest request){
+        SsoUser user = (SsoUser) request.getAttribute(SsoConstant.SSO_USER);
+        requestDTO.setUserName(user.getUserName());
+        XfaceSysLeftMenuInquiryResponseDTO responseDTO = sysUserMicroService.sysLeftMenuInquiry(requestDTO);
         return responseDTO;
     }
 }
