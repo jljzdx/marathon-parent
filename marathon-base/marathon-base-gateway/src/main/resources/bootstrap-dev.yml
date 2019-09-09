@@ -1,0 +1,21 @@
+server:
+  port: 8070
+spring:
+  cloud:
+    gateway:
+      discovery:
+        locator:
+          #表明gateway开启服务注册和发现的功能
+          enabled: false
+          #将请求路径上的服务名配置为小写
+          lower-case-service-id: true
+      routes:
+      - id: marathon-sys-service-system
+        uri: lb://marathon-sys-service-system
+        predicates:
+        - Path=/system/**
+        filters:
+        - StripPrefix=1
+    nacos:
+      discovery:
+        server-addr: 127.0.0.1:8848

@@ -116,7 +116,7 @@
 </div>
 <script src="${request.contextPath}/layuiadmin/layui/layui.js" charset="utf-8"></script>
 <script>
-layui.use(['jquery','layer'],
+layui.use(['jquery', 'layer'],
 function() {
     var $ = layui.$,
     layer = layui.layer;
@@ -127,13 +127,20 @@ function() {
         success: function(data) {
             var result = JSON.parse(data);
             if (result.transactionStatus.success) {
-                $.each(result.dataList,function(i,obj){
-                    var content='<li data-name="user" class="layui-nav-item layui-nav-itemed">';
-                    content+='<a href="javascript:;" lay-tips="'+obj.name+'" lay-direction="2"><i class="iconfont layui-icon-extend'+obj.icon+'"></i><cite>'+obj.name+'</cite></a> ';
+                $.each(result.dataList,
+                function(i, obj) {
+                    var content = '<li data-name="user" class="layui-nav-item layui-nav-itemed">';
+                    content += '<a href="javascript:;" lay-tips="' + obj.name + '" lay-direction="2"><i class="iconfont layui-icon-extend' + obj.icon + '"></i><cite>' + obj.name + '</cite></a> ';
                     //这里是添加所有的子菜单
-                    content+=loadchild(obj);
-                    content+='</li>';
+                    content += loadchild(obj);
+                    content += '</li>';
                     $(".layui-nav-tree").append(content);
+                });
+                console.log(result.permissions);
+                //存储权限
+                layui.data('auth', {
+                    key: 'authList',
+                    value: result.permissions
                 });
             } else {
                 layer.msg(result.transactionStatus.replyText);
@@ -142,32 +149,32 @@ function() {
                 base: '${request.contextPath}/layuiadmin/'
             }).extend({
                 index: 'res/js/modules/index' //主入口模块
-            }).use('index',{});
+            }).use('index', {});
         }
     });
-    function loadchild(obj){
-        if(obj==null){
+    function loadchild(obj) {
+        if (obj == null) {
             return;
         }
-        var content='';
-        if(obj.children!=null && obj.children.length>0){
-            content+='<dl class="layui-nav-child">';
-        }else{
-            content+='<dl>';
+        var content = '';
+        if (obj.children != null && obj.children.length > 0) {
+            content += '<dl class="layui-nav-child">';
+        } else {
+            content += '<dl>';
         }
-
-        if(obj.children!=null && obj.children.length>0){
-            $.each(obj.children,function(i,note){
-                content+='<dd>';
-                content+='<i class="iconfont layui-icon-extend'+note.icon+'"></i>';
-                content+='<a lay-href="'+note.url+'">'+note.name+'</a> ';
-                if(note.children==null){
+        if (obj.children != null && obj.children.length > 0) {
+            $.each(obj.children,
+            function(i, note) {
+                content += '<dd>';
+                content += '<i class="iconfont layui-icon-extend' + note.icon + '"></i>';
+                content += '<a lay-href="' + note.url + '">' + note.name + '</a> ';
+                if (note.children == null) {
                     return;
                 }
-                content+=loadchild(note);
-                content+=' </dd>';
+                content += loadchild(note);
+                content += ' </dd>';
             });
-            content+='</dl> ';
+            content += '</dl> ';
         }
         return content;
     }

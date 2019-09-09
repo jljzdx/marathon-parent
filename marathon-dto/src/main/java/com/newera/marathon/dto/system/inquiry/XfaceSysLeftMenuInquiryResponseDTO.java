@@ -10,4 +10,6 @@ public class XfaceSysLeftMenuInquiryResponseDTO extends GenericResponseDTO {
 
     private List<XfaceSysLeftMenuInquiryResponseSubDTO> dataList;
 
+    private List<String> permissions;
+
 }

@@ -15,4 +15,6 @@ public interface SysUserMapper extends BaseMapper<SysUser> {
                                                                  @Param("requestDTO") XfaceSysUserInquiryPageRequestDTO requestDTO);
 
     List<LeftMenuListVO> queryLeftMenu(String userName);
+
+    List<String> queryPermissions(String userName);
 }

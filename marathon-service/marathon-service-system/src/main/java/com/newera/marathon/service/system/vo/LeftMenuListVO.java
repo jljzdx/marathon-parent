@@ -28,4 +28,9 @@ public class LeftMenuListVO {
      * 访问路径
      */
     private String url;
+
+    /**
+     * 类型
+     */
+    private Integer type;
 }

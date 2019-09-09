@@ -273,9 +273,12 @@ public class SysUserServiceImpl extends ServiceImpl<SysUserMapper, SysUser> impl
         TransactionStatus transactionStatus = new TransactionStatus();
         //查询菜单
         List<LeftMenuListVO> list = sysUserMapper.queryLeftMenu(requestDTO.getUserName());
+        //查询权限列表
+        List<String> permissions = sysUserMapper.queryPermissions(requestDTO.getUserName());
         //循环所有资源，标记已授权的资源，并递归生成树
         List<XfaceSysLeftMenuInquiryResponseSubDTO> responseSubDTOS = createTree(list);
         responseDTO.setDataList(responseSubDTOS);
+        responseDTO.setPermissions(permissions);
         responseDTO.setTransactionStatus(transactionStatus);
         log.info("doSysLeftMenuInquiry start");
         return responseDTO;
