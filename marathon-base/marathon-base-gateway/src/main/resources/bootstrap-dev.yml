@@ -15,7 +15,21 @@ spring:
         predicates:
         - Path=/system/**
         filters:
+        - Test=1, 2, 3
+        #在转发之前将/demo去掉
         - StripPrefix=1
+        - name: RequestRateLimiter
+          args:
+            #SpEL 表达式根据#{@beanName}从 Spring 容器中获取 Bean 对象
+            key-resolver: '#{@hostAddrKeyResolver}'
+            #令牌桶每秒填充平均速率
+            redis-rate-limiter.replenishRate: 1
+            #令牌桶总容量
+            redis-rate-limiter.burstCapacity: 3
     nacos:
       discovery:
         server-addr: 127.0.0.1:8848
+  redis:
+    host: 127.0.0.1
+    port: 6379
+    database: 0

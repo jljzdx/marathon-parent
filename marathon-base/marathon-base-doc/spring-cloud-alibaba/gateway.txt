@@ -1,0 +1,22 @@
+1、过滤器
+|-针对于单个路由的GatewayFilter【需要通过spring.cloud.routes.filters 配置在具体路由下，只作用在当前路由上】
+  |--Spring Cloud Gateway内置了19种强大的过滤器工厂，能够满足很多场景的需求
+  |--自定义过滤器
+     |---implements GatewayFilter, Ordered
+     |---extends AbstractGatewayFilterFactory<RequestTimeGatewayFilterFactory.Config>
+|-针对于所有路由的GlobalFilter【全局过滤器，不需要在配置文件中配置，作用在所有的路由上】
+  |--Spring Cloud Gateway内置了6种全局过滤器
+  |--自定义过滤器【例子看TokenGlobalFilter】
+2、限流
+|-常见的限流算法
+  |--计数器算法：限制一秒钟的能够通过的请求数
+     |---弊端：如果我在单位时间1s内的前10ms，已经通过了100个请求，那后面的990ms，只能眼巴巴的把请求拒绝，我们把这种现象称为“突刺现象”
+  |--漏桶算法：每10毫秒处理一次请求，可能突然进来很多请求，没来得及处理的请求就先放在桶里。当桶满了，那么新进来的请求就丢弃。
+     |---优点：解决了计数器算法的弊端。
+     |---弊端：无法应对短时间的突发流量。
+  |--令牌桶算法：
+|-默认实现Redis限流，扩展只需要实现Ratelimter接口即可，同时也可以通过自定义KeyResolver来指定限流的Key,比如我们需要根据用户、IP、URI来做限流等
+3、动态路由
+4、容错
+
+
