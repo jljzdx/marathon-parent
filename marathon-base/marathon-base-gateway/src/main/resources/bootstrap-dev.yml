@@ -2,41 +2,14 @@ server:
   port: 8070
 spring:
   cloud:
-    gateway:
-      discovery:
-        locator:
-          #表明gateway开启服务注册和发现的功能
-          enabled: false
-          #将请求路径上的服务名配置为小写
-          lower-case-service-id: true
-      routes:
-      - id: marathon-sys-service-system
-        uri: lb://marathon-sys-service-system
-        predicates:
-        - Path=/system/**
-        filters:
-        - Test=1, 2, 3
-        #在转发之前将/demo去掉
-        - StripPrefix=1
-        - name: RequestRateLimiter
-          args:
-            #SpEL 表达式根据#{@beanName}从 Spring 容器中获取 Bean 对象
-            key-resolver: '#{@userKeyResolver}'
-            #令牌桶每秒填充平均速率
-            redis-rate-limiter.replenishRate: 1
-            #令牌桶总容量
-            redis-rate-limiter.burstCapacity: 6
     nacos:
+      config:
+        server-addr: 127.0.0.1:8848
+        file-extension: yaml
+        namespace: 826edc0d-f59e-4bee-9b62-b1d8eb78127f
+        group: MARATHON_GROUP
+        ext-config[0]:
+          data-id: redis.yaml
+          refresh: true
       discovery:
         server-addr: 127.0.0.1:8848
-  redis:
-    host: 127.0.0.1
-    port: 6379
-    database: 0
-    timeout: 5000
-    lettuce:
-      pool:
-        max-active: 200 #连接池最大连接数（使用负值表示没有限制）
-        max-idle: 20 # 连接池中的最大空闲连接
-        min-idle: 5 #连接池中的最小空闲连接
-        max-wait: 1000 # 连接池最大阻塞等待时间（使用负值表示没有限制）
