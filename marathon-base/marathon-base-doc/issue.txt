@@ -2,6 +2,7 @@
 2、js、css如何不需要每个页面都引入？//动态加载    顺便把layui.config的base放到config.js里面
 3、啥时候考虑一下机构、系统
 4、排序以后再优化
-6、getway
+6、getway：限流
 7、对admin角色特地放开所有权限
 8、后台权限拦截
+9、reactor-core响应式编程（Flux、Mono）

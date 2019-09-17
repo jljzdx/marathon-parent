@@ -24,10 +24,9 @@ public class TestGatewayFilterFactory extends AbstractGatewayFilterFactory<TestG
     }
     @Override
     public GatewayFilter apply(TestConfig config) {
-        log.info("TestGatewayFilterFactory start ..................");
         return (exchange, chain) -> {
+            log.info("TestGatewayFilterFactory start ..................");
             //这里写业务逻辑
-            log.info("TestGatewayFilterFactory chain.filter start ................");
             return chain.filter(exchange).then(
                     Mono.fromRunnable(() -> {
                         //调用成功后

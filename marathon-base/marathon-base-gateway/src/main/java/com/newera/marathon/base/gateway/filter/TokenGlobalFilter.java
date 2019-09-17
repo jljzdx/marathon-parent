@@ -17,10 +17,10 @@ import reactor.core.publisher.Mono;
 public class TokenGlobalFilter implements GlobalFilter, Ordered  {
     @Override
     public Mono<Void> filter(ServerWebExchange exchange, GatewayFilterChain chain) {
-        log.info("token global filter start ................");
+        log.info("TokenGlobalFilter start ................");
         ServerHttpRequest request = exchange.getRequest();
         log.info("path="+request.getPath());
-        log.info("uri="+request.getURI());
+        //log.info("uri="+request.getURI());
         HttpHeaders headers = request.getHeaders();
         String token = headers.getFirst("token");
         log.info("token="+token);
@@ -29,7 +29,7 @@ public class TokenGlobalFilter implements GlobalFilter, Ordered  {
             exchange.getResponse().setStatusCode(HttpStatus.UNAUTHORIZED);
             return exchange.getResponse().setComplete();
         }
-        log.info("TokenGlobalFilter chain.filter start ................");
+        log.info("TokenGlobalFilter chain.filter ................");
         return chain.filter(exchange);
     }
 
