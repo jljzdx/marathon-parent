@@ -15,16 +15,14 @@ import com.newera.marathon.service.system.model.ApplicationError;
 import com.newera.marathon.service.system.service.SysService;
 import com.spaking.boot.starter.core.exception.BaseException;
 import com.spaking.boot.starter.core.model.TransactionStatus;
+import com.spaking.boot.starter.redis.utils.RedisUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.redis.core.ReactiveRedisTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import reactor.core.publisher.Mono;
 
-import java.time.Duration;
 import java.util.Date;
 import java.util.Map;
 
@@ -34,7 +32,7 @@ public class SysServiceImpl implements SysService {
     @Autowired
     private SysUserMapper sysUserMapper;
     @Autowired
-    private ReactiveRedisTemplate redisTemplate;
+    private RedisUtil redisUtil;
 
     @Transactional
     @Override
@@ -57,11 +55,7 @@ public class SysServiceImpl implements SysService {
             throw new BaseException(ApplicationError.USER_NAME_OR_PASSWORD_ERROR.getMessage(), ApplicationError.USER_NAME_OR_PASSWORD_ERROR.getCode());
         }
         //验证图形验证码
-        String captcha = "";
-        Object obj = redisTemplate.opsForValue().get(requestDTO.getCaptchaId()).block();
-        if(null != obj){
-            captcha = (String)obj;
-        }
+        String captcha = redisUtil.get(requestDTO.getCaptchaId());
         if(StringUtils.isBlank(captcha) || !captcha.equalsIgnoreCase(requestDTO.getCaptchaCode())){
             throw new BaseException(ApplicationError.CAPTCHA_ERROR.getMessage(), ApplicationError.CAPTCHA_ERROR.getCode());
         }
@@ -97,10 +91,8 @@ public class SysServiceImpl implements SysService {
         responseDTO.setPic(pic);
         responseDTO.setCaptchaId(key);
         responseDTO.setTransactionStatus(transactionStatus);
-        Duration duration = Duration.ofSeconds(RedisConstant.CAPTCHA_EXPIRY_SECOND);
-        Mono<Boolean> result = redisTemplate.opsForValue().set(key,map.get(CaptchaCodeUtil.RANDOMSTRING),duration);
-        log.info("doGenerateCaptcha："+result.block());
-        result.subscribe(System.out::println);
+        Boolean result = redisUtil.setx(key,map.get(CaptchaCodeUtil.RANDOMSTRING),RedisConstant.CAPTCHA_EXPIRY_SECOND);
+        log.info("doGenerateCaptcha："+result);
         log.info("doGenerateCaptcha end");
         return responseDTO;
     }
