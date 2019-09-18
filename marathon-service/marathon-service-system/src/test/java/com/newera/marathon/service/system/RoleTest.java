@@ -74,6 +74,11 @@ public class RoleTest {
                 .andReturn();
         log.info("response data：[" + mvcResult.getResponse().getContentAsString() + "]");
     }
+
+    /**
+     * 修改角色
+     * @throws Exception
+     */
     @Test
     public void roleModifyTest() throws Exception {
         XfaceSysRoleModifyRequestDTO requestDTO = new XfaceSysRoleModifyRequestDTO();
