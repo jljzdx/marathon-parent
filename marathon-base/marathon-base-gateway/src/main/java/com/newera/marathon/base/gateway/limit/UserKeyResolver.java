@@ -14,7 +14,7 @@ import reactor.core.publisher.Mono;
 public class UserKeyResolver implements KeyResolver {
     @Override
     public Mono<String> resolve(ServerWebExchange exchange) {
-        String userId = exchange.getRequest().getQueryParams().getFirst("userId");
+        String userId = exchange.getRequest().getHeaders().getFirst("userId");
         log.info("UserKeyResolver userId="+userId);
         return Mono.just(userId);
     }

@@ -238,7 +238,7 @@ public class SysUserServiceImpl extends ServiceImpl<SysUserMapper, SysUser> impl
         updateUser.setModifyOperator(requestDTO.getModifyOperator());
         sysUserMapper.updateById(updateUser);
         responseDTO.setTransactionStatus(transactionStatus);
-        log.info("doSysUserModifyPassword start");
+        log.info("doSysUserModifyPassword end");
         return responseDTO;
     }
 
@@ -263,7 +263,7 @@ public class SysUserServiceImpl extends ServiceImpl<SysUserMapper, SysUser> impl
         sysUser2.setModifyOperator(requestDTO.getModifyOperator());
         updateById(sysUser2);
         responseDTO.setTransactionStatus(transactionStatus);
-        log.info("doSysUserResetPassword start");
+        log.info("doSysUserResetPassword end");
         return responseDTO;
     }
     @Override
@@ -280,7 +280,7 @@ public class SysUserServiceImpl extends ServiceImpl<SysUserMapper, SysUser> impl
         responseDTO.setDataList(responseSubDTOS);
         responseDTO.setPermissions(permissions);
         responseDTO.setTransactionStatus(transactionStatus);
-        log.info("doSysLeftMenuInquiry start");
+        log.info("doSysLeftMenuInquiry end");
         return responseDTO;
     }
 
