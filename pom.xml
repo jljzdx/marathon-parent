@@ -20,6 +20,7 @@
         <module>marathon-web</module>
         <module>marathon-common</module>
         <module>marathon-microface</module>
+        <module>marathon-job</module>
     </modules>
 
     <properties>
