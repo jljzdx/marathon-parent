@@ -7,5 +7,4 @@
 7、对admin角色特地放开所有权限
 8、后台权限拦截
 9、reactor-core响应式编程（Flux、Mono）
-10、分布式JOB
-11、swagger
+10、整理一下配置中心

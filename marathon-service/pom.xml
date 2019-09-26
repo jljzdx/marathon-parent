@@ -12,7 +12,7 @@
     <artifactId>marathon-service</artifactId>
     <packaging>pom</packaging>
     <modules>
-        <module>marathon-service-system</module>
+        <module>marathon-service-cms</module>
     </modules>
 
     <dependencies>

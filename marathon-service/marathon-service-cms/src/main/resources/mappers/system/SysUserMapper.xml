@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.newera.marathon.service.cms.mapper.SysUserMapper">
+    <sql id="SysUserWhere">
+        <if test="null != requestDTO.userName and requestDTO.userName != ''">
+            and user_name LIKE CONCAT('%', '${requestDTO.userName}', '%')
+        </if>
+        <if test="null != requestDTO.startDateTime and requestDTO.startDateTime != ''">
+            and login_time &gt;= #{requestDTO.startDateTime}
+        </if>
+        <if test="null != requestDTO.endDateTime and requestDTO.endDateTime != ''">
+            and login_time &lt;= #{requestDTO.endDateTime}
+        </if>
+    </sql>
+    <select id="querySysUserPage" resultType="com.newera.marathon.dto.system.inquiry.XfaceSysUserInquiryPageResponseSubDTO">
+        select
+        id,
+        gender,
+        user_name userName,
+        real_name realName,
+        mobile mobile,
+        email,
+        last_login_time lastLoginTime,
+        login_time loginTime,
+        login_count loginCount,
+        locked,
+        gmt_create gmtCreate
+        from t_sys_user
+        <where>
+            <include refid="SysUserWhere"></include>
+        </where>
+    </select>
+    <select id="queryLeftMenu" parameterType="java.lang.String" resultType="com.newera.marathon.service.cms.vo.LeftMenuListVO">
+        select
+        r.id,r.`name`,r.parent_id parentId,r.parent_ids parentIds,r.icon,r.url
+        from t_sys_user u,t_sys_user_role ur,t_sys_role role,t_sys_role_resource rr,t_sys_resource r
+        where
+        u.id = ur.user_id
+        and ur.role_id = rr.role_id
+        and rr.resource_id = r.id
+        and role.id = ur.role_id
+        and r.type in (2,3)
+        and r.available = 1
+        and role.available = 1
+        and u.user_name = #{value}
+        order by priority
+    </select>
+    <select id="queryPermissions" parameterType="java.lang.String" resultType="java.lang.String">
+        select
+        r.permission
+        from t_sys_user u,t_sys_user_role ur,t_sys_role role,t_sys_role_resource rr,t_sys_resource r
+        where
+        u.id = ur.user_id
+        and ur.role_id = rr.role_id
+        and rr.resource_id = r.id
+        and role.id = ur.role_id
+        and r.type in (4)
+        and r.available = 1
+        and role.available = 1
+        and u.user_name = #{value}
+    </select>
+</mapper>
