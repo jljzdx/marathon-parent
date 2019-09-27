@@ -13,6 +13,8 @@
     <packaging>pom</packaging>
     <modules>
         <module>marathon-service-cms</module>
+        <module>marathon-service-cust</module>
+        <module>marathon-service-cos</module>
     </modules>
 
     <dependencies>

@@ -24,3 +24,9 @@ npm run：package.json文件中的字段script的每一个属性都是一个自�
   }
 }
 7、Swagger因为浏览器缓存造成一致报错。
+8、环境
+DEV 开发环境
+FAT 测试环境，相当于alpha环境(功能测试)
+UAT 集成环境，相当于beta环境（回归测试）
+PRO 生产环境
+
