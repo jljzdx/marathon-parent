@@ -6,5 +6,4 @@ public interface SysService {
 
     XfaceSysLoginResponseDTO doSysLoginAuth(XfaceSysLoginRequestDTO requestDTO);
 
-    XfaceGenearteCaptchaResponseDTO doGenerateCaptcha();
 }

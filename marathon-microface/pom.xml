@@ -12,7 +12,9 @@
     <artifactId>marathon-microface</artifactId>
     <packaging>pom</packaging>
     <modules>
-        <module>marathon-microface-system</module>
+        <module>marathon-microface-cust</module>
+        <module>marathon-microface-cos</module>
+        <module>marathon-microface-cms</module>
     </modules>
 
     <dependencies>

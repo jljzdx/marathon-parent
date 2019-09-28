@@ -45,9 +45,9 @@ public class TokenGlobalFilter implements GlobalFilter, Ordered {
         Long count = routeIds.stream().filter(w->{
             return path.contains(w)
                     && !("/"+w+"/v2/api-docs").equalsIgnoreCase(path)
-                    && !"dev".equalsIgnoreCase(profiles);
+                    && !"dev".equalsIgnoreCase(profiles)
+                    && !"cos".equalsIgnoreCase(w);
         }).count();
-        log.info("count >>>>>>>>>"+count);
         if (count == 1) {
             HttpHeaders headers = request.getHeaders();
             String token = headers.getFirst("token");

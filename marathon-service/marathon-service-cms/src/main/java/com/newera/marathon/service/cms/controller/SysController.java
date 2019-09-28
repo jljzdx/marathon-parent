@@ -1,6 +1,5 @@
 package com.newera.marathon.service.cms.controller;
 
-import com.newera.marathon.dto.system.maintenance.XfaceGenearteCaptchaResponseDTO;
 import com.newera.marathon.dto.system.maintenance.XfaceSysLoginRequestDTO;
 import com.newera.marathon.dto.system.maintenance.XfaceSysLoginResponseDTO;
 import com.newera.marathon.service.cms.service.SysService;
@@ -23,12 +22,6 @@ public class SysController {
     @PostMapping("/sys/login/auth")
     public XfaceSysLoginResponseDTO sysLoginAuth(@Valid @RequestBody XfaceSysLoginRequestDTO requestDTO){
         XfaceSysLoginResponseDTO responseDTO = sysService.doSysLoginAuth(requestDTO);
-        return responseDTO;
-    }
-    @ApiOperation(value="生成图形验证码", notes="生成图形验证码")
-    @PostMapping("/sys/generate/captcha")
-    public XfaceGenearteCaptchaResponseDTO generateCaptcha(){
-        XfaceGenearteCaptchaResponseDTO responseDTO = sysService.doGenerateCaptcha();
         return responseDTO;
     }
 }

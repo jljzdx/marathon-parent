@@ -7,9 +7,9 @@ import org.springframework.cloud.openfeign.EnableFeignClients;
 import org.springframework.context.annotation.ComponentScan;
 
 @SpringBootApplication
-@ComponentScan(basePackages = {"com.spaking.boot.starter","com.newera.marathon.microface.system","com.newera.marathon.base.sso"})
+@ComponentScan(basePackages = {"com.spaking.boot.starter","com.newera.marathon.microface.cms","com.newera.marathon.microface.cos","com.newera.marathon.base.sso"})
 @EnableDiscoveryClient
-@EnableFeignClients(basePackages = {"com.newera.marathon.microface.system"})
+@EnableFeignClients(basePackages = {"com.newera.marathon.microface.cms","com.newera.marathon.microface.cos"})
 public class SsoApplication {
 
 	public static void main(String[] args) {

@@ -124,7 +124,7 @@ public class SysResourceServiceImpl extends ServiceImpl<SysResourceMapper, SysRe
         //更新操作
         Boolean result = updateById(resource);
         if(!result){
-            throw new BaseException(ApplicationError.SYS_MODIFY_FAILED.getMessage(), ApplicationError.SYS_MODIFY_FAILED.getCode());
+            throw new BaseException(ApplicationError.MODIFY_FAILED.getMessage(), ApplicationError.MODIFY_FAILED.getCode());
         }
         responseDTO.setTransactionStatus(transactionStatus);
         log.info("doSysResourceModify end");
@@ -143,7 +143,7 @@ public class SysResourceServiceImpl extends ServiceImpl<SysResourceMapper, SysRe
         //更新操作
         Boolean result = updateById(resource);
         if(!result){
-            throw new BaseException(ApplicationError.SYS_DELETE_FAILED.getMessage(), ApplicationError.SYS_DELETE_FAILED.getCode());
+            throw new BaseException(ApplicationError.DELETE_FAILED.getMessage(), ApplicationError.DELETE_FAILED.getCode());
         }
 
         responseDTO.setTransactionStatus(transactionStatus);

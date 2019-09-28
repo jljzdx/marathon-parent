@@ -35,10 +35,10 @@
             <groupId>com.spakingframework.boot</groupId>
             <artifactId>spaking-boot-starter-redis</artifactId>
         </dependency>
-        <!--marathon-microface-system-->
+        <!--marathon-microface-cms-->
         <dependency>
             <groupId>com.newera.marathon</groupId>
-            <artifactId>marathon-microface-system</artifactId>
+            <artifactId>marathon-microface-cms</artifactId>
         </dependency>
         <!--marathon-common-->
         <dependency>

@@ -232,7 +232,7 @@ public class SysRoleServiceImpl extends ServiceImpl<SysRoleMapper, SysRole> impl
         //添加操作
         Boolean result = save(sysRole);
         if (!result) {
-            throw new BaseException(ApplicationError.SYS_ADDITION_FAILED.getMessage(), ApplicationError.SYS_ADDITION_FAILED.getCode());
+            throw new BaseException(ApplicationError.ADDITION_FAILED.getMessage(), ApplicationError.ADDITION_FAILED.getCode());
         }
         responseDTO.setTransactionStatus(transactionStatus);
         log.info("doSysRoleAddition end");
@@ -251,7 +251,7 @@ public class SysRoleServiceImpl extends ServiceImpl<SysRoleMapper, SysRole> impl
         //更新操作
         Boolean result = updateById(sysRole);
         if (!result) {
-            throw new BaseException(ApplicationError.SYS_MODIFY_FAILED.getMessage(), ApplicationError.SYS_MODIFY_FAILED.getCode());
+            throw new BaseException(ApplicationError.MODIFY_FAILED.getMessage(), ApplicationError.MODIFY_FAILED.getCode());
         }
         responseDTO.setTransactionStatus(transactionStatus);
         log.info("doSysRoleModify end");
@@ -270,7 +270,7 @@ public class SysRoleServiceImpl extends ServiceImpl<SysRoleMapper, SysRole> impl
         //更新操作
         Boolean result = updateById(sysRole);
         if (!result) {
-            throw new BaseException(ApplicationError.SYS_DELETE_FAILED.getMessage(), ApplicationError.SYS_DELETE_FAILED.getCode());
+            throw new BaseException(ApplicationError.DELETE_FAILED.getMessage(), ApplicationError.DELETE_FAILED.getCode());
         }
         responseDTO.setTransactionStatus(transactionStatus);
         log.info("doSysRoleDelete end");

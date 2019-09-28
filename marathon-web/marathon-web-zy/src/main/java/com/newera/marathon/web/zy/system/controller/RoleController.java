@@ -3,7 +3,7 @@ package com.newera.marathon.web.zy.system.controller;
 import com.newera.marathon.common.web.ListResponseConverter;
 import com.newera.marathon.dto.system.inquiry.*;
 import com.newera.marathon.dto.system.maintenance.*;
-import com.newera.marathon.microface.system.SysRoleMicroService;
+import com.newera.marathon.microface.cms.system.SysRoleMicroService;
 import com.spaking.boot.starter.cas.model.SsoUser;
 import com.spaking.boot.starter.cas.utils.SsoConstant;
 import com.spaking.boot.starter.core.model.PageModel;

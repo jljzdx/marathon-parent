@@ -120,7 +120,7 @@ public class SysUserServiceImpl extends ServiceImpl<SysUserMapper, SysUser> impl
         //添加操作
         Boolean result = save(sysUser);
         if(!result){
-            throw new BaseException(ApplicationError.SYS_ADDITION_FAILED.getMessage(), ApplicationError.SYS_ADDITION_FAILED.getCode());
+            throw new BaseException(ApplicationError.ADDITION_FAILED.getMessage(), ApplicationError.ADDITION_FAILED.getCode());
         }
         //组装用户角色数据
         List<SysUserRole> sysUserRoles = new ArrayList<>();
@@ -154,7 +154,7 @@ public class SysUserServiceImpl extends ServiceImpl<SysUserMapper, SysUser> impl
         //更新操作
         Boolean result = updateById(sysUser);
         if(!result){
-            throw new BaseException(ApplicationError.SYS_MODIFY_FAILED.getMessage(), ApplicationError.SYS_MODIFY_FAILED.getCode());
+            throw new BaseException(ApplicationError.MODIFY_FAILED.getMessage(), ApplicationError.MODIFY_FAILED.getCode());
         }
         //删除用户角色
         sysUserRoleMapper.deleteByUserId(requestDTO.getId());
@@ -189,7 +189,7 @@ public class SysUserServiceImpl extends ServiceImpl<SysUserMapper, SysUser> impl
         //更新操作
         Boolean result = updateById(sysUser);
         if(!result){
-            throw new BaseException(ApplicationError.SYS_MODIFY_FAILED.getMessage(), ApplicationError.SYS_MODIFY_FAILED.getCode());
+            throw new BaseException(ApplicationError.MODIFY_FAILED.getMessage(), ApplicationError.MODIFY_FAILED.getCode());
         }
         responseDTO.setTransactionStatus(transactionStatus);
         log.info("doSysUserBaseInfoModify end");
@@ -208,7 +208,7 @@ public class SysUserServiceImpl extends ServiceImpl<SysUserMapper, SysUser> impl
         //更新操作
         Boolean result = updateById(sysUser);
         if(!result){
-            throw new BaseException(ApplicationError.SYS_DELETE_FAILED.getMessage(), ApplicationError.SYS_DELETE_FAILED.getCode());
+            throw new BaseException(ApplicationError.DELETE_FAILED.getMessage(), ApplicationError.DELETE_FAILED.getCode());
         }
         responseDTO.setTransactionStatus(transactionStatus);
         log.info("doSysUserDelete end");

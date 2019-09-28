@@ -12,4 +12,11 @@
     <artifactId>marathon-service-cos</artifactId>
 
 
+    <dependencies>
+        <!--marathon-microface-cms-->
+        <dependency>
+            <groupId>com.newera.marathon</groupId>
+            <artifactId>marathon-microface-cust</artifactId>
+        </dependency>
+    </dependencies>
 </project>

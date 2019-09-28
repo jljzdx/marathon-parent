@@ -27,7 +27,17 @@
             </dependency>
             <dependency>
                 <groupId>com.newera.marathon</groupId>
-                <artifactId>marathon-microface-system</artifactId>
+                <artifactId>marathon-microface-cms</artifactId>
+                <version>${project.newera.marathon.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.newera.marathon</groupId>
+                <artifactId>marathon-microface-cos</artifactId>
+                <version>${project.newera.marathon.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.newera.marathon</groupId>
+                <artifactId>marathon-microface-cust</artifactId>
                 <version>${project.newera.marathon.version}</version>
             </dependency>
             <!-- commons-codec -->

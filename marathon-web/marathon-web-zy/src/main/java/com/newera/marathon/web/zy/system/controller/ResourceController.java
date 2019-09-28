@@ -1,9 +1,12 @@
 package com.newera.marathon.web.zy.system.controller;
 
 import com.newera.marathon.common.web.ListResponseConverter;
-import com.newera.marathon.dto.system.inquiry.*;
+import com.newera.marathon.dto.system.inquiry.XfaceSysResourceLoopInquiryRequestDTO;
+import com.newera.marathon.dto.system.inquiry.XfaceSysResourceLoopInquiryResponseDTO;
+import com.newera.marathon.dto.system.inquiry.XfaceSysResourceModifyInquiryRequestDTO;
+import com.newera.marathon.dto.system.inquiry.XfaceSysResourceModifyInquiryResponseDTO;
 import com.newera.marathon.dto.system.maintenance.*;
-import com.newera.marathon.microface.system.SysResourceMicroService;
+import com.newera.marathon.microface.cms.system.SysResourceMicroService;
 import com.spaking.boot.starter.cas.model.SsoUser;
 import com.spaking.boot.starter.cas.utils.SsoConstant;
 import org.springframework.beans.factory.annotation.Autowired;

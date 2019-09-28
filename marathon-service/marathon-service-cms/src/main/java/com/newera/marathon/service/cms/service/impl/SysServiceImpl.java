@@ -1,12 +1,8 @@
 package com.newera.marathon.service.cms.service.impl;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
-import com.newera.marathon.common.constant.RedisConstant;
-import com.newera.marathon.common.utils.CaptchaCodeUtil;
 import com.newera.marathon.common.utils.PasswordUtil;
-import com.newera.marathon.common.utils.RandomUtil;
 import com.newera.marathon.dto.system.enumeration.SysUserStatus;
-import com.newera.marathon.dto.system.maintenance.XfaceGenearteCaptchaResponseDTO;
 import com.newera.marathon.dto.system.maintenance.XfaceSysLoginRequestDTO;
 import com.newera.marathon.dto.system.maintenance.XfaceSysLoginResponseDTO;
 import com.newera.marathon.service.cms.entity.SysUser;
@@ -24,7 +20,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Date;
-import java.util.Map;
 
 @Slf4j
 @Service
@@ -74,27 +69,6 @@ public class SysServiceImpl implements SysService {
         log.info("doSysLoginAuth end");
         return responseDTO;
 
-    }
-
-    @Override
-    public XfaceGenearteCaptchaResponseDTO doGenerateCaptcha() {
-        log.info("doGenerateCaptcha start");
-        XfaceGenearteCaptchaResponseDTO responseDTO = new XfaceGenearteCaptchaResponseDTO();
-        TransactionStatus transactionStatus = new TransactionStatus();
-        CaptchaCodeUtil captchaCodeUtil = new CaptchaCodeUtil();
-        Map<String, String> map = captchaCodeUtil.getRandcode();
-        //把验证码存储到redis上，有效期5分钟
-        String key = RandomUtil.getRandomString(12);
-        String pic = map.get(CaptchaCodeUtil.PIC);
-        pic = "data:image/jpg;base64,"+pic;
-        responseDTO.setCaptchaCode(map.get(CaptchaCodeUtil.RANDOMSTRING));
-        responseDTO.setPic(pic);
-        responseDTO.setCaptchaId(key);
-        responseDTO.setTransactionStatus(transactionStatus);
-        Boolean result = redisUtil.setx(key,map.get(CaptchaCodeUtil.RANDOMSTRING),RedisConstant.CAPTCHA_EXPIRY_SECOND);
-        log.info("doGenerateCaptcha："+result);
-        log.info("doGenerateCaptcha end");
-        return responseDTO;
     }
 
 }

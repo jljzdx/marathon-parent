@@ -4,7 +4,8 @@ import com.newera.marathon.base.sso.service.UserService;
 import com.newera.marathon.dto.system.maintenance.XfaceGenearteCaptchaResponseDTO;
 import com.newera.marathon.dto.system.maintenance.XfaceSysLoginRequestDTO;
 import com.newera.marathon.dto.system.maintenance.XfaceSysLoginResponseDTO;
-import com.newera.marathon.microface.system.SysMicroService;
+import com.newera.marathon.microface.cos.SendMicroService;
+import com.newera.marathon.microface.cms.system.SysMicroService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -13,6 +14,8 @@ public class UserServiceImpl implements UserService {
 
     @Autowired
     private SysMicroService sysMicroService;
+    @Autowired
+    private SendMicroService sendMicroService;
 
     @Override
     public XfaceSysLoginResponseDTO findUser(String username, String password, String captchaId, String captchaCode) {
@@ -27,7 +30,7 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public XfaceGenearteCaptchaResponseDTO doGenerateCaptcha() {
-        XfaceGenearteCaptchaResponseDTO responseDTO = sysMicroService.generateCaptcha();
+        XfaceGenearteCaptchaResponseDTO responseDTO = sendMicroService.generateCaptcha();
         return responseDTO;
     }
 
