@@ -1,5 +1,6 @@
 package com.newera.marathon.base.gateway.filter;
 
+import com.spaking.boot.starter.core.utils.JWTUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -28,6 +29,7 @@ public class TokenGlobalFilter implements GlobalFilter, Ordered {
     public TokenGlobalFilter(RouteLocator routeLocator){
         this.routeLocator = routeLocator;
     }
+
     @Override
     public Mono<Void> filter(ServerWebExchange exchange, GatewayFilterChain chain) {
         log.info("TokenGlobalFilter start ................");
@@ -45,14 +47,15 @@ public class TokenGlobalFilter implements GlobalFilter, Ordered {
         Long count = routeIds.stream().filter(w->{
             return path.contains(w)
                     && !("/"+w+"/v2/api-docs").equalsIgnoreCase(path)
-                    && !"dev".equalsIgnoreCase(profiles)
+                    // TODO: 2019-09-29  
+                    //&& !"dev".equalsIgnoreCase(profiles)
                     && !"cos".equalsIgnoreCase(w);
         }).count();
         if (count == 1) {
             HttpHeaders headers = request.getHeaders();
             String token = headers.getFirst("token");
             log.info("token >>>>>>>>>" + token);
-            if (StringUtils.isBlank(token)) {
+            if (StringUtils.isBlank(token) || StringUtils.isBlank(JWTUtil.getUserId(token))) {
                 log.info("token is empty !");
                 exchange.getResponse().setStatusCode(HttpStatus.UNAUTHORIZED);
                 return exchange.getResponse().setComplete();

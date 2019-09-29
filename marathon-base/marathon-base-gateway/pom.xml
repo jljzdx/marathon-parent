@@ -16,6 +16,10 @@
             <groupId>org.springframework.cloud</groupId>
             <artifactId>spring-cloud-starter-gateway</artifactId>
         </dependency>
+        <dependency>
+            <groupId>com.spakingframework.boot</groupId>
+            <artifactId>spaking-boot-starter-core</artifactId>
+        </dependency>
         <!--spaking-redis-->
         <dependency>
             <groupId>com.spakingframework.boot</groupId>
