@@ -1,5 +1,7 @@
 package com.newera.marathon.service.cust.controller;
 
+import com.newera.marathon.dto.cust.maintenance.XfaceCustCustomerLoginRequestDTO;
+import com.newera.marathon.dto.cust.maintenance.XfaceCustCustomerLoginResponseDTO;
 import com.newera.marathon.dto.cust.maintenance.XfaceCustCustomerRegisterRequestDTO;
 import com.newera.marathon.dto.cust.maintenance.XfaceCustCustomerRegisterResponseDTO;
 import com.newera.marathon.service.cust.service.CustomerService;
@@ -28,4 +30,11 @@ public class CustomerController {
         return responseDTO;
     }
 
+    @ApiOperation(value="客户登陆", notes="客户登陆")
+    @ApiImplicitParam(name = "requestDTO", value = "入参对象", dataType = "XfaceCustCustomerLoginRequestDTO")
+    @PostMapping("/login")
+    public XfaceCustCustomerLoginResponseDTO customerLogin(@Valid @RequestBody XfaceCustCustomerLoginRequestDTO requestDTO){
+        XfaceCustCustomerLoginResponseDTO responseDTO = sysUserService.doCustomerLogin(requestDTO);
+        return responseDTO;
+    }
 }

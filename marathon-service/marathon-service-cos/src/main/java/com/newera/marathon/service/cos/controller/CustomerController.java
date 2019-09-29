@@ -1,5 +1,7 @@
 package com.newera.marathon.service.cos.controller;
 
+import com.newera.marathon.dto.cust.maintenance.XfaceCustCustomerLoginRequestDTO;
+import com.newera.marathon.dto.cust.maintenance.XfaceCustCustomerLoginResponseDTO;
 import com.newera.marathon.dto.cust.maintenance.XfaceCustCustomerRegisterRequestDTO;
 import com.newera.marathon.dto.cust.maintenance.XfaceCustCustomerRegisterResponseDTO;
 import com.newera.marathon.microface.cust.CustomerMicroService;
@@ -25,6 +27,14 @@ public class CustomerController {
     @PostMapping("/register")
     public XfaceCustCustomerRegisterResponseDTO customerRegister(@Valid @RequestBody XfaceCustCustomerRegisterRequestDTO requestDTO){
         XfaceCustCustomerRegisterResponseDTO responseDTO = customerMicroService.customerRegister(requestDTO);
+        return responseDTO;
+    }
+
+    @ApiOperation(value="客户登陆", notes="客户登陆")
+    @ApiImplicitParam(name = "requestDTO", value = "入参对象", dataType = "XfaceCustCustomerLoginRequestDTO")
+    @PostMapping("/login")
+    public XfaceCustCustomerLoginResponseDTO customerLogin(@Valid @RequestBody XfaceCustCustomerLoginRequestDTO requestDTO){
+        XfaceCustCustomerLoginResponseDTO responseDTO = customerMicroService.customerLogin(requestDTO);
         return responseDTO;
     }
 }

@@ -1,5 +1,7 @@
 package com.newera.marathon.microface.cust;
 
+import com.newera.marathon.dto.cust.maintenance.XfaceCustCustomerLoginRequestDTO;
+import com.newera.marathon.dto.cust.maintenance.XfaceCustCustomerLoginResponseDTO;
 import com.newera.marathon.dto.cust.maintenance.XfaceCustCustomerRegisterRequestDTO;
 import com.newera.marathon.dto.cust.maintenance.XfaceCustCustomerRegisterResponseDTO;
 import com.spaking.boot.starter.core.model.TransactionStatus;
@@ -21,6 +23,9 @@ public interface CustomerMicroService {
     @PostMapping({"/customer/register"})
     XfaceCustCustomerRegisterResponseDTO customerRegister(@Valid @RequestBody XfaceCustCustomerRegisterRequestDTO requestDTO);
 
+    @PostMapping("/customer/login")
+    public XfaceCustCustomerLoginResponseDTO customerLogin(@Valid @RequestBody XfaceCustCustomerLoginRequestDTO requestDTO);
+
     @Component
     class CustomerMicroServiceImpl implements FallbackFactory<CustomerMicroService> {
         private Logger logger = LoggerFactory.getLogger(CustomerMicroServiceImpl.class);
@@ -33,6 +38,15 @@ public interface CustomerMicroService {
                     XfaceCustCustomerRegisterResponseDTO responseDTO = new XfaceCustCustomerRegisterResponseDTO();
                     TransactionStatus transactionStatus = new TransactionStatus();
                     transactionStatus.setError("Call remote(customerRegister) service error.", ServerName.APPLICATION_NAME);
+                    responseDTO.setTransactionStatus(transactionStatus);
+                    return responseDTO;
+                }
+
+                @Override
+                public XfaceCustCustomerLoginResponseDTO customerLogin(@Valid XfaceCustCustomerLoginRequestDTO requestDTO) {
+                    XfaceCustCustomerLoginResponseDTO responseDTO = new XfaceCustCustomerLoginResponseDTO();
+                    TransactionStatus transactionStatus = new TransactionStatus();
+                    transactionStatus.setError("Call remote(customerLogin) service error.", ServerName.APPLICATION_NAME);
                     responseDTO.setTransactionStatus(transactionStatus);
                     return responseDTO;
                 }
