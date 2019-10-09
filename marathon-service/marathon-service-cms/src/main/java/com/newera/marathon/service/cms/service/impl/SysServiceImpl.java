@@ -1,13 +1,13 @@
 package com.newera.marathon.service.cms.service.impl;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.newera.marathon.common.model.ApplicationError;
 import com.newera.marathon.common.utils.PasswordUtil;
 import com.newera.marathon.dto.system.enumeration.SysUserStatus;
 import com.newera.marathon.dto.system.maintenance.XfaceSysLoginRequestDTO;
 import com.newera.marathon.dto.system.maintenance.XfaceSysLoginResponseDTO;
 import com.newera.marathon.service.cms.entity.SysUser;
 import com.newera.marathon.service.cms.mapper.SysUserMapper;
-import com.newera.marathon.service.cms.model.ApplicationError;
 import com.newera.marathon.service.cms.service.SysService;
 import com.spaking.boot.starter.core.exception.BaseException;
 import com.spaking.boot.starter.core.model.TransactionStatus;

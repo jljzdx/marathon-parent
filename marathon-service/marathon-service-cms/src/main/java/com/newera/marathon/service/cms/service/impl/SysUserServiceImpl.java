@@ -4,6 +4,7 @@ import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.newera.marathon.common.constant.OtherConstant;
+import com.newera.marathon.common.model.ApplicationError;
 import com.newera.marathon.common.utils.PasswordUtil;
 import com.newera.marathon.common.utils.StringBlankFormat;
 import com.newera.marathon.dto.system.inquiry.*;
@@ -13,7 +14,6 @@ import com.newera.marathon.service.cms.entity.SysUser;
 import com.newera.marathon.service.cms.entity.SysUserRole;
 import com.newera.marathon.service.cms.mapper.SysUserMapper;
 import com.newera.marathon.service.cms.mapper.SysUserRoleMapper;
-import com.newera.marathon.service.cms.model.ApplicationError;
 import com.newera.marathon.service.cms.service.SysUserRoleService;
 import com.newera.marathon.service.cms.service.SysUserService;
 import com.newera.marathon.service.cms.vo.LeftMenuListVO;
@@ -274,7 +274,7 @@ public class SysUserServiceImpl extends ServiceImpl<SysUserMapper, SysUser> impl
         //查询菜单
         List<LeftMenuListVO> list = sysUserMapper.queryLeftMenu(requestDTO.getUserName());
         //查询权限列表
-        List<String> permissions = sysUserMapper.queryPermissions(requestDTO.getUserName());
+        List<String> permissions = getPermissions(requestDTO.getUserName());
         //循环所有资源，标记已授权的资源，并递归生成树
         List<XfaceSysLeftMenuInquiryResponseSubDTO> responseSubDTOS = createTree(list);
         responseDTO.setDataList(responseSubDTOS);
@@ -282,6 +282,23 @@ public class SysUserServiceImpl extends ServiceImpl<SysUserMapper, SysUser> impl
         responseDTO.setTransactionStatus(transactionStatus);
         log.info("doSysLeftMenuInquiry end");
         return responseDTO;
+    }
+    @Override
+    public XfaceSysPermissionsInquiryResponseDTO doSysPermissionsInquiry(XfaceSysPermissionsInquiryRequestDTO requestDTO) {
+        log.info("doSysPermissionsInquiry start");
+        XfaceSysPermissionsInquiryResponseDTO responseDTO = new XfaceSysPermissionsInquiryResponseDTO();
+        TransactionStatus transactionStatus = new TransactionStatus();
+        //查询权限列表
+        List<String> permissions = getPermissions(requestDTO.getUserName());
+        responseDTO.setPermissions(permissions);
+        responseDTO.setTransactionStatus(transactionStatus);
+        log.info("doSysPermissionsInquiry end");
+        return responseDTO;
+    }
+
+    public List<String> getPermissions(String userName){
+        List<String> permissions = sysUserMapper.queryPermissions(userName);
+        return permissions;
     }
 
     public List<XfaceSysLeftMenuInquiryResponseSubDTO> createTree(List<LeftMenuListVO> sysResourceList){

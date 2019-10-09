@@ -66,4 +66,9 @@ public class SysUserController {
         XfaceSysLeftMenuInquiryResponseDTO responseDTO = sysUserService.doSysLeftMenuInquiry(requestDTO);
         return responseDTO;
     }
+    @PostMapping("/permissions/inquiry")
+    public XfaceSysPermissionsInquiryResponseDTO sysPermissionsInquiry(@Valid @RequestBody XfaceSysPermissionsInquiryRequestDTO requestDTO){
+        XfaceSysPermissionsInquiryResponseDTO responseDTO = sysUserService.doSysPermissionsInquiry(requestDTO);
+        return responseDTO;
+    }
 }

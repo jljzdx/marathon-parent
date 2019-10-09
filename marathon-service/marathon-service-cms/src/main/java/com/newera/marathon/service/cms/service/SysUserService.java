@@ -24,4 +24,6 @@ public interface SysUserService  extends IService<SysUser> {
     XfaceSysUserResetPasswordResponseDTO doSysUserResetPassword(XfaceSysUserResetPasswordRequestDTO requestDTO);
 
     XfaceSysLeftMenuInquiryResponseDTO doSysLeftMenuInquiry(XfaceSysLeftMenuInquiryRequestDTO requestDTO);
+
+    XfaceSysPermissionsInquiryResponseDTO doSysPermissionsInquiry(XfaceSysPermissionsInquiryRequestDTO requestDTO);
 }

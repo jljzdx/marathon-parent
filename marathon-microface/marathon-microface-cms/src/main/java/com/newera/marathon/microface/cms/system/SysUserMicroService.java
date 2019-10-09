@@ -46,6 +46,9 @@ public interface SysUserMicroService {
     @PostMapping("/sys/user/left/menu/inquiry")
     public XfaceSysLeftMenuInquiryResponseDTO sysLeftMenuInquiry(@Valid @RequestBody XfaceSysLeftMenuInquiryRequestDTO requestDTO);
 
+    @PostMapping("/sys/user/permissions/inquiry")
+    public XfaceSysPermissionsInquiryResponseDTO sysPermissionsInquiry(@Valid @RequestBody XfaceSysPermissionsInquiryRequestDTO requestDTO);
+
     @Component
     class SysUserMicroServiceImpl implements FallbackFactory<SysUserMicroService> {
         private Logger logger = LoggerFactory.getLogger(SysUserMicroServiceImpl.class);
@@ -130,6 +133,15 @@ public interface SysUserMicroService {
                     XfaceSysLeftMenuInquiryResponseDTO responseDTO = new XfaceSysLeftMenuInquiryResponseDTO();
                     TransactionStatus transactionStatus = new TransactionStatus();
                     transactionStatus.setError("Call remote(sysLeftMenuInquiry) service error.", ServerName.APPLICATION_NAME);
+                    responseDTO.setTransactionStatus(transactionStatus);
+                    return responseDTO;
+                }
+
+                @Override
+                public XfaceSysPermissionsInquiryResponseDTO sysPermissionsInquiry(@Valid XfaceSysPermissionsInquiryRequestDTO requestDTO) {
+                    XfaceSysPermissionsInquiryResponseDTO responseDTO = new XfaceSysPermissionsInquiryResponseDTO();
+                    TransactionStatus transactionStatus = new TransactionStatus();
+                    transactionStatus.setError("Call remote(sysPermissionsInquiry) service error.", ServerName.APPLICATION_NAME);
                     responseDTO.setTransactionStatus(transactionStatus);
                     return responseDTO;
                 }

@@ -47,19 +47,20 @@ public class TokenGlobalFilter implements GlobalFilter, Ordered {
         Long count = routeIds.stream().filter(w->{
             return path.contains(w)
                     && !("/"+w+"/v2/api-docs").equalsIgnoreCase(path)
-                    // TODO: 2019-09-29  
-                    //&& !"dev".equalsIgnoreCase(profiles)
+                    && !"dev".equalsIgnoreCase(profiles)
                     && !"cos".equalsIgnoreCase(w);
         }).count();
         if (count == 1) {
             HttpHeaders headers = request.getHeaders();
             String token = headers.getFirst("token");
             log.info("token >>>>>>>>>" + token);
-            if (StringUtils.isBlank(token) || StringUtils.isBlank(JWTUtil.getUserId(token))) {
+            if (StringUtils.isBlank(token)|| StringUtils.isBlank(JWTUtil.getUserId(token))) {
                 log.info("token is empty !");
                 exchange.getResponse().setStatusCode(HttpStatus.UNAUTHORIZED);
                 return exchange.getResponse().setComplete();
             }
+            //判断token解析出来的customerId和body中的customerId是否一样
+            // TODO: 2019-10-03
         }
 
         return chain.filter(exchange);

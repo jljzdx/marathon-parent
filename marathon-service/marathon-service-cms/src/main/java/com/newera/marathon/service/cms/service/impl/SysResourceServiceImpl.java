@@ -2,11 +2,11 @@ package com.newera.marathon.service.cms.service.impl;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import com.newera.marathon.common.model.ApplicationError;
 import com.newera.marathon.dto.system.inquiry.*;
 import com.newera.marathon.dto.system.maintenance.*;
 import com.newera.marathon.service.cms.entity.SysResource;
 import com.newera.marathon.service.cms.mapper.SysResourceMapper;
-import com.newera.marathon.service.cms.model.ApplicationError;
 import com.newera.marathon.service.cms.service.SysResourceService;
 import com.spaking.boot.starter.core.exception.BaseException;
 import com.spaking.boot.starter.core.model.TransactionStatus;

@@ -1,6 +1,7 @@
 package com.newera.marathon.service.cos.service.impl;
 
 import com.newera.marathon.common.constant.RedisConstant;
+import com.newera.marathon.common.model.ApplicationError;
 import com.newera.marathon.common.utils.CaptchaCodeUtil;
 import com.newera.marathon.common.utils.DateUtils;
 import com.newera.marathon.common.utils.RandomUtil;
@@ -9,7 +10,6 @@ import com.newera.marathon.dto.cos.maintenance.XfaceCosCheckSmsCodeResponseDTO;
 import com.newera.marathon.dto.cos.maintenance.XfaceCosSendSmsRequestDTO;
 import com.newera.marathon.dto.cos.maintenance.XfaceCosSendSmsResponseDTO;
 import com.newera.marathon.dto.system.maintenance.XfaceGenearteCaptchaResponseDTO;
-import com.newera.marathon.service.cos.model.ApplicationError;
 import com.newera.marathon.service.cos.service.SendService;
 import com.spaking.boot.starter.core.exception.BaseException;
 import com.spaking.boot.starter.core.model.TransactionStatus;

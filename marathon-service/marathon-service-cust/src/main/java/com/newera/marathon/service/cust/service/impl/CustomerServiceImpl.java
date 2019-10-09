@@ -2,13 +2,13 @@ package com.newera.marathon.service.cust.service.impl;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import com.newera.marathon.common.model.ApplicationError;
 import com.newera.marathon.dto.cust.maintenance.XfaceCustCustomerLoginRequestDTO;
 import com.newera.marathon.dto.cust.maintenance.XfaceCustCustomerLoginResponseDTO;
 import com.newera.marathon.dto.cust.maintenance.XfaceCustCustomerRegisterRequestDTO;
 import com.newera.marathon.dto.cust.maintenance.XfaceCustCustomerRegisterResponseDTO;
 import com.newera.marathon.service.cust.entity.Customer;
 import com.newera.marathon.service.cust.mapper.CustomerMapper;
-import com.newera.marathon.service.cust.model.ApplicationError;
 import com.newera.marathon.service.cust.service.CustomerService;
 import com.spaking.boot.starter.core.exception.BaseException;
 import com.spaking.boot.starter.core.model.TransactionStatus;
