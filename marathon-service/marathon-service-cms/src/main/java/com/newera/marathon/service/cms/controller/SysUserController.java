@@ -3,6 +3,7 @@ package com.newera.marathon.service.cms.controller;
 import com.newera.marathon.dto.system.inquiry.*;
 import com.newera.marathon.dto.system.maintenance.*;
 import com.newera.marathon.service.cms.service.SysUserService;
+import com.spaking.boot.starter.core.annotation.BusinessLogger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -17,6 +18,7 @@ public class SysUserController {
     @Autowired
     private SysUserService sysUserService;
 
+    @BusinessLogger
     @PostMapping("/inquiry/page")
     public XfaceSysUserInquiryPageResponseDTO sysUserInquiryPage(@Valid @RequestBody XfaceSysUserInquiryPageRequestDTO requestDTO){
         XfaceSysUserInquiryPageResponseDTO responseDTO = sysUserService.doSysUserInquiryPage(requestDTO);

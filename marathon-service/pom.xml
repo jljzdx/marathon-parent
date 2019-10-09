@@ -18,6 +18,11 @@
     </modules>
 
     <dependencies>
+        <!--spaking-core-->
+        <dependency>
+            <groupId>com.spakingframework.boot</groupId>
+            <artifactId>spaking-boot-starter-core</artifactId>
+        </dependency>
         <!--spaking-mysql-->
         <dependency>
             <groupId>com.spakingframework.boot</groupId>

@@ -4,6 +4,7 @@ package com.newera.marathon.service.cms.controller;
 import com.newera.marathon.dto.system.inquiry.*;
 import com.newera.marathon.dto.system.maintenance.*;
 import com.newera.marathon.service.cms.service.SysRoleService;
+import com.spaking.boot.starter.core.annotation.BusinessLogger;
 import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -36,6 +37,7 @@ public class SysRoleController {
         return responseDTO;
     }
 
+    @BusinessLogger
     @ApiOperation(value="分页查询角色", notes="分页查询角色")
     @ApiImplicitParam(name = "requestDTO", value = "入参对象", dataType = "XfaceSysRoleInquiryPageRequestDTO")
     @PostMapping("/inquiry/page")
