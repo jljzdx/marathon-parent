@@ -121,7 +121,7 @@ function() {
     var $ = layui.$,
     layer = layui.layer;
     $.ajax({
-        url: '/sys/user/left/menu/inquiry',
+        url: '/public/user/left/menu/inquiry',
         type: 'post',
         dataType: 'text',
         success: function(data) {
@@ -136,7 +136,7 @@ function() {
                     content += '</li>';
                     $(".layui-nav-tree").append(content);
                 });
-                console.log(result.permissions);
+                //console.log(result.permissions);
                 //存储权限
                 layui.data('auth', {
                     key: 'authList',

@@ -47,7 +47,7 @@ public class RoleTest {
     public void roleInquirySelectTest() throws Exception {
         MvcResult mvcResult = this.mockMvc
                 .perform(
-                        post("/sys/role/inquiry/select"))
+                        post("/public/role/inquiry/select"))
                 .andExpect(
                         status().isOk())
                 .andReturn();

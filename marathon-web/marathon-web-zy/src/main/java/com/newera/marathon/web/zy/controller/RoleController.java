@@ -6,6 +6,7 @@ import com.newera.marathon.dto.system.maintenance.*;
 import com.newera.marathon.microface.cms.system.SysRoleMicroService;
 import com.spaking.boot.starter.cas.model.SsoUser;
 import com.spaking.boot.starter.cas.utils.SsoConstant;
+import com.spaking.boot.starter.core.annotation.NeedAuthorize;
 import com.spaking.boot.starter.core.model.PageModel;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -14,9 +15,6 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import javax.servlet.http.HttpServletRequest;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 @Controller
@@ -42,29 +40,10 @@ public class RoleController {
     public String roleAuthHtml(){
         return "role/roleAuth";
     }
-    @GetMapping("/sys/role/inquiry/select")
-    @ResponseBody
-    public List<Map> sysRoleInquirySelect(){
-        //调用微服务
-        XfaceSysRoleInquirySelectResponseDTO responseDTO = sysRoleMicroService.sysRoleInquirySelect();
-        List<XfaceSysRoleInquirySelectResponseSubDTO> dataList = responseDTO.getDataList();
-        //重组响应对象
-        List result = new ArrayList();
-        dataList.forEach(w->{
-            Map map = new HashMap<>();
-            map.put("value", w.getId());
-            map.put("name", w.getName());
-            map.put("selected", "");
-            if(w.getAvailable()==0){
-                map.put("disabled", "disabled");
-            }else {
-                map.put("disabled", "");
-            }
-            result.add(map);
-        });
-        return result;
-    }
 
+
+
+    @NeedAuthorize(value = "role:list")
     @PostMapping("/sys/role/inquiry/page")
     @ResponseBody
     public Map sysRoleInquiryPage(Long page, Long limit, String roleName){
@@ -86,6 +65,7 @@ public class RoleController {
                 responseDTO.getDataList());
     }
 
+    @NeedAuthorize(value = "role:add")
     @PostMapping("/sys/role/addition")
     @ResponseBody
     public XfaceSysRoleAdditionResponseDTO sysRoleAddition(XfaceSysRoleAdditionRequestDTO requestDTO, HttpServletRequest request){
@@ -94,12 +74,16 @@ public class RoleController {
         XfaceSysRoleAdditionResponseDTO responseDTO = sysRoleMicroService.sysRoleAddition(requestDTO);
         return responseDTO;
     }
+
+    @NeedAuthorize(value = "role:edit")
     @PostMapping("/sys/role/modify/inquiry")
     @ResponseBody
     public XfaceSysRoleModifyInquiryResponseDTO sysRoleModifyInquiry(XfaceSysRoleModifyInquiryRequestDTO requestDTO){
         XfaceSysRoleModifyInquiryResponseDTO responseDTO = sysRoleMicroService.sysRoleModifyInquiry(requestDTO);
         return responseDTO;
     }
+
+    @NeedAuthorize(value = "role:edit")
     @PostMapping("/sys/role/modify")
     @ResponseBody
     public XfaceSysRoleModifyResponseDTO sysRoleModify(XfaceSysRoleModifyRequestDTO requestDTO, HttpServletRequest request){
@@ -108,6 +92,8 @@ public class RoleController {
         XfaceSysRoleModifyResponseDTO responseDTO = sysRoleMicroService.sysRoleModify(requestDTO);
         return responseDTO;
     }
+
+    @NeedAuthorize(value = "role:status")
     @PostMapping("/sys/role/modify/status")
     @ResponseBody
     public XfaceSysRoleModifyStatusResponseDTO sysRoleModifyStatus(XfaceSysRoleModifyStatusRequestDTO requestDTO, HttpServletRequest request){
@@ -116,15 +102,19 @@ public class RoleController {
         XfaceSysRoleModifyStatusResponseDTO responseDTO = sysRoleMicroService.sysRoleModifyStatus(requestDTO);
         return responseDTO;
     }
+
+    @NeedAuthorize(value = "role:auth")
     @PostMapping("/sys/role/auth/inquiry")
     @ResponseBody
-    public XfaceSysRoleAuthInquiryResponseDTO sysRoleModifyStatus(XfaceSysRoleAuthInquiryRequestDTO requestDTO){
+    public XfaceSysRoleAuthInquiryResponseDTO sysRoleAuthInquiry(XfaceSysRoleAuthInquiryRequestDTO requestDTO){
         XfaceSysRoleAuthInquiryResponseDTO responseDTO = sysRoleMicroService.sysRoleAuthInquiry(requestDTO);
         return responseDTO;
     }
+
+    @NeedAuthorize(value = "role:auth")
     @PostMapping("/sys/role/auth")
     @ResponseBody
-    public XfaceSysRoleAuthResponseDTO sysRoleModifyStatus(XfaceSysRoleAuthRequestDTO requestDTO, HttpServletRequest request){
+    public XfaceSysRoleAuthResponseDTO sysRoleAuth(XfaceSysRoleAuthRequestDTO requestDTO, HttpServletRequest request){
         SsoUser user = (SsoUser) request.getAttribute(SsoConstant.SSO_USER);
         requestDTO.setOperator(user.getUserName());
         XfaceSysRoleAuthResponseDTO responseDTO = sysRoleMicroService.sysRoleAuth(requestDTO);

@@ -7,6 +7,6 @@ import javax.validation.constraints.NotNull;
 @Data
 public class XfaceSysRoleModifyInquiryRequestDTO {
 
-    @NotNull(message = "ID不能为空")
+    @NotNull(message = "角色ID不能为空")
     private Integer id;
 }

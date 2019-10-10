@@ -6,7 +6,7 @@ function(exports) {
     var form = layui.form,
     formSelects = layui.formSelects;
     formSelects.data('roleSelect', 'server', {
-        url: '/sys/role/inquiry/select'
+        url: '/public/role/inquiry/select'
     });
     //formSelects.render();
     exports('userEdit',

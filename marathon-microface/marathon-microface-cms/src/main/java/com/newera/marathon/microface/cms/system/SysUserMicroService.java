@@ -31,8 +31,11 @@ public interface SysUserMicroService {
     @PostMapping("/sys/user/modify")
     XfaceSysUserModifyResponseDTO sysUserModify(@Valid @RequestBody XfaceSysUserModifyRequestDTO requestDTO);
 
-    @PostMapping("/sys/user/modify/base/info")
-    public XfaceSysUserBaseInfoModifyResponseDTO sysUserBaseInfoModify(@Valid @RequestBody XfaceSysUserBaseInfoModifyRequestDTO requestDTO);
+    @PostMapping("/sys/user/base/info/modify/inquiry")
+    XfaceSysUserBaseInfoModifyInquiryResponseDTO sysUserBaseInfoModifyInquiry(@Valid @RequestBody XfaceSysUserBaseInfoModifyInquiryRequestDTO requestDTO);
+
+    @PostMapping("/sys/user/base/info/modify")
+    XfaceSysUserBaseInfoModifyResponseDTO sysUserBaseInfoModify(@Valid @RequestBody XfaceSysUserBaseInfoModifyRequestDTO requestDTO);
 
     @PostMapping("/sys/user/modify/status")
     XfaceSysUserModifyStatusResponseDTO sysUserModifyStatus(@Valid @RequestBody XfaceSysUserModifyStatusRequestDTO requestDTO);
@@ -41,13 +44,13 @@ public interface SysUserMicroService {
     XfaceSysUserModifyPasswordResponseDTO sysUserModifyPassword(@Valid @RequestBody XfaceSysUserModifyPasswordRequestDTO requestDTO);
 
     @PostMapping("/sys/user/reset/password")
-    public XfaceSysUserResetPasswordResponseDTO sysUserResetPassword(@Valid @RequestBody XfaceSysUserResetPasswordRequestDTO requestDTO);
+    XfaceSysUserResetPasswordResponseDTO sysUserResetPassword(@Valid @RequestBody XfaceSysUserResetPasswordRequestDTO requestDTO);
 
     @PostMapping("/sys/user/left/menu/inquiry")
-    public XfaceSysLeftMenuInquiryResponseDTO sysLeftMenuInquiry(@Valid @RequestBody XfaceSysLeftMenuInquiryRequestDTO requestDTO);
+    XfaceSysLeftMenuInquiryResponseDTO sysLeftMenuInquiry(@Valid @RequestBody XfaceSysLeftMenuInquiryRequestDTO requestDTO);
 
     @PostMapping("/sys/user/permissions/inquiry")
-    public XfaceSysPermissionsInquiryResponseDTO sysPermissionsInquiry(@Valid @RequestBody XfaceSysPermissionsInquiryRequestDTO requestDTO);
+    XfaceSysPermissionsInquiryResponseDTO sysPermissionsInquiry(@Valid @RequestBody XfaceSysPermissionsInquiryRequestDTO requestDTO);
 
     @Component
     class SysUserMicroServiceImpl implements FallbackFactory<SysUserMicroService> {
@@ -88,6 +91,15 @@ public interface SysUserMicroService {
                     XfaceSysUserModifyResponseDTO responseDTO = new XfaceSysUserModifyResponseDTO();
                     TransactionStatus transactionStatus = new TransactionStatus();
                     transactionStatus.setError("Call remote(sysUserModify) service error.", ServerName.APPLICATION_NAME);
+                    responseDTO.setTransactionStatus(transactionStatus);
+                    return responseDTO;
+                }
+
+                @Override
+                public XfaceSysUserBaseInfoModifyInquiryResponseDTO sysUserBaseInfoModifyInquiry(@Valid XfaceSysUserBaseInfoModifyInquiryRequestDTO requestDTO) {
+                    XfaceSysUserBaseInfoModifyInquiryResponseDTO responseDTO = new XfaceSysUserBaseInfoModifyInquiryResponseDTO();
+                    TransactionStatus transactionStatus = new TransactionStatus();
+                    transactionStatus.setError("Call remote(sysUserBaseInfoModifyInquiry) service error.", ServerName.APPLICATION_NAME);
                     responseDTO.setTransactionStatus(transactionStatus);
                     return responseDTO;
                 }

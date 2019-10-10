@@ -367,7 +367,6 @@ function(e) {
   }),
   P.on("tabsPage(setMenustatus)",
   function(e) {
-    console.log(">>>>>>>>>");
     var i = e.url,
     t = function(e) {
       return {

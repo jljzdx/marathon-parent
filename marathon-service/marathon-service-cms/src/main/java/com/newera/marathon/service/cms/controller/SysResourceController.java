@@ -7,10 +7,10 @@ import com.newera.marathon.dto.system.inquiry.XfaceSysResourceModifyInquiryReque
 import com.newera.marathon.dto.system.inquiry.XfaceSysResourceModifyInquiryResponseDTO;
 import com.newera.marathon.dto.system.maintenance.*;
 import com.newera.marathon.service.cms.service.SysResourceService;
+import com.spaking.boot.starter.core.annotation.BusinessLogger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import javax.validation.Valid;
@@ -24,37 +24,42 @@ import javax.validation.Valid;
  * @since 2019-08-14
  */
 @RestController
-@RequestMapping("/sys/resource")
 public class SysResourceController {
 
     @Autowired
     private SysResourceService sysResourceService;
 
-    @PostMapping("/inquiry/loop")
+
+    @BusinessLogger(key = "CMS",value = "sysResourceInquiryLoop")
+    @PostMapping("/sys/resource/inquiry/loop")
     public XfaceSysResourceLoopInquiryResponseDTO sysResourceInquiryLoop(@Valid @RequestBody XfaceSysResourceLoopInquiryRequestDTO requestDTO){
         XfaceSysResourceLoopInquiryResponseDTO responseDTO = sysResourceService.doSysResourceInquiryLoop(requestDTO);
         return responseDTO;
     }
 
-    @PostMapping("/addition")
+    @BusinessLogger(key = "CMS",value = "sysResourceAddition")
+    @PostMapping("/sys/resource/addition")
     public XfaceSysResourceAdditionResponseDTO sysResourceAddition(@Valid @RequestBody XfaceSysResourceAdditionRequestDTO requestDTO){
         XfaceSysResourceAdditionResponseDTO responseDTO = sysResourceService.doSysResourceAddition(requestDTO);
         return responseDTO;
     }
 
-    @PostMapping("/modify/inquiry")
+    @BusinessLogger(key = "CMS",value = "sysResourceModifyInquiry")
+    @PostMapping("/sys/resource/modify/inquiry")
     public XfaceSysResourceModifyInquiryResponseDTO sysResourceModifyInquiry(@Valid @RequestBody XfaceSysResourceModifyInquiryRequestDTO requestDTO){
         XfaceSysResourceModifyInquiryResponseDTO responseDTO = sysResourceService.doSysResourceModifyInquiry(requestDTO);
         return responseDTO;
     }
 
-    @PostMapping("/modify")
+    @BusinessLogger(key = "CMS",value = "sysResourceModify")
+    @PostMapping("/sys/resource/modify")
     public XfaceSysResourceModifyResponseDTO sysResourceModify(@Valid @RequestBody XfaceSysResourceModifyRequestDTO requestDTO){
         XfaceSysResourceModifyResponseDTO responseDTO = sysResourceService.doSysResourceModify(requestDTO);
         return responseDTO;
     }
 
-    @PostMapping("/modify/status")
+    @BusinessLogger(key = "CMS",value = "sysResourceModifyStatus")
+    @PostMapping("/sys/resource/modify/status")
     public XfaceSysResourceModifyStatusResponseDTO sysResourceModifyStatus(@Valid @RequestBody XfaceSysResourceModifyStatusRequestDTO requestDTO){
         XfaceSysResourceModifyStatusResponseDTO responseDTO = sysResourceService.doSysResourceModifyStatus(requestDTO);
         return responseDTO;

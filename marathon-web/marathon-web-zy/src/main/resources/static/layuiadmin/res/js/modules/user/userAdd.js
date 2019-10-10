@@ -7,7 +7,7 @@ function(exports) {
     formSelects = layui.formSelects;
     $("input:first").focus();
     formSelects.data('roleSelect', 'server', {
-        url: '/sys/role/inquiry/select'
+        url: '/public/role/inquiry/select'
     });
     exports('userAdd',
     function() {});

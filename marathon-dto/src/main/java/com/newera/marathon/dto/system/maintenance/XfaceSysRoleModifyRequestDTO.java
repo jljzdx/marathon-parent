@@ -10,7 +10,7 @@ import javax.validation.constraints.Size;
 public class XfaceSysRoleModifyRequestDTO {
 
 
-    @NotNull(message = "ID不能为空")
+    @NotNull(message = "角色ID不能为空")
     private Integer id;
 
     @Size(max = 50, message= "角色名称长度不能超过50位")

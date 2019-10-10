@@ -10,7 +10,7 @@ import javax.validation.constraints.Size;
 public class XfaceSysRoleModifyStatusRequestDTO {
 
 
-    @NotNull(message = "ID不能为空")
+    @NotNull(message = "角色ID不能为空")
     private Integer id;
 
     @NotNull(message = "角色状态不能为空")

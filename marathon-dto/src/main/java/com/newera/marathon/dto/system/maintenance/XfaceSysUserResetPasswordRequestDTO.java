@@ -10,7 +10,7 @@ import javax.validation.constraints.Size;
 public class XfaceSysUserResetPasswordRequestDTO {
 
 
-    @NotNull(message = "ID不能为空")
+    @NotNull(message = "用户ID不能为空")
     private Integer id;
 
     @NotBlank(message = "更新人不能为空")

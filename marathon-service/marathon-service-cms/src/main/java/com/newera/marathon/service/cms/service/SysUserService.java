@@ -26,4 +26,6 @@ public interface SysUserService  extends IService<SysUser> {
     XfaceSysLeftMenuInquiryResponseDTO doSysLeftMenuInquiry(XfaceSysLeftMenuInquiryRequestDTO requestDTO);
 
     XfaceSysPermissionsInquiryResponseDTO doSysPermissionsInquiry(XfaceSysPermissionsInquiryRequestDTO requestDTO);
+
+    XfaceSysUserBaseInfoModifyInquiryResponseDTO doSysUserBaseInfoModifyInquiry(XfaceSysUserBaseInfoModifyInquiryRequestDTO requestDTO);
 }

@@ -296,6 +296,34 @@ public class SysUserServiceImpl extends ServiceImpl<SysUserMapper, SysUser> impl
         return responseDTO;
     }
 
+    @Override
+    public XfaceSysUserBaseInfoModifyInquiryResponseDTO doSysUserBaseInfoModifyInquiry(XfaceSysUserBaseInfoModifyInquiryRequestDTO requestDTO) {
+        log.info("doSysUserBaseInfoModifyInquiry start");
+        XfaceSysUserBaseInfoModifyInquiryResponseDTO responseDTO = new XfaceSysUserBaseInfoModifyInquiryResponseDTO();
+        TransactionStatus transactionStatus = new TransactionStatus();
+        //查询用户信息
+        QueryWrapper<SysUser> wrapper = new QueryWrapper<>();
+        wrapper.eq("id",requestDTO.getId());
+        wrapper.select("id","gender","user_name","mobile","real_name","email");
+        SysUser sysUser = getOne(wrapper);
+        if(null != sysUser){
+            BeanUtils.copyProperties(sysUser,responseDTO);
+        }
+        //查询用户的所有角色，并复制数据
+        List<SysRole> sysRoleList = sysUserRoleMapper.queryRoleListByUserId(requestDTO.getId());
+        List<XfaceSysUserModifyInquiryResponseSubDTO> dataList = new ArrayList<>();
+        sysRoleList.forEach(w->{
+            XfaceSysUserModifyInquiryResponseSubDTO responseSubDTO = new XfaceSysUserModifyInquiryResponseSubDTO();
+            BeanUtils.copyProperties(w,responseSubDTO);
+            dataList.add(responseSubDTO);
+        });
+        String roles = sysRoleList.stream().map(w->w.getRoleName()).collect(Collectors.joining(","));
+        responseDTO.setRoles(roles);
+        responseDTO.setTransactionStatus(transactionStatus);
+        log.info("doSysUserBaseInfoModifyInquiry end");
+        return responseDTO;
+    }
+
     public List<String> getPermissions(String userName){
         List<String> permissions = sysUserMapper.queryPermissions(userName);
         return permissions;

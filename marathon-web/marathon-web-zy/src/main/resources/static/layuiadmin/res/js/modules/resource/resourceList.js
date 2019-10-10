@@ -9,7 +9,6 @@ function(exports) {
     layer = layui.layer,
     table = layui.table;
     var renderTable = function () {
-        layer.load(2);
         treetable.render({
             elem: '#resource-tree-table',
             url: '/sys/resource/inquiry/loop',

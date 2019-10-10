@@ -12,7 +12,6 @@ function(a) {
   t = n.tabsPage,
   d = layui.view,
   l = function(a, d) {
-    console.log("-----------");
     var l, b = r("#LAY_app_tabsheader>li"),
     y = a.replace(/(^http(s*):)|(\?[\s\S]*$)/g, "");
     if (b.each(function(e) {

@@ -9,6 +9,7 @@ import com.newera.marathon.dto.system.maintenance.*;
 import com.newera.marathon.microface.cms.system.SysResourceMicroService;
 import com.spaking.boot.starter.cas.model.SsoUser;
 import com.spaking.boot.starter.cas.utils.SsoConstant;
+import com.spaking.boot.starter.core.annotation.NeedAuthorize;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -36,6 +37,8 @@ public class ResourceController {
         return "resource/resourceEdit";
     }
 
+
+    @NeedAuthorize(value = "resource:list")
     @PostMapping("/sys/resource/inquiry/loop")
     @ResponseBody
     public Map sysResourceInquiryPage(XfaceSysResourceLoopInquiryRequestDTO requestDTO){
@@ -48,6 +51,7 @@ public class ResourceController {
                 responseDTO.getDataList());
     }
 
+    @NeedAuthorize(value = "resource:add")
     @PostMapping("/sys/resource/addition")
     @ResponseBody
     public XfaceSysResourceAdditionResponseDTO sysRoleAddition(XfaceSysResourceAdditionRequestDTO requestDTO, HttpServletRequest request){
@@ -56,12 +60,16 @@ public class ResourceController {
         XfaceSysResourceAdditionResponseDTO responseDTO = sysResourceMicroService.sysResourceAddition(requestDTO);
         return responseDTO;
     }
+
+    @NeedAuthorize(value = "resource:edit")
     @PostMapping("/sys/resource/modify/inquiry")
     @ResponseBody
     public XfaceSysResourceModifyInquiryResponseDTO sysRoleModifyInquiry(XfaceSysResourceModifyInquiryRequestDTO requestDTO){
         XfaceSysResourceModifyInquiryResponseDTO responseDTO = sysResourceMicroService.sysResourceModifyInquiry(requestDTO);
         return responseDTO;
     }
+
+    @NeedAuthorize(value = "resource:edit")
     @PostMapping("/sys/resource/modify")
     @ResponseBody
     public XfaceSysResourceModifyResponseDTO sysRoleModify(XfaceSysResourceModifyRequestDTO requestDTO, HttpServletRequest request){
@@ -70,6 +78,8 @@ public class ResourceController {
         XfaceSysResourceModifyResponseDTO responseDTO = sysResourceMicroService.sysResourceModify(requestDTO);
         return responseDTO;
     }
+
+    @NeedAuthorize(value = "resource:status")
     @PostMapping("/sys/resource/modify/status")
     @ResponseBody
     public XfaceSysResourceModifyStatusResponseDTO sysRoleModifyStatus(XfaceSysResourceModifyStatusRequestDTO requestDTO, HttpServletRequest request){

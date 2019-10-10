@@ -73,59 +73,58 @@
 </div>
 <script src="${request.contextPath}/layuiadmin/layui/layui.js" charset="utf-8"></script>
 <script>
-layui.use(['form','element'],
+layui.use(['form', 'element'],
 function() {
-  var form = layui.form,
-  element = layui.element,
-  $ = layui.jquery;
-  $.ajax({
-    url: '/sys/user/modify/inquiry',
-    type: 'post',
-    dataType: 'text',
-    success: function(data) {
-      var result = JSON.parse(data);
-      if (result.transactionStatus.success) {
-        //多选下拉框
-          var roleNames = new Array();
-          $.each(result.dataList,
-          function(i, item) {
-            roleNames.push(item.roleName);
-          });
-          form.val("base-info-edit-form", {
-            "id": result.id,
-            "userName": result.userName,
-            "mobile": result.mobile,
-            "realName": result.realName,
-            "email": result.email,
-            "roleNames": roleNames.join(',')
-          });
-          $("input[name=gender][value=0]").attr("checked", result.gender == 0 ? true: false);
-          $("input[name=gender][value=1]").attr("checked", result.gender == 1 ? true: false);
-          form.render();
-      } else {
-        layer.msg(result.transactionStatus.replyText);
-      }
-    }
-  });
-  form.on('submit(base-info-modify-submit)',
-  function(data) {
-    var field = data.field; //获取提交的字段
-    //提交 Ajax 成功后，静态更新表格中的数据
+    var form = layui.form,
+    element = layui.element,
+    $ = layui.jquery;
     $.ajax({
-      url: '/sys/user/modify/base/info',
-      type: 'post',
-      dataType: 'text',
-      data: field,
-      success: function(data) {
-        var result = JSON.parse(data);
-        if (result.transactionStatus.success) {
-          layer.msg("修改成功");
-        } else {
-          layer.msg(result.transactionStatus.replyText);
+        url: '/public/user/base/info/modify/inquiry',
+        type: 'post',
+        dataType: 'text',
+        success: function(data) {
+            var result = JSON.parse(data);
+            if (result.transactionStatus.success) {
+                //var roleNames = new Array();
+                //$.each(result.dataList,
+                //function(i, item) {
+                //roleNames.push(item.roleName);
+                //});
+                form.val("base-info-edit-form", {
+                    "id": result.id,
+                    "userName": result.userName,
+                    "mobile": result.mobile,
+                    "realName": result.realName,
+                    "email": result.email,
+                    "roleNames": result.roles
+                });
+                $("input[name=gender][value=0]").attr("checked", result.gender == 0 ? true: false);
+                $("input[name=gender][value=1]").attr("checked", result.gender == 1 ? true: false);
+                form.render();
+            } else {
+                layer.msg(result.transactionStatus.replyText);
+            }
         }
-      }
     });
-  });
+    form.on('submit(base-info-modify-submit)',
+    function(data) {
+        var field = data.field; //获取提交的字段
+        //提交 Ajax 成功后，静态更新表格中的数据
+        $.ajax({
+            url: '/public/user/base/info/modify',
+            type: 'post',
+            dataType: 'text',
+            data: field,
+            success: function(data) {
+                var result = JSON.parse(data);
+                if (result.transactionStatus.success) {
+                    layer.msg("修改成功");
+                } else {
+                    layer.msg(result.transactionStatus.replyText);
+                }
+            }
+        });
+    });
 });
 
 </script>

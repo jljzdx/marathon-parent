@@ -10,7 +10,7 @@ import javax.validation.constraints.Size;
 public class XfaceSysResourceModifyStatusRequestDTO {
 
 
-    @NotNull(message = "ID不能为空")
+    @NotNull(message = "资源ID不能为空")
     private Integer id;
 
     @NotNull(message = "资源状态不能为空")
