@@ -1,7 +1,7 @@
 package com.newera.marathon.base.sso.controller;
 
 import com.newera.marathon.base.sso.service.UserService;
-import com.newera.marathon.dto.system.maintenance.XfaceGenearteCaptchaResponseDTO;
+import com.newera.marathon.dto.cos.maintenance.XfaceGenearteCaptchaResponseDTO;
 import com.newera.marathon.dto.system.maintenance.XfaceSysLoginResponseDTO;
 import com.spaking.boot.starter.cas.model.ReturnT;
 import com.spaking.boot.starter.cas.model.SsoUser;

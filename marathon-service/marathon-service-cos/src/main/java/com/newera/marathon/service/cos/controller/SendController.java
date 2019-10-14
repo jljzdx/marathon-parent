@@ -1,10 +1,8 @@
 package com.newera.marathon.service.cos.controller;
 
-import com.newera.marathon.dto.cos.maintenance.XfaceCosCheckSmsCodeRequestDTO;
-import com.newera.marathon.dto.cos.maintenance.XfaceCosCheckSmsCodeResponseDTO;
-import com.newera.marathon.dto.cos.maintenance.XfaceCosSendSmsRequestDTO;
-import com.newera.marathon.dto.cos.maintenance.XfaceCosSendSmsResponseDTO;
-import com.newera.marathon.dto.system.maintenance.XfaceGenearteCaptchaResponseDTO;
+import com.newera.marathon.dto.cos.maintenance.*;
+import com.newera.marathon.dto.cos.maintenance.XfaceGenearteCaptchaResponseDTO;
+import com.newera.marathon.service.cos.service.MailService;
 import com.newera.marathon.service.cos.service.SendService;
 import com.spaking.boot.starter.core.annotation.BusinessLogger;
 import io.swagger.annotations.ApiImplicitParam;
@@ -21,6 +19,8 @@ public class SendController {
 
     @Autowired
     private SendService sendService;
+    @Autowired
+    private MailService mailService;
 
     @BusinessLogger(key = "COS",value = "sendSms")
     @ApiOperation(value="发送短信", notes="发送短信")
@@ -45,6 +45,15 @@ public class SendController {
     @PostMapping("/generate/captcha")
     public XfaceGenearteCaptchaResponseDTO generateCaptcha(){
         XfaceGenearteCaptchaResponseDTO responseDTO = sendService.doGenerateCaptcha();
+        return responseDTO;
+    }
+
+    @BusinessLogger(key = "COS",value = "sendMail")
+    @ApiOperation(value="发送邮件", notes="发送邮件")
+    @ApiImplicitParam(name = "requestDTO", value = "入参对象", dataType = "XfaceCosSendMailRequestDTO")
+    @PostMapping("/mail/send")
+    public XfaceCosSendMailResponseDTO sendMail(@Valid @RequestBody XfaceCosSendMailRequestDTO requestDTO){
+        XfaceCosSendMailResponseDTO responseDTO = sendService.doMailSend(requestDTO);
         return responseDTO;
     }
 }

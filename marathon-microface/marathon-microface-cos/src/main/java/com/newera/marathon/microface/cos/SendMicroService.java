@@ -4,7 +4,7 @@ import com.newera.marathon.dto.cos.maintenance.XfaceCosCheckSmsCodeRequestDTO;
 import com.newera.marathon.dto.cos.maintenance.XfaceCosCheckSmsCodeResponseDTO;
 import com.newera.marathon.dto.cos.maintenance.XfaceCosSendSmsRequestDTO;
 import com.newera.marathon.dto.cos.maintenance.XfaceCosSendSmsResponseDTO;
-import com.newera.marathon.dto.system.maintenance.XfaceGenearteCaptchaResponseDTO;
+import com.newera.marathon.dto.cos.maintenance.XfaceGenearteCaptchaResponseDTO;
 import com.spaking.boot.starter.core.model.TransactionStatus;
 import feign.hystrix.FallbackFactory;
 import org.slf4j.Logger;

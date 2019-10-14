@@ -8,6 +8,7 @@ public enum ApplicationError {
     SMS_OVER_MAX_COUNT("操作过于频繁，请明天再试", "200001"),
     SMS_CODE_EXPIRED("验证码已过期，请重新获取验证码", "200002"),
     SMS_CODE_ERROR("验证码错误，请输入正确的验证码", "200003"),
+    MAIL_SEND_FAILED("邮件发送失败", "200004"),
     //---------cms
     USER_NAME_ALREADY_EXIST("用户名已经存在", "300001"),
     ROLE_NAME_ALREADY_EXIST("角色名称已经存在", "300002"),

@@ -18,5 +18,10 @@
             <groupId>com.newera.marathon</groupId>
             <artifactId>marathon-microface-cust</artifactId>
         </dependency>
+        <!--mail-->
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-mail</artifactId>
+        </dependency>
     </dependencies>
 </project>

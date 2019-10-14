@@ -29,4 +29,9 @@ DEV 开发环境
 FAT 测试环境，相当于alpha环境(功能测试)
 UAT 集成环境，相当于beta环境（回归测试）
 PRO 生产环境
+9、163网易邮箱
+neweramicrobin@163.com
+密码：MicroBin569
+授权码：MicroBin5689
+10、postman密码：wangwb123
 

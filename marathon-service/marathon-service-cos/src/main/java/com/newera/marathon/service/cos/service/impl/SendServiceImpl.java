@@ -5,11 +5,8 @@ import com.newera.marathon.common.model.ApplicationError;
 import com.newera.marathon.common.utils.CaptchaCodeUtil;
 import com.newera.marathon.common.utils.DateUtils;
 import com.newera.marathon.common.utils.RandomUtil;
-import com.newera.marathon.dto.cos.maintenance.XfaceCosCheckSmsCodeRequestDTO;
-import com.newera.marathon.dto.cos.maintenance.XfaceCosCheckSmsCodeResponseDTO;
-import com.newera.marathon.dto.cos.maintenance.XfaceCosSendSmsRequestDTO;
-import com.newera.marathon.dto.cos.maintenance.XfaceCosSendSmsResponseDTO;
-import com.newera.marathon.dto.system.maintenance.XfaceGenearteCaptchaResponseDTO;
+import com.newera.marathon.dto.cos.maintenance.*;
+import com.newera.marathon.service.cos.service.MailService;
 import com.newera.marathon.service.cos.service.SendService;
 import com.spaking.boot.starter.core.exception.BaseException;
 import com.spaking.boot.starter.core.model.TransactionStatus;
@@ -32,6 +29,8 @@ public class SendServiceImpl implements SendService {
     private String template = "【新时代】验证码为{0}，请在{1}页面中输入";
     @Autowired
     private RedisUtil redisUtil;
+    @Autowired
+    private MailService mailService;
 
     @Override
     public XfaceCosSendSmsResponseDTO doSmsSend(XfaceCosSendSmsRequestDTO requestDTO) {
@@ -119,6 +118,38 @@ public class SendServiceImpl implements SendService {
         Boolean result = redisUtil.setx(key,map.get(CaptchaCodeUtil.RANDOMSTRING), RedisConstant.CAPTCHA_EXPIRY_SECOND);
         log.info("doGenerateCaptcha："+result);
         log.info("doGenerateCaptcha end");
+        return responseDTO;
+    }
+
+    @Override
+    public XfaceCosSendMailResponseDTO doMailSend(XfaceCosSendMailRequestDTO requestDTO) {
+        log.info("doMailSend start");
+        XfaceCosSendMailResponseDTO responseDTO = new XfaceCosSendMailResponseDTO();
+        TransactionStatus transactionStatus = new TransactionStatus();
+        String toMail = requestDTO.getToMail();
+        String subject = requestDTO.getSubject();
+        String content = requestDTO.getContent();
+        //判断抄送人
+        String cc = requestDTO.getCc();
+        String [] ccs = {};
+        if(StringUtils.isNotBlank(cc)){
+            ccs = cc.split(",");
+        }
+        Integer type = requestDTO.getType();
+        try {
+            if(type == 3){
+                mailService.sendAttachmentsMail(toMail,subject,content,requestDTO.getFilePath(),ccs);
+            }else if(type == 2){
+                mailService.sendHtmlMail(toMail,subject,content,ccs);
+            }else{
+                mailService.sendSimpleMail(toMail,subject,content,ccs);
+            }
+        } catch (Exception e) {
+            log.info("Simple Mail Message Exception >>>>>", e);
+            throw new BaseException(ApplicationError.MAIL_SEND_FAILED.getMessage(), ApplicationError.MAIL_SEND_FAILED.getCode());
+        }
+        responseDTO.setTransactionStatus(transactionStatus);
+        log.info("doMailSend end");
         return responseDTO;
     }
 }

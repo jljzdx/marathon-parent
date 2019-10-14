@@ -21,6 +21,7 @@
         <module>marathon-common</module>
         <module>marathon-microface</module>
         <module>marathon-job</module>
+        <module>marathon-mq</module>
     </modules>
 
     <properties>
