@@ -7,7 +7,7 @@ public interface SendService {
 
     XfaceCosCheckSmsCodeResponseDTO doCheckSmsCode(XfaceCosCheckSmsCodeRequestDTO requestDTO);
 
-    XfaceGenearteCaptchaResponseDTO doGenerateCaptcha();
+    XfaceCosGenearteCaptchaResponseDTO doGenerateCaptcha();
 
-    XfaceCosSendMailResponseDTO doMailSend(XfaceCosSendMailRequestDTO requestDTO);
+    XfaceCosMailSendResponseDTO doMailSend(XfaceCosMailSendRequestDTO requestDTO);
 }

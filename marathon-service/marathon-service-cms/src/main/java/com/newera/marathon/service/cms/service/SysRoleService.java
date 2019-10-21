@@ -16,7 +16,7 @@ import com.newera.marathon.service.cms.entity.SysRole;
  */
 public interface SysRoleService extends IService<SysRole> {
 
-    XfaceSysRoleInquirySelectResponseDTO doSysRoleInquirySelect();
+    XfaceSysRoleSelectInquiryResponseDTO doSysRoleInquirySelect();
 
     XfaceSysRoleAdditionResponseDTO doSysRoleAddition(XfaceSysRoleAdditionRequestDTO requestDTO);
 

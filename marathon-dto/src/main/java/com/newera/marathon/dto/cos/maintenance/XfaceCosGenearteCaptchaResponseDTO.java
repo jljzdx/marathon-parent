@@ -4,7 +4,7 @@ import com.spaking.boot.starter.core.dto.GenericResponseDTO;
 import lombok.Data;
 
 @Data
-public class XfaceGenearteCaptchaResponseDTO extends GenericResponseDTO {
+public class XfaceCosGenearteCaptchaResponseDTO extends GenericResponseDTO {
 
 	String captchaCode;
 

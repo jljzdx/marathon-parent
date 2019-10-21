@@ -1,0 +1,13 @@
+package com.newera.marathon.dto.system.inquiry;
+
+import lombok.Data;
+
+@Data
+public class XfaceSysRoleSelectInquiryResponseSubDTO {
+
+    private Integer id;
+
+    private String name;
+
+    private Integer available;
+}

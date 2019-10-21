@@ -3,3 +3,4 @@
 查看内存进程占用情况：top -u elk
 查看内存大小：cat /proc/meminfo | grep MemTotal
 查看JVM内存使用情况：jps -l;jmap -heap 进程号
+

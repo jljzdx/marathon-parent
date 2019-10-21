@@ -190,7 +190,15 @@ zookeeper【树状存储结构】
   |--持久化目录节点、持久化顺序编号目录节点、临时目录节点、临时顺序编号目录节点
 
 RabbitMQ:
-|-如何确保消息正确地发送至RabbitMQ?
+|-RabbitMQ安装路径：cd /usr/local/Cellar/rabbitmq/3.8.0
+|-启动：rabbitmq-server -detached
+|-查看状态：rabbitmqctl status
+|-关闭：rabbitmqctl stop
+|-可视化监控界面：http://localhost:15672【guest/guest】
+|-如何确保消息100%发送至RabbitMQ?
+1、发送消息到MQ前，先将消息持久化
+2、在confirm模式，当消息发送成功，将消息状态更新为投递成功
+3、使用定时任务（每30秒查一下投递失败的数据），将投递失败的消息，重新投递（最大重新投递次数3）
 使用confirm模式（异步的），当消息发送成功，信道会发送一个确认给生产者；如果发送失败，信道会发送nack（未确认）消息给生产者
 |-如何确保消费者消费了消息？
 使用ACK手动确认机制
@@ -202,6 +210,11 @@ Message message = MessageBuilder.withBody(msg.getBytes()).setContentType(Message
 持久化
 |-RabbitMQ有什么好处？
 异步、解耦、流量削峰
+|-死信队列条件
+消息被拒绝 (basic.reject or basic.nack) 且带 requeue=false不重新入队参数或达到的retry重新入队的上限次数
+消息的TTL(Time To Live)-存活时间已经过期
+队列长度限制被超越（队列满，queue的"x-max-length"参数）
+
 
 Tomcat调优：
 |-内存:JAVA_OPTS="-Xms 1G -Xmx 1G"

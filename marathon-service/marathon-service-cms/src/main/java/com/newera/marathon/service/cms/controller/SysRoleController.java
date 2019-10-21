@@ -32,8 +32,8 @@ public class SysRoleController {
     @BusinessLogger(key = "CMS",value = "sysRoleInquirySelect")
     @ApiOperation(value="查询所有角色--下拉", notes="查询所有角色--下拉")
     @PostMapping("/sys/role/inquiry/select")
-    public XfaceSysRoleInquirySelectResponseDTO sysRoleInquirySelect(){
-        XfaceSysRoleInquirySelectResponseDTO responseDTO = sysRoleService.doSysRoleInquirySelect();
+    public XfaceSysRoleSelectInquiryResponseDTO sysRoleInquirySelect(){
+        XfaceSysRoleSelectInquiryResponseDTO responseDTO = sysRoleService.doSysRoleInquirySelect();
         return responseDTO;
     }
 

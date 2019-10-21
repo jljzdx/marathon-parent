@@ -11,5 +11,22 @@
 
     <artifactId>marathon-mq</artifactId>
 
-
+    <dependencies>
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-web</artifactId>
+            <scope>provided</scope>
+        </dependency>
+        <!--rabbitmq-->
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-amqp</artifactId>
+        </dependency>
+        <!--marathon-microface-cms-->
+        <dependency>
+            <groupId>com.newera.marathon</groupId>
+            <artifactId>marathon-microface-cos</artifactId>
+            <scope>provided</scope>
+        </dependency>
+    </dependencies>
 </project>

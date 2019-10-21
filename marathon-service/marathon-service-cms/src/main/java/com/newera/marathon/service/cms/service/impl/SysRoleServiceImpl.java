@@ -192,16 +192,16 @@ public class SysRoleServiceImpl extends ServiceImpl<SysRoleMapper, SysRole> impl
     }
 
     @Override
-    public XfaceSysRoleInquirySelectResponseDTO doSysRoleInquirySelect() {
+    public XfaceSysRoleSelectInquiryResponseDTO doSysRoleInquirySelect() {
         log.info("doSysRoleInquirySelect start");
-        XfaceSysRoleInquirySelectResponseDTO responseDTO = new XfaceSysRoleInquirySelectResponseDTO();
+        XfaceSysRoleSelectInquiryResponseDTO responseDTO = new XfaceSysRoleSelectInquiryResponseDTO();
         TransactionStatus transactionStatus = new TransactionStatus();
-        List<XfaceSysRoleInquirySelectResponseSubDTO> responseSubDTOS = new ArrayList<>();
+        List<XfaceSysRoleSelectInquiryResponseSubDTO> responseSubDTOS = new ArrayList<>();
         QueryWrapper<SysRole> wrapper = new QueryWrapper<>();
         wrapper.select("id", "role_name", "available");
         List<SysRole> sysRoles = list(wrapper);
         sysRoles.forEach(w -> {
-            XfaceSysRoleInquirySelectResponseSubDTO responseSubDTO = new XfaceSysRoleInquirySelectResponseSubDTO();
+            XfaceSysRoleSelectInquiryResponseSubDTO responseSubDTO = new XfaceSysRoleSelectInquiryResponseSubDTO();
             responseSubDTO.setId(w.getId());
             responseSubDTO.setName(w.getRoleName());
             responseSubDTO.setAvailable(w.getAvailable());

@@ -39,7 +39,7 @@ public class CodeGenerator {
 
         // 包配置
         PackageConfig pc = new PackageConfig();
-        pc.setModuleName("cust");
+        pc.setModuleName("cms");
         pc.setParent("com.newera.marathon.service");
         mpg.setPackageInfo(pc);
 
@@ -78,10 +78,10 @@ public class CodeGenerator {
         strategy.setNaming(NamingStrategy.underline_to_camel);
         strategy.setColumnNaming(NamingStrategy.underline_to_camel);
         strategy.setEntityLombokModel(true);
-        strategy.setInclude("CUSTOMER_BALANCE_DETAIL");
+        strategy.setInclude("t_msg_log");
         strategy.setRestControllerStyle(true);
         strategy.setControllerMappingHyphenStyle(true);
-        //strategy.setTablePrefix("t_");
+        strategy.setTablePrefix("t_");
         mpg.setStrategy(strategy);
         // 选择 freemarker 引擎需要指定如下加，注意 pom 依赖必须有！
         mpg.setTemplateEngine(new FreemarkerTemplateEngine());

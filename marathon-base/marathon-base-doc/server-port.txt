@@ -2,3 +2,4 @@ marathon-base：8100
 marathon-job：8200
 marathon-service：8300
 marathon-web：8400
+marathon-mq：8500

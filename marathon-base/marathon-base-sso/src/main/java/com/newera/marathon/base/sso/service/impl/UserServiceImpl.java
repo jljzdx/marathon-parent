@@ -1,7 +1,7 @@
 package com.newera.marathon.base.sso.service.impl;
 
 import com.newera.marathon.base.sso.service.UserService;
-import com.newera.marathon.dto.cos.maintenance.XfaceGenearteCaptchaResponseDTO;
+import com.newera.marathon.dto.cos.maintenance.XfaceCosGenearteCaptchaResponseDTO;
 import com.newera.marathon.dto.system.maintenance.XfaceSysLoginRequestDTO;
 import com.newera.marathon.dto.system.maintenance.XfaceSysLoginResponseDTO;
 import com.newera.marathon.microface.cos.SendMicroService;
@@ -29,8 +29,8 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public XfaceGenearteCaptchaResponseDTO doGenerateCaptcha() {
-        XfaceGenearteCaptchaResponseDTO responseDTO = sendMicroService.generateCaptcha();
+    public XfaceCosGenearteCaptchaResponseDTO doGenerateCaptcha() {
+        XfaceCosGenearteCaptchaResponseDTO responseDTO = sendMicroService.generateCaptcha();
         return responseDTO;
     }
 

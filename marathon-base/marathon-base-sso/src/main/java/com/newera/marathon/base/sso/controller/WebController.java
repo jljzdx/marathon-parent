@@ -1,7 +1,7 @@
 package com.newera.marathon.base.sso.controller;
 
 import com.newera.marathon.base.sso.service.UserService;
-import com.newera.marathon.dto.cos.maintenance.XfaceGenearteCaptchaResponseDTO;
+import com.newera.marathon.dto.cos.maintenance.XfaceCosGenearteCaptchaResponseDTO;
 import com.newera.marathon.dto.system.maintenance.XfaceSysLoginResponseDTO;
 import com.spaking.boot.starter.cas.model.ReturnT;
 import com.spaking.boot.starter.cas.model.SsoUser;
@@ -42,7 +42,7 @@ public class WebController {
 
     @RequestMapping("/generate/captcha")
     @ResponseBody
-    public XfaceGenearteCaptchaResponseDTO generateCaptcha(){
+    public XfaceCosGenearteCaptchaResponseDTO generateCaptcha(){
         return userService.doGenerateCaptcha();
     }
 

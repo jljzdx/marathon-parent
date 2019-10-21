@@ -16,11 +16,11 @@ import javax.validation.Valid;
 
 @FeignClient(
         name = ServerName.APPLICATION_NAME,
-        fallbackFactory = SysRoleMicroService.SysUserMicroServiceImpl.class
+        fallbackFactory = SysRoleMicroService.SysRoleMicroServiceImpl.class
 )
 public interface SysRoleMicroService {
     @PostMapping("/sys/role/inquiry/select")
-    public XfaceSysRoleInquirySelectResponseDTO sysRoleInquirySelect();
+    public XfaceSysRoleSelectInquiryResponseDTO sysRoleInquirySelect();
 
     @PostMapping("/sys/role/inquiry/page")
     public XfaceSysRoleInquiryPageResponseDTO sysRoleInquiryPage(@Valid @RequestBody XfaceSysRoleInquiryPageRequestDTO requestDTO);
@@ -44,15 +44,15 @@ public interface SysRoleMicroService {
     public XfaceSysRoleAuthResponseDTO sysRoleAuth(@Valid @RequestBody XfaceSysRoleAuthRequestDTO requestDTO);
 
     @Component
-    class SysUserMicroServiceImpl implements FallbackFactory<SysRoleMicroService> {
-        private Logger logger = LoggerFactory.getLogger(SysUserMicroServiceImpl.class);
+    class SysRoleMicroServiceImpl implements FallbackFactory<SysRoleMicroService> {
+        private Logger logger = LoggerFactory.getLogger(SysRoleMicroServiceImpl.class);
         @Override
         public SysRoleMicroService create(Throwable throwable) {
             logger.error("fallback reason:{}",throwable.getMessage());
             return new SysRoleMicroService(){
                 @Override
-                public XfaceSysRoleInquirySelectResponseDTO sysRoleInquirySelect() {
-                    XfaceSysRoleInquirySelectResponseDTO responseDTO = new XfaceSysRoleInquirySelectResponseDTO();
+                public XfaceSysRoleSelectInquiryResponseDTO sysRoleInquirySelect() {
+                    XfaceSysRoleSelectInquiryResponseDTO responseDTO = new XfaceSysRoleSelectInquiryResponseDTO();
                     TransactionStatus transactionStatus = new TransactionStatus();
                     transactionStatus.setError("Call remote(sysRoleInquirySelect) service error.", ServerName.APPLICATION_NAME);
                     responseDTO.setTransactionStatus(transactionStatus);

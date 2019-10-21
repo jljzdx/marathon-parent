@@ -9,13 +9,17 @@ import org.springframework.cloud.openfeign.EnableFeignClients;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
 
-@MapperScan({"com.newera.marathon.service.*.mapper"})
 @EnableTransactionManagement
 @SpringBootApplication
-@EnableFeignClients
 @EnableDiscoveryClient
 @EnableCaching
-@ComponentScan(basePackages = {"com.spaking.boot.starter","com.newera.marathon.service"})
+@MapperScan({"com.newera.marathon.service.*.mapper"})
+@EnableFeignClients(basePackages = {"com.newera.marathon.microface.cos"})
+@ComponentScan(basePackages = {
+		"com.newera.marathon.microface.cos",
+		"com.spaking.boot.starter",
+		"com.newera.marathon.mq",
+		"com.newera.marathon.service"})
 public class ServiceCmsApplication {
 
 	public static void main(String[] args) {

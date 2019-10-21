@@ -36,8 +36,8 @@ public class PublicController {
     @ResponseBody
     public List<Map> sysRoleInquirySelect(){
         //调用微服务
-        XfaceSysRoleInquirySelectResponseDTO responseDTO = sysRoleMicroService.sysRoleInquirySelect();
-        List<XfaceSysRoleInquirySelectResponseSubDTO> dataList = responseDTO.getDataList();
+        XfaceSysRoleSelectInquiryResponseDTO responseDTO = sysRoleMicroService.sysRoleInquirySelect();
+        List<XfaceSysRoleSelectInquiryResponseSubDTO> dataList = responseDTO.getDataList();
         //重组响应对象
         List result = new ArrayList();
         dataList.forEach(w->{

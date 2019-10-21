@@ -14,6 +14,8 @@ import com.newera.marathon.service.cms.entity.SysUser;
 import com.newera.marathon.service.cms.entity.SysUserRole;
 import com.newera.marathon.service.cms.mapper.SysUserMapper;
 import com.newera.marathon.service.cms.mapper.SysUserRoleMapper;
+import com.newera.marathon.service.cms.mq.pojo.MailSend;
+import com.newera.marathon.service.cms.mq.producer.MailSendProducer;
 import com.newera.marathon.service.cms.service.SysUserRoleService;
 import com.newera.marathon.service.cms.service.SysUserService;
 import com.newera.marathon.service.cms.vo.LeftMenuListVO;
@@ -41,6 +43,8 @@ public class SysUserServiceImpl extends ServiceImpl<SysUserMapper, SysUser> impl
     private SysUserRoleMapper sysUserRoleMapper;
     @Autowired
     private SysUserRoleService sysUserRoleService;
+    @Autowired
+    private MailSendProducer mailSendProducer;
 
     @Override
     public XfaceSysUserInquiryPageResponseDTO doSysUserInquiryPage(XfaceSysUserInquiryPageRequestDTO requestDTO) {
@@ -251,7 +255,7 @@ public class SysUserServiceImpl extends ServiceImpl<SysUserMapper, SysUser> impl
         QueryWrapper<SysUser> wrapper = new QueryWrapper<>();
         wrapper.eq("id",requestDTO.getId());
         wrapper.eq("locked",1);
-        wrapper.select("id","user_name");
+        wrapper.select("id","user_name","email");
         SysUser sysUser = getOne(wrapper);
         if(null == sysUser){
             throw new BaseException(ApplicationError.USERID_STATUS_INVALID.getMessage(), ApplicationError.USERID_STATUS_INVALID.getCode());
@@ -262,6 +266,13 @@ public class SysUserServiceImpl extends ServiceImpl<SysUserMapper, SysUser> impl
         sysUser2.setPassword(PasswordUtil.generate(sysUser.getUserName()));
         sysUser2.setModifyOperator(requestDTO.getModifyOperator());
         updateById(sysUser2);
+        //发送邮件
+        MailSend mailSend = new MailSend();
+        mailSend.setToMail(sysUser.getEmail());
+        mailSend.setSubject("后台用户密码重置");
+        mailSend.setContent("亲爱的"+sysUser.getUserName()+"用户，您的新密码为："+sysUser.getUserName());
+        mailSend.setType(1);
+        mailSendProducer.send(mailSend);
         responseDTO.setTransactionStatus(transactionStatus);
         log.info("doSysUserResetPassword end");
         return responseDTO;

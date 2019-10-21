@@ -4,6 +4,6 @@ import com.spaking.boot.starter.core.dto.GenericResponseDTO;
 import lombok.Data;
 
 @Data
-public class XfaceCosSendMailResponseDTO extends GenericResponseDTO {
+public class XfaceCosMailSendResponseDTO extends GenericResponseDTO {
 
 }

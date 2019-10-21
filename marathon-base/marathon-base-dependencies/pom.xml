@@ -40,6 +40,11 @@
                 <artifactId>marathon-microface-cust</artifactId>
                 <version>${project.newera.marathon.version}</version>
             </dependency>
+            <dependency>
+                <groupId>com.newera.marathon</groupId>
+                <artifactId>marathon-mq</artifactId>
+                <version>${project.newera.marathon.version}</version>
+            </dependency>
             <!-- commons-codec -->
             <dependency>
                 <groupId>commons-codec</groupId>

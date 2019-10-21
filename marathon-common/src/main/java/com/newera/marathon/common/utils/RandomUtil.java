@@ -1,13 +1,18 @@
 package com.newera.marathon.common.utils;
 
 import java.text.SimpleDateFormat;
-import java.util.Date;
-import java.util.HashSet;
-import java.util.Random;
-import java.util.Set;
+import java.util.*;
 
 public class RandomUtil {
 
+	public static String UUID32() {
+		String str = UUID.randomUUID().toString();
+		return str.replaceAll("-", "");
+	}
+
+	public static String UUID36() {
+		return UUID.randomUUID().toString();
+	}
 	/**
 	 * 获取随机验证码
 	 * 

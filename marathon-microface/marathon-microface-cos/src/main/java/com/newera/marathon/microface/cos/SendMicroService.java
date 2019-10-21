@@ -1,10 +1,6 @@
 package com.newera.marathon.microface.cos;
 
-import com.newera.marathon.dto.cos.maintenance.XfaceCosCheckSmsCodeRequestDTO;
-import com.newera.marathon.dto.cos.maintenance.XfaceCosCheckSmsCodeResponseDTO;
-import com.newera.marathon.dto.cos.maintenance.XfaceCosSendSmsRequestDTO;
-import com.newera.marathon.dto.cos.maintenance.XfaceCosSendSmsResponseDTO;
-import com.newera.marathon.dto.cos.maintenance.XfaceGenearteCaptchaResponseDTO;
+import com.newera.marathon.dto.cos.maintenance.*;
 import com.spaking.boot.starter.core.model.TransactionStatus;
 import feign.hystrix.FallbackFactory;
 import org.slf4j.Logger;
@@ -28,7 +24,10 @@ public interface SendMicroService {
     XfaceCosCheckSmsCodeResponseDTO checkSmsCode(@Valid @RequestBody XfaceCosCheckSmsCodeRequestDTO requestDTO);
 
     @PostMapping("/generate/captcha")
-    public XfaceGenearteCaptchaResponseDTO generateCaptcha();
+    XfaceCosGenearteCaptchaResponseDTO generateCaptcha();
+
+    @PostMapping("/mail/send")
+    XfaceCosMailSendResponseDTO sendMail(@Valid @RequestBody XfaceCosMailSendRequestDTO requestDTO);
 
     @Component
     class SendMicroServiceImpl implements FallbackFactory<SendMicroService> {
@@ -56,10 +55,19 @@ public interface SendMicroService {
                 }
 
                 @Override
-                public XfaceGenearteCaptchaResponseDTO generateCaptcha() {
-                    XfaceGenearteCaptchaResponseDTO responseDTO = new XfaceGenearteCaptchaResponseDTO();
+                public XfaceCosGenearteCaptchaResponseDTO generateCaptcha() {
+                    XfaceCosGenearteCaptchaResponseDTO responseDTO = new XfaceCosGenearteCaptchaResponseDTO();
                     TransactionStatus transactionStatus = new TransactionStatus();
                     transactionStatus.setError("Call remote(generateCaptcha) service error.", ServerName.APPLICATION_NAME);
+                    responseDTO.setTransactionStatus(transactionStatus);
+                    return responseDTO;
+                }
+
+                @Override
+                public XfaceCosMailSendResponseDTO sendMail(@Valid XfaceCosMailSendRequestDTO requestDTO) {
+                    XfaceCosMailSendResponseDTO responseDTO = new XfaceCosMailSendResponseDTO();
+                    TransactionStatus transactionStatus = new TransactionStatus();
+                    transactionStatus.setError("Call remote(sendMail) service error.", ServerName.APPLICATION_NAME);
                     responseDTO.setTransactionStatus(transactionStatus);
                     return responseDTO;
                 }

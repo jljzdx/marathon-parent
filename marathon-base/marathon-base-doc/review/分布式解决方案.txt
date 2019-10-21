@@ -33,11 +33,6 @@ RabbitMQ解决分布式事务：
 1、使用Confirm确认机制，保证生产者消息发送成功；
 2、使用ACK模式+补偿机制（注意幂等），保证消费者成功消费消息；
 3、使用补单机制，确保第一个事务执行成功
-|-RabbitMQ安装路径：cd /usr/local/Cellar/rabbitmq/3.8.0
-|-启动：rabbitmq-server -detached
-|-查看状态：rabbitmqctl status
-|-关闭：rabbitmqctl stop
-|-可视化监控界面：http://localhost:15672【guest/guest】
 
 redis分布式锁：
 获取锁：

@@ -101,9 +101,9 @@ public class SendServiceImpl implements SendService {
     }
 
     @Override
-    public XfaceGenearteCaptchaResponseDTO doGenerateCaptcha() {
+    public XfaceCosGenearteCaptchaResponseDTO doGenerateCaptcha() {
         log.info("doGenerateCaptcha start");
-        XfaceGenearteCaptchaResponseDTO responseDTO = new XfaceGenearteCaptchaResponseDTO();
+        XfaceCosGenearteCaptchaResponseDTO responseDTO = new XfaceCosGenearteCaptchaResponseDTO();
         TransactionStatus transactionStatus = new TransactionStatus();
         CaptchaCodeUtil captchaCodeUtil = new CaptchaCodeUtil();
         Map<String, String> map = captchaCodeUtil.getRandcode();
@@ -122,9 +122,9 @@ public class SendServiceImpl implements SendService {
     }
 
     @Override
-    public XfaceCosSendMailResponseDTO doMailSend(XfaceCosSendMailRequestDTO requestDTO) {
+    public XfaceCosMailSendResponseDTO doMailSend(XfaceCosMailSendRequestDTO requestDTO) {
         log.info("doMailSend start");
-        XfaceCosSendMailResponseDTO responseDTO = new XfaceCosSendMailResponseDTO();
+        XfaceCosMailSendResponseDTO responseDTO = new XfaceCosMailSendResponseDTO();
         TransactionStatus transactionStatus = new TransactionStatus();
         String toMail = requestDTO.getToMail();
         String subject = requestDTO.getSubject();

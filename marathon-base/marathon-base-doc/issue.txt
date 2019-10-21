@@ -5,3 +5,4 @@
 6、将nacos后台放到manathon-web下
 9、reactor-core响应式编程（Flux、Mono）
 10、整理一下配置中心
+11、rabbitmq：死信队列和分布式事物解决

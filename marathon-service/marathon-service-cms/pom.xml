@@ -18,5 +18,15 @@
             <artifactId>spring-boot-starter-test</artifactId>
             <scope>test</scope>
         </dependency>
+        <!--marathon-microface-cos-->
+        <dependency>
+            <groupId>com.newera.marathon</groupId>
+            <artifactId>marathon-microface-cos</artifactId>
+        </dependency>
+        <!--marathon-mq-->
+        <dependency>
+            <groupId>com.newera.marathon</groupId>
+            <artifactId>marathon-mq</artifactId>
+        </dependency>
     </dependencies>
 </project>
