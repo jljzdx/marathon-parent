@@ -1,4 +1,4 @@
-package com.newera.marathon.dto.system.maintenance;
+package com.newera.marathon.dto.cos.maintenance;
 
 import lombok.Data;
 
@@ -6,7 +6,7 @@ import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.Size;
 
 @Data
-public class XfaceMsgLogAdditionRequestDTO {
+public class XfaceCosMsgLogAdditionRequestDTO {
 
 
     @NotBlank(message = "消息唯一标识不能为空")

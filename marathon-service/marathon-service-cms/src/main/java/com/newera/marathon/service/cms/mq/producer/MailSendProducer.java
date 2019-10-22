@@ -2,8 +2,8 @@ package com.newera.marathon.service.cms.mq.producer;
 
 import com.alibaba.fastjson.JSON;
 import com.newera.marathon.common.utils.RandomUtil;
-import com.newera.marathon.dto.system.maintenance.XfaceMsgLogAdditionRequestDTO;
-import com.newera.marathon.dto.system.maintenance.XfaceMsgLogAdditionResponseDTO;
+import com.newera.marathon.dto.cos.maintenance.XfaceCosMsgLogAdditionRequestDTO;
+import com.newera.marathon.dto.cos.maintenance.XfaceCosMsgLogAdditionResponseDTO;
 import com.newera.marathon.microface.cos.MsgLogMicroService;
 import com.newera.marathon.mq.config.RabbitConfig;
 import com.newera.marathon.service.cms.mq.pojo.MailSend;
@@ -34,12 +34,12 @@ public class MailSendProducer {
         String body = JSON.toJSONString(mailSend);
         log.info("【邮件队列生产者】消息体：{}",body);
         //消息入库
-        XfaceMsgLogAdditionRequestDTO msgLogAdditionRequestDTO = new XfaceMsgLogAdditionRequestDTO();
+        XfaceCosMsgLogAdditionRequestDTO msgLogAdditionRequestDTO = new XfaceCosMsgLogAdditionRequestDTO();
         msgLogAdditionRequestDTO.setMsgId(msgId);
         msgLogAdditionRequestDTO.setMsgBody(body);
         msgLogAdditionRequestDTO.setExchange(RabbitConfig.MAIL_EXCHANGE);
         msgLogAdditionRequestDTO.setRoutingKey(RabbitConfig.MAIL_ROUTING_KEY);
-        XfaceMsgLogAdditionResponseDTO msgLogAdditionResponseDTO = msgLogMicroService.msgLogAddition(msgLogAdditionRequestDTO);
+        XfaceCosMsgLogAdditionResponseDTO msgLogAdditionResponseDTO = msgLogMicroService.msgLogAddition(msgLogAdditionRequestDTO);
         if (!msgLogAdditionResponseDTO.getTransactionStatus().isSuccess()) {
             log.error("消息入库失败：{}",msgLogAdditionResponseDTO.getTransactionStatus().getReplyText());
         }

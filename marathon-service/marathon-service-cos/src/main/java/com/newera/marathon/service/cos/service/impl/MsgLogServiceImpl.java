@@ -3,13 +3,13 @@ package com.newera.marathon.service.cos.service.impl;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.update.UpdateWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
-import com.newera.marathon.dto.system.inquiry.XfaceMsgLogListInquiryRequestDTO;
-import com.newera.marathon.dto.system.inquiry.XfaceMsgLogListInquiryResponseDTO;
-import com.newera.marathon.dto.system.inquiry.XfaceMsgLogListInquiryResponseSubDTO;
-import com.newera.marathon.dto.system.maintenance.XfaceMsgLogAdditionRequestDTO;
-import com.newera.marathon.dto.system.maintenance.XfaceMsgLogAdditionResponseDTO;
-import com.newera.marathon.dto.system.maintenance.XfaceMsgLogModifyRequestDTO;
-import com.newera.marathon.dto.system.maintenance.XfaceMsgLogModifyResponseDTO;
+import com.newera.marathon.dto.cos.inquiry.XfaceCosMsgLogListInquiryRequestDTO;
+import com.newera.marathon.dto.cos.inquiry.XfaceCosMsgLogListInquiryResponseDTO;
+import com.newera.marathon.dto.cos.inquiry.XfaceCosMsgLogListInquiryResponseSubDTO;
+import com.newera.marathon.dto.cos.maintenance.XfaceCosMsgLogAdditionRequestDTO;
+import com.newera.marathon.dto.cos.maintenance.XfaceCosMsgLogAdditionResponseDTO;
+import com.newera.marathon.dto.cos.maintenance.XfaceCosMsgLogModifyRequestDTO;
+import com.newera.marathon.dto.cos.maintenance.XfaceCosMsgLogModifyResponseDTO;
 import com.newera.marathon.service.cos.entity.MsgLog;
 import com.newera.marathon.service.cos.mapper.MsgLogMapper;
 import com.newera.marathon.service.cos.service.MsgLogService;
@@ -39,9 +39,9 @@ public class MsgLogServiceImpl extends ServiceImpl<MsgLogMapper, MsgLog> impleme
     private MsgLogMapper msgLogMapper;
 
     @Override
-    public XfaceMsgLogListInquiryResponseDTO doMsgLogListInquiry(XfaceMsgLogListInquiryRequestDTO requestDTO) {
+    public XfaceCosMsgLogListInquiryResponseDTO doMsgLogListInquiry(XfaceCosMsgLogListInquiryRequestDTO requestDTO) {
         log.info("doMsgLogListInquiry start");
-        XfaceMsgLogListInquiryResponseDTO responseDTO = new XfaceMsgLogListInquiryResponseDTO();
+        XfaceCosMsgLogListInquiryResponseDTO responseDTO = new XfaceCosMsgLogListInquiryResponseDTO();
         TransactionStatus transactionStatus = new TransactionStatus();
         //查询条件
         QueryWrapper<MsgLog> wrapper = new QueryWrapper<>();
@@ -54,9 +54,9 @@ public class MsgLogServiceImpl extends ServiceImpl<MsgLogMapper, MsgLog> impleme
         //查询
         List<MsgLog> list = msgLogMapper.selectList(wrapper);
         //复制对象
-        List<XfaceMsgLogListInquiryResponseSubDTO> responseSubDTOS = new ArrayList<>();
+        List<XfaceCosMsgLogListInquiryResponseSubDTO> responseSubDTOS = new ArrayList<>();
         list.forEach(w->{
-            XfaceMsgLogListInquiryResponseSubDTO responseSubDTO = new XfaceMsgLogListInquiryResponseSubDTO();
+            XfaceCosMsgLogListInquiryResponseSubDTO responseSubDTO = new XfaceCosMsgLogListInquiryResponseSubDTO();
             BeanUtils.copyProperties(w,responseSubDTO);
             responseSubDTOS.add(responseSubDTO);
         });
@@ -67,9 +67,9 @@ public class MsgLogServiceImpl extends ServiceImpl<MsgLogMapper, MsgLog> impleme
     }
 
     @Override
-    public XfaceMsgLogAdditionResponseDTO doMsgLogAddition(XfaceMsgLogAdditionRequestDTO requestDTO) {
+    public XfaceCosMsgLogAdditionResponseDTO doMsgLogAddition(XfaceCosMsgLogAdditionRequestDTO requestDTO) {
         log.info("doMsgLogAddition start");
-        XfaceMsgLogAdditionResponseDTO responseDTO = new XfaceMsgLogAdditionResponseDTO();
+        XfaceCosMsgLogAdditionResponseDTO responseDTO = new XfaceCosMsgLogAdditionResponseDTO();
         TransactionStatus transactionStatus = new TransactionStatus();
         //复制对象
         MsgLog msgLog = new MsgLog();
@@ -82,9 +82,9 @@ public class MsgLogServiceImpl extends ServiceImpl<MsgLogMapper, MsgLog> impleme
     }
 
     @Override
-    public XfaceMsgLogModifyResponseDTO doMsgLogModify(XfaceMsgLogModifyRequestDTO requestDTO) {
+    public XfaceCosMsgLogModifyResponseDTO doMsgLogModify(XfaceCosMsgLogModifyRequestDTO requestDTO) {
         log.info("doMsgLogModify start");
-        XfaceMsgLogModifyResponseDTO responseDTO = new XfaceMsgLogModifyResponseDTO();
+        XfaceCosMsgLogModifyResponseDTO responseDTO = new XfaceCosMsgLogModifyResponseDTO();
         TransactionStatus transactionStatus = new TransactionStatus();
         //更新条件
         UpdateWrapper<MsgLog> wrapper = new UpdateWrapper<>();

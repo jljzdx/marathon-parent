@@ -3,11 +3,11 @@ package com.newera.marathon.service.cms.mq.consumer;
 import com.alibaba.fastjson.JSONObject;
 import com.newera.marathon.dto.cos.maintenance.XfaceCosMailSendRequestDTO;
 import com.newera.marathon.dto.cos.maintenance.XfaceCosMailSendResponseDTO;
-import com.newera.marathon.dto.system.inquiry.XfaceMsgLogListInquiryRequestDTO;
-import com.newera.marathon.dto.system.inquiry.XfaceMsgLogListInquiryResponseDTO;
-import com.newera.marathon.dto.system.inquiry.XfaceMsgLogListInquiryResponseSubDTO;
-import com.newera.marathon.dto.system.maintenance.XfaceMsgLogModifyRequestDTO;
-import com.newera.marathon.dto.system.maintenance.XfaceMsgLogModifyResponseDTO;
+import com.newera.marathon.dto.cos.inquiry.XfaceCosMsgLogListInquiryRequestDTO;
+import com.newera.marathon.dto.cos.inquiry.XfaceCosMsgLogListInquiryResponseDTO;
+import com.newera.marathon.dto.cos.inquiry.XfaceCosMsgLogListInquiryResponseSubDTO;
+import com.newera.marathon.dto.cos.maintenance.XfaceCosMsgLogModifyRequestDTO;
+import com.newera.marathon.dto.cos.maintenance.XfaceCosMsgLogModifyResponseDTO;
 import com.newera.marathon.microface.cos.MsgLogMicroService;
 import com.newera.marathon.microface.cos.SendMicroService;
 import com.newera.marathon.mq.config.RabbitConfig;
@@ -38,10 +38,10 @@ public class MailSendConsumer {
         log.info("【邮件队列消费者】消息体: {}", json);
         MailSend mailSend = JSONObject.parseObject(json, MailSend.class);
         //幂等性判断
-        XfaceMsgLogListInquiryRequestDTO msgLogListInquiryRequestDTO = new XfaceMsgLogListInquiryRequestDTO();
+        XfaceCosMsgLogListInquiryRequestDTO msgLogListInquiryRequestDTO = new XfaceCosMsgLogListInquiryRequestDTO();
         msgLogListInquiryRequestDTO.setMsgId(mailSend.getMsgId());
-        XfaceMsgLogListInquiryResponseDTO msgLogListInquiryResponseDTO = msgLogMicroService.msgLogListInquiry(msgLogListInquiryRequestDTO);
-        List<XfaceMsgLogListInquiryResponseSubDTO> responseSubDTOS = msgLogListInquiryResponseDTO.getDataList();
+        XfaceCosMsgLogListInquiryResponseDTO msgLogListInquiryResponseDTO = msgLogMicroService.msgLogListInquiry(msgLogListInquiryRequestDTO);
+        List<XfaceCosMsgLogListInquiryResponseSubDTO> responseSubDTOS = msgLogListInquiryResponseDTO.getDataList();
         if(null == responseSubDTOS || responseSubDTOS.size() != 1 || responseSubDTOS.get(0).getStatus()==4){
             log.error("【邮件队列消费者】幂等性问题，消息Id：{}",mailSend.getMsgId());
             return;
@@ -53,10 +53,10 @@ public class MailSendConsumer {
         try {
             if(cosMailSendResponseDTO.getTransactionStatus().isSuccess()){
                 //更新状态为已消费
-                XfaceMsgLogModifyRequestDTO msgLogModifyRequestDTO = new XfaceMsgLogModifyRequestDTO();
+                XfaceCosMsgLogModifyRequestDTO msgLogModifyRequestDTO = new XfaceCosMsgLogModifyRequestDTO();
                 msgLogModifyRequestDTO.setMsgId(mailSend.getMsgId());
                 msgLogModifyRequestDTO.setStatus(4);
-                XfaceMsgLogModifyResponseDTO msgLogModifyResponseDTO = msgLogMicroService.msgLogModify(msgLogModifyRequestDTO);
+                XfaceCosMsgLogModifyResponseDTO msgLogModifyResponseDTO = msgLogMicroService.msgLogModify(msgLogModifyRequestDTO);
                 if(!msgLogModifyResponseDTO.getTransactionStatus().isSuccess()){
                     log.error("【邮件队列消费者】：更新状态为'已消费'失败");
                 }

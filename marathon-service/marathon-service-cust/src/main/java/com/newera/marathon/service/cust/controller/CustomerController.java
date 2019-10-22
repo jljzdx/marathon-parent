@@ -24,7 +24,7 @@ public class CustomerController {
     @BusinessLogger(key = "CUST",value = "customerRegister")
     @ApiOperation(value="客户注册", notes="客户注册")
     @ApiImplicitParam(name = "requestDTO", value = "入参对象", dataType = "XfaceCustCustomerRegisterRequestDTO")
-    @PostMapping("/customer/register")
+    @PostMapping("/cust/customer/register")
     public XfaceCustCustomerRegisterResponseDTO customerRegister(@Valid @RequestBody XfaceCustCustomerRegisterRequestDTO requestDTO){
         XfaceCustCustomerRegisterResponseDTO responseDTO = sysUserService.doCustomerRegister(requestDTO);
         return responseDTO;
@@ -33,7 +33,7 @@ public class CustomerController {
     @BusinessLogger(key = "CUST",value = "customerLogin")
     @ApiOperation(value="客户登陆", notes="客户登陆")
     @ApiImplicitParam(name = "requestDTO", value = "入参对象", dataType = "XfaceCustCustomerLoginRequestDTO")
-    @PostMapping("/customer/login")
+    @PostMapping("/cust/customer/login")
     public XfaceCustCustomerLoginResponseDTO customerLogin(@Valid @RequestBody XfaceCustCustomerLoginRequestDTO requestDTO){
         XfaceCustCustomerLoginResponseDTO responseDTO = sysUserService.doCustomerLogin(requestDTO);
         return responseDTO;

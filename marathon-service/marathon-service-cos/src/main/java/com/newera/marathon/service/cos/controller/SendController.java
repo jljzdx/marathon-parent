@@ -25,7 +25,7 @@ public class SendController {
     @BusinessLogger(key = "COS",value = "sendSms")
     @ApiOperation(value="发送短信", notes="发送短信")
     @ApiImplicitParam(name = "requestDTO", value = "入参对象", dataType = "XfaceCosSendSmsRequestDTO")
-    @PostMapping("/sms/send")
+    @PostMapping("/cos/sms/send")
     public XfaceCosSendSmsResponseDTO sendSms(@Valid @RequestBody XfaceCosSendSmsRequestDTO requestDTO){
         XfaceCosSendSmsResponseDTO responseDTO = sendService.doSmsSend(requestDTO);
         return responseDTO;
@@ -34,7 +34,7 @@ public class SendController {
     @BusinessLogger(key = "COS",value = "checkSmsCode")
     @ApiOperation(value="短信验证码校验", notes="短信验证码校验")
     @ApiImplicitParam(name = "requestDTO", value = "入参对象", dataType = "XfaceCosCheckSmsCodeRequestDTO")
-    @PostMapping("/sms/code/check")
+    @PostMapping("/cos/sms/code/check")
     public XfaceCosCheckSmsCodeResponseDTO checkSmsCode(@Valid @RequestBody XfaceCosCheckSmsCodeRequestDTO requestDTO){
         XfaceCosCheckSmsCodeResponseDTO responseDTO = sendService.doCheckSmsCode(requestDTO);
         return responseDTO;
@@ -42,7 +42,7 @@ public class SendController {
 
     @BusinessLogger(key = "COS",value = "generateCaptcha")
     @ApiOperation(value="生成图形验证码", notes="生成图形验证码")
-    @PostMapping("/generate/captcha")
+    @PostMapping("/cos/generate/captcha")
     public XfaceCosGenearteCaptchaResponseDTO generateCaptcha(){
         XfaceCosGenearteCaptchaResponseDTO responseDTO = sendService.doGenerateCaptcha();
         return responseDTO;
@@ -51,7 +51,7 @@ public class SendController {
     @BusinessLogger(key = "COS",value = "sendMail")
     @ApiOperation(value="发送邮件", notes="发送邮件")
     @ApiImplicitParam(name = "requestDTO", value = "入参对象", dataType = "XfaceCosMailSendRequestDTO")
-    @PostMapping("/mail/send")
+    @PostMapping("/cos/mail/send")
     public XfaceCosMailSendResponseDTO sendMail(@Valid @RequestBody XfaceCosMailSendRequestDTO requestDTO){
         XfaceCosMailSendResponseDTO responseDTO = sendService.doMailSend(requestDTO);
         return responseDTO;

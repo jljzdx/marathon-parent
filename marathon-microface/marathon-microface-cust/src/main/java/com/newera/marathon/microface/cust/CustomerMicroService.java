@@ -20,10 +20,10 @@ import javax.validation.Valid;
         fallbackFactory = CustomerMicroService.CustomerMicroServiceImpl.class
 )
 public interface CustomerMicroService {
-    @PostMapping({"/customer/register"})
+    @PostMapping({"/cust/customer/register"})
     XfaceCustCustomerRegisterResponseDTO customerRegister(@Valid @RequestBody XfaceCustCustomerRegisterRequestDTO requestDTO);
 
-    @PostMapping("/customer/login")
+    @PostMapping("/cust/customer/login")
     public XfaceCustCustomerLoginResponseDTO customerLogin(@Valid @RequestBody XfaceCustCustomerLoginRequestDTO requestDTO);
 
     @Component

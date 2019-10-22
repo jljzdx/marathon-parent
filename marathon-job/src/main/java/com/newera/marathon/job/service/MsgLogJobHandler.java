@@ -1,10 +1,10 @@
 package com.newera.marathon.job.service;
 
-import com.newera.marathon.dto.system.inquiry.XfaceMsgLogListInquiryRequestDTO;
-import com.newera.marathon.dto.system.inquiry.XfaceMsgLogListInquiryResponseDTO;
-import com.newera.marathon.dto.system.inquiry.XfaceMsgLogListInquiryResponseSubDTO;
-import com.newera.marathon.dto.system.maintenance.XfaceMsgLogModifyRequestDTO;
-import com.newera.marathon.dto.system.maintenance.XfaceMsgLogModifyResponseDTO;
+import com.newera.marathon.dto.cos.inquiry.XfaceCosMsgLogListInquiryRequestDTO;
+import com.newera.marathon.dto.cos.inquiry.XfaceCosMsgLogListInquiryResponseDTO;
+import com.newera.marathon.dto.cos.inquiry.XfaceCosMsgLogListInquiryResponseSubDTO;
+import com.newera.marathon.dto.cos.maintenance.XfaceCosMsgLogModifyRequestDTO;
+import com.newera.marathon.dto.cos.maintenance.XfaceCosMsgLogModifyResponseDTO;
 import com.newera.marathon.microface.cos.MsgLogMicroService;
 import com.xxl.job.core.biz.model.ReturnT;
 import com.xxl.job.core.handler.IJobHandler;
@@ -46,29 +46,29 @@ public class MsgLogJobHandler extends IJobHandler {
     @Override
     public ReturnT<String> execute(String param) throws Exception {
         log.info("MsgLogJobHandler start ..............");
-        XfaceMsgLogListInquiryRequestDTO msgLogListInquiryRequestDTO = new XfaceMsgLogListInquiryRequestDTO();
+        XfaceCosMsgLogListInquiryRequestDTO msgLogListInquiryRequestDTO = new XfaceCosMsgLogListInquiryRequestDTO();
         msgLogListInquiryRequestDTO.setStatus(1);
         //查询所有状态为"投递中"的消息
-        XfaceMsgLogListInquiryResponseDTO msgLogListInquiryResponseDTO = msgLogMicroService.msgLogListInquiry(msgLogListInquiryRequestDTO);
-        List<XfaceMsgLogListInquiryResponseSubDTO> responseSubDTOS = msgLogListInquiryResponseDTO.getDataList();
+        XfaceCosMsgLogListInquiryResponseDTO msgLogListInquiryResponseDTO = msgLogMicroService.msgLogListInquiry(msgLogListInquiryRequestDTO);
+        List<XfaceCosMsgLogListInquiryResponseSubDTO> responseSubDTOS = msgLogListInquiryResponseDTO.getDataList();
         responseSubDTOS.forEach(w->{
             if (w.getTryCount() >= MAX_TRY_COUNT) {
                 log.info("MsgId：{}",w.getMsgId());
-                XfaceMsgLogModifyRequestDTO msgLogModifyRequestDTO = new XfaceMsgLogModifyRequestDTO();
+                XfaceCosMsgLogModifyRequestDTO msgLogModifyRequestDTO = new XfaceCosMsgLogModifyRequestDTO();
                 msgLogModifyRequestDTO.setMsgId(w.getMsgId());
                 msgLogModifyRequestDTO.setStatus(3);
                 //更新状态为投递失败
-                XfaceMsgLogModifyResponseDTO msgLogModifyResponseDTO = msgLogMicroService.msgLogModify(msgLogModifyRequestDTO);
+                XfaceCosMsgLogModifyResponseDTO msgLogModifyResponseDTO = msgLogMicroService.msgLogModify(msgLogModifyRequestDTO);
                 if(!msgLogModifyResponseDTO.getTransactionStatus().isSuccess()){
                     log.error("【消息定时任务】：更新状态为'投递失败'失败");
                 }
                 log.info("超过最大重试次数, 消息投递失败, msgId: {}", w.getMsgId());
             }else{
-                XfaceMsgLogModifyRequestDTO msgLogModifyRequestDTO = new XfaceMsgLogModifyRequestDTO();
+                XfaceCosMsgLogModifyRequestDTO msgLogModifyRequestDTO = new XfaceCosMsgLogModifyRequestDTO();
                 msgLogModifyRequestDTO.setMsgId(w.getMsgId());
                 msgLogModifyRequestDTO.setTryCount(w.getTryCount()+1);
                 //更新重试次数+1
-                XfaceMsgLogModifyResponseDTO msgLogModifyResponseDTO = msgLogMicroService.msgLogModify(msgLogModifyRequestDTO);
+                XfaceCosMsgLogModifyResponseDTO msgLogModifyResponseDTO = msgLogMicroService.msgLogModify(msgLogModifyRequestDTO);
                 if(!msgLogModifyResponseDTO.getTransactionStatus().isSuccess()){
                     log.error("【消息定时任务】：更新重试次数失败");
                 }

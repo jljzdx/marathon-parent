@@ -1,9 +1,9 @@
-package com.newera.marathon.dto.system.inquiry;
+package com.newera.marathon.dto.cos.inquiry;
 
 import lombok.Data;
 
 @Data
-public class XfaceMsgLogListInquiryResponseSubDTO {
+public class XfaceCosMsgLogListInquiryResponseSubDTO {
 
     private String msgId;
 

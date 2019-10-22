@@ -1,12 +1,12 @@
 package com.newera.marathon.service.cos.service;
 
 import com.baomidou.mybatisplus.extension.service.IService;
-import com.newera.marathon.dto.system.inquiry.XfaceMsgLogListInquiryRequestDTO;
-import com.newera.marathon.dto.system.inquiry.XfaceMsgLogListInquiryResponseDTO;
-import com.newera.marathon.dto.system.maintenance.XfaceMsgLogAdditionRequestDTO;
-import com.newera.marathon.dto.system.maintenance.XfaceMsgLogAdditionResponseDTO;
-import com.newera.marathon.dto.system.maintenance.XfaceMsgLogModifyRequestDTO;
-import com.newera.marathon.dto.system.maintenance.XfaceMsgLogModifyResponseDTO;
+import com.newera.marathon.dto.cos.inquiry.XfaceCosMsgLogListInquiryRequestDTO;
+import com.newera.marathon.dto.cos.inquiry.XfaceCosMsgLogListInquiryResponseDTO;
+import com.newera.marathon.dto.cos.maintenance.XfaceCosMsgLogAdditionRequestDTO;
+import com.newera.marathon.dto.cos.maintenance.XfaceCosMsgLogAdditionResponseDTO;
+import com.newera.marathon.dto.cos.maintenance.XfaceCosMsgLogModifyRequestDTO;
+import com.newera.marathon.dto.cos.maintenance.XfaceCosMsgLogModifyResponseDTO;
 import com.newera.marathon.service.cos.entity.MsgLog;
 
 /**
@@ -19,9 +19,9 @@ import com.newera.marathon.service.cos.entity.MsgLog;
  */
 public interface MsgLogService extends IService<MsgLog> {
 
-    XfaceMsgLogListInquiryResponseDTO doMsgLogListInquiry(XfaceMsgLogListInquiryRequestDTO requestDTO);
+    XfaceCosMsgLogListInquiryResponseDTO doMsgLogListInquiry(XfaceCosMsgLogListInquiryRequestDTO requestDTO);
 
-    XfaceMsgLogAdditionResponseDTO doMsgLogAddition(XfaceMsgLogAdditionRequestDTO requestDTO);
+    XfaceCosMsgLogAdditionResponseDTO doMsgLogAddition(XfaceCosMsgLogAdditionRequestDTO requestDTO);
 
-    XfaceMsgLogModifyResponseDTO doMsgLogModify(XfaceMsgLogModifyRequestDTO requestDTO);
+    XfaceCosMsgLogModifyResponseDTO doMsgLogModify(XfaceCosMsgLogModifyRequestDTO requestDTO);
 }

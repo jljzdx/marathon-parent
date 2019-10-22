@@ -17,16 +17,16 @@ import javax.validation.Valid;
         fallbackFactory = SendMicroService.SendMicroServiceImpl.class
 )
 public interface SendMicroService {
-    @PostMapping("/sms/send")
+    @PostMapping("/cos/sms/send")
     XfaceCosSendSmsResponseDTO sendSms(@Valid @RequestBody XfaceCosSendSmsRequestDTO requestDTO);
 
-    @PostMapping("/sms/code/check")
+    @PostMapping("/cos/sms/code/check")
     XfaceCosCheckSmsCodeResponseDTO checkSmsCode(@Valid @RequestBody XfaceCosCheckSmsCodeRequestDTO requestDTO);
 
-    @PostMapping("/generate/captcha")
+    @PostMapping("/cos/generate/captcha")
     XfaceCosGenearteCaptchaResponseDTO generateCaptcha();
 
-    @PostMapping("/mail/send")
+    @PostMapping("/cos/mail/send")
     XfaceCosMailSendResponseDTO sendMail(@Valid @RequestBody XfaceCosMailSendRequestDTO requestDTO);
 
     @Component

@@ -1,11 +1,11 @@
 package com.newera.marathon.microface.cos;
 
-import com.newera.marathon.dto.system.inquiry.XfaceMsgLogListInquiryRequestDTO;
-import com.newera.marathon.dto.system.inquiry.XfaceMsgLogListInquiryResponseDTO;
-import com.newera.marathon.dto.system.maintenance.XfaceMsgLogAdditionRequestDTO;
-import com.newera.marathon.dto.system.maintenance.XfaceMsgLogAdditionResponseDTO;
-import com.newera.marathon.dto.system.maintenance.XfaceMsgLogModifyRequestDTO;
-import com.newera.marathon.dto.system.maintenance.XfaceMsgLogModifyResponseDTO;
+import com.newera.marathon.dto.cos.inquiry.XfaceCosMsgLogListInquiryRequestDTO;
+import com.newera.marathon.dto.cos.inquiry.XfaceCosMsgLogListInquiryResponseDTO;
+import com.newera.marathon.dto.cos.maintenance.XfaceCosMsgLogAdditionRequestDTO;
+import com.newera.marathon.dto.cos.maintenance.XfaceCosMsgLogAdditionResponseDTO;
+import com.newera.marathon.dto.cos.maintenance.XfaceCosMsgLogModifyRequestDTO;
+import com.newera.marathon.dto.cos.maintenance.XfaceCosMsgLogModifyResponseDTO;
 import com.spaking.boot.starter.core.model.TransactionStatus;
 import feign.hystrix.FallbackFactory;
 import org.slf4j.Logger;
@@ -23,13 +23,13 @@ import javax.validation.Valid;
 )
 public interface MsgLogMicroService {
     @PostMapping("/cos/msg/log/list/inquiry")
-    XfaceMsgLogListInquiryResponseDTO msgLogListInquiry(@Valid @RequestBody XfaceMsgLogListInquiryRequestDTO requestDTO);
+    XfaceCosMsgLogListInquiryResponseDTO msgLogListInquiry(@Valid @RequestBody XfaceCosMsgLogListInquiryRequestDTO requestDTO);
 
     @PostMapping("/cos/msg/log/addition")
-    XfaceMsgLogAdditionResponseDTO msgLogAddition(@Valid @RequestBody XfaceMsgLogAdditionRequestDTO requestDTO);
+    XfaceCosMsgLogAdditionResponseDTO msgLogAddition(@Valid @RequestBody XfaceCosMsgLogAdditionRequestDTO requestDTO);
 
     @PostMapping("/cos/msg/log/modify")
-    XfaceMsgLogModifyResponseDTO msgLogModify(@Valid @RequestBody XfaceMsgLogModifyRequestDTO requestDTO);
+    XfaceCosMsgLogModifyResponseDTO msgLogModify(@Valid @RequestBody XfaceCosMsgLogModifyRequestDTO requestDTO);
 
     @Component
     class MsgLogMicroServiceImpl implements FallbackFactory<MsgLogMicroService> {
@@ -39,8 +39,8 @@ public interface MsgLogMicroService {
             logger.error("fallback reason:{}",throwable.getMessage());
             return new MsgLogMicroService(){
                 @Override
-                public XfaceMsgLogListInquiryResponseDTO msgLogListInquiry(XfaceMsgLogListInquiryRequestDTO requestDTO) {
-                    XfaceMsgLogListInquiryResponseDTO responseDTO = new XfaceMsgLogListInquiryResponseDTO();
+                public XfaceCosMsgLogListInquiryResponseDTO msgLogListInquiry(XfaceCosMsgLogListInquiryRequestDTO requestDTO) {
+                    XfaceCosMsgLogListInquiryResponseDTO responseDTO = new XfaceCosMsgLogListInquiryResponseDTO();
                     TransactionStatus transactionStatus = new TransactionStatus();
                     transactionStatus.setError("Call remote(msgLogListInquiry) service error.", ServerName.APPLICATION_NAME);
                     responseDTO.setTransactionStatus(transactionStatus);
@@ -48,8 +48,8 @@ public interface MsgLogMicroService {
                 }
 
                 @Override
-                public XfaceMsgLogAdditionResponseDTO msgLogAddition(@Valid XfaceMsgLogAdditionRequestDTO requestDTO) {
-                    XfaceMsgLogAdditionResponseDTO responseDTO = new XfaceMsgLogAdditionResponseDTO();
+                public XfaceCosMsgLogAdditionResponseDTO msgLogAddition(@Valid XfaceCosMsgLogAdditionRequestDTO requestDTO) {
+                    XfaceCosMsgLogAdditionResponseDTO responseDTO = new XfaceCosMsgLogAdditionResponseDTO();
                     TransactionStatus transactionStatus = new TransactionStatus();
                     transactionStatus.setError("Call remote(msgLogAddition) service error.", ServerName.APPLICATION_NAME);
                     responseDTO.setTransactionStatus(transactionStatus);
@@ -57,8 +57,8 @@ public interface MsgLogMicroService {
                 }
 
                 @Override
-                public XfaceMsgLogModifyResponseDTO msgLogModify(@Valid XfaceMsgLogModifyRequestDTO requestDTO) {
-                    XfaceMsgLogModifyResponseDTO responseDTO = new XfaceMsgLogModifyResponseDTO();
+                public XfaceCosMsgLogModifyResponseDTO msgLogModify(@Valid XfaceCosMsgLogModifyRequestDTO requestDTO) {
+                    XfaceCosMsgLogModifyResponseDTO responseDTO = new XfaceCosMsgLogModifyResponseDTO();
                     TransactionStatus transactionStatus = new TransactionStatus();
                     transactionStatus.setError("Call remote(msgLogModify) service error.", ServerName.APPLICATION_NAME);
                     responseDTO.setTransactionStatus(transactionStatus);

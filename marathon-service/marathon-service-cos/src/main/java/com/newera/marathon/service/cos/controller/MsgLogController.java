@@ -1,12 +1,12 @@
 package com.newera.marathon.service.cos.controller;
 
 
-import com.newera.marathon.dto.system.inquiry.XfaceMsgLogListInquiryRequestDTO;
-import com.newera.marathon.dto.system.inquiry.XfaceMsgLogListInquiryResponseDTO;
-import com.newera.marathon.dto.system.maintenance.XfaceMsgLogAdditionRequestDTO;
-import com.newera.marathon.dto.system.maintenance.XfaceMsgLogAdditionResponseDTO;
-import com.newera.marathon.dto.system.maintenance.XfaceMsgLogModifyRequestDTO;
-import com.newera.marathon.dto.system.maintenance.XfaceMsgLogModifyResponseDTO;
+import com.newera.marathon.dto.cos.inquiry.XfaceCosMsgLogListInquiryRequestDTO;
+import com.newera.marathon.dto.cos.inquiry.XfaceCosMsgLogListInquiryResponseDTO;
+import com.newera.marathon.dto.cos.maintenance.XfaceCosMsgLogAdditionRequestDTO;
+import com.newera.marathon.dto.cos.maintenance.XfaceCosMsgLogAdditionResponseDTO;
+import com.newera.marathon.dto.cos.maintenance.XfaceCosMsgLogModifyRequestDTO;
+import com.newera.marathon.dto.cos.maintenance.XfaceCosMsgLogModifyResponseDTO;
 import com.newera.marathon.service.cos.service.MsgLogService;
 import com.spaking.boot.starter.core.annotation.BusinessLogger;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -33,22 +33,22 @@ public class MsgLogController {
 
     @BusinessLogger(key = "CMS",value = "msgLogListInquiry")
     @PostMapping("/cos/msg/log/list/inquiry")
-    public XfaceMsgLogListInquiryResponseDTO msgLogListInquiry(@Valid @RequestBody XfaceMsgLogListInquiryRequestDTO requestDTO){
-        XfaceMsgLogListInquiryResponseDTO responseDTO = msgLogService.doMsgLogListInquiry(requestDTO);
+    public XfaceCosMsgLogListInquiryResponseDTO msgLogListInquiry(@Valid @RequestBody XfaceCosMsgLogListInquiryRequestDTO requestDTO){
+        XfaceCosMsgLogListInquiryResponseDTO responseDTO = msgLogService.doMsgLogListInquiry(requestDTO);
         return responseDTO;
     }
 
     @BusinessLogger(key = "CMS",value = "msgLogAddition")
     @PostMapping("/cos/msg/log/addition")
-    public XfaceMsgLogAdditionResponseDTO msgLogAddition(@Valid @RequestBody XfaceMsgLogAdditionRequestDTO requestDTO){
-        XfaceMsgLogAdditionResponseDTO responseDTO = msgLogService.doMsgLogAddition(requestDTO);
+    public XfaceCosMsgLogAdditionResponseDTO msgLogAddition(@Valid @RequestBody XfaceCosMsgLogAdditionRequestDTO requestDTO){
+        XfaceCosMsgLogAdditionResponseDTO responseDTO = msgLogService.doMsgLogAddition(requestDTO);
         return responseDTO;
     }
 
     @BusinessLogger(key = "CMS",value = "msgLogModify")
     @PostMapping("/cos/msg/log/modify")
-    public XfaceMsgLogModifyResponseDTO msgLogModify(@Valid @RequestBody XfaceMsgLogModifyRequestDTO requestDTO){
-        XfaceMsgLogModifyResponseDTO responseDTO = msgLogService.doMsgLogModify(requestDTO);
+    public XfaceCosMsgLogModifyResponseDTO msgLogModify(@Valid @RequestBody XfaceCosMsgLogModifyRequestDTO requestDTO){
+        XfaceCosMsgLogModifyResponseDTO responseDTO = msgLogService.doMsgLogModify(requestDTO);
         return responseDTO;
     }
 }
