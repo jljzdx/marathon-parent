@@ -13,7 +13,7 @@ function(exports) {
     });
     table.render({
         elem: '#user-table',
-        url: '/sys/user/inquiry/page',
+        url: '/user/inquiry/page',
         method: 'post',
         page: {
             layout: ['limit', 'count', 'prev', 'page', 'next', 'refresh', 'skip'],
@@ -142,7 +142,7 @@ function(exports) {
                         var field = data.field; //获取提交的字段
                         //提交 Ajax 成功后，静态更新表格中的数据
                         $.ajax({
-                            url: '/sys/user/addition',
+                            url: '/user/addition',
                             type: 'post',
                             dataType: 'text',
                             data: field,
@@ -173,7 +173,7 @@ function(exports) {
             function(index) {
                 layer.close(index);
                 $.ajax({
-                    url: '/sys/user/reset/password',
+                    url: '/user/reset/password',
                     type: 'post',
                     dataType: 'text',
                     data: {
@@ -207,7 +207,7 @@ function(exports) {
                         var field = data.field; //获取提交的字段
                         //提交 Ajax 成功后，静态更新表格中的数据
                         $.ajax({
-                            url: '/sys/user/modify',
+                            url: '/user/modify',
                             type: 'post',
                             dataType: 'text',
                             data: field,
@@ -227,7 +227,7 @@ function(exports) {
                 },
                 success: function(layero, index) {
                     $.ajax({
-                        url: '/sys/user/modify/inquiry',
+                        url: '/user/modify/inquiry',
                         type: 'post',
                         dataType: 'text',
                         data: {
@@ -268,7 +268,7 @@ function(exports) {
             status = 1;
         }
         $.ajax({
-            url: '/sys/user/modify/status',
+            url: '/user/modify/status',
             type: 'post',
             dataType: 'text',
             data: {

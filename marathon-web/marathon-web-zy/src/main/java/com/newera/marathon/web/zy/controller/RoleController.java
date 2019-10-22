@@ -1,9 +1,9 @@
 package com.newera.marathon.web.zy.controller;
 
 import com.newera.marathon.common.web.ListResponseConverter;
-import com.newera.marathon.dto.system.inquiry.*;
-import com.newera.marathon.dto.system.maintenance.*;
-import com.newera.marathon.microface.cms.system.SysRoleMicroService;
+import com.newera.marathon.dto.cms.inquiry.*;
+import com.newera.marathon.dto.cms.maintenance.*;
+import com.newera.marathon.microface.cms.admin.AdminRoleMicroService;
 import com.spaking.boot.starter.cas.model.SsoUser;
 import com.spaking.boot.starter.cas.utils.SsoConstant;
 import com.spaking.boot.starter.core.annotation.NeedAuthorize;
@@ -21,7 +21,7 @@ import java.util.Map;
 public class RoleController {
 
     @Autowired
-    private SysRoleMicroService sysRoleMicroService;
+    private AdminRoleMicroService adminRoleMicroService;
 
 
     @GetMapping("/role/list/html")
@@ -44,10 +44,10 @@ public class RoleController {
 
 
     @NeedAuthorize(value = "role:list")
-    @PostMapping("/sys/role/inquiry/page")
+    @PostMapping("/role/inquiry/page")
     @ResponseBody
-    public Map sysRoleInquiryPage(Long page, Long limit, String roleName){
-        XfaceSysRoleInquiryPageRequestDTO requestDTO = new XfaceSysRoleInquiryPageRequestDTO();
+    public Map roleInquiryPage(Long page, Long limit, String roleName){
+        XfaceCmsAdminRoleInquiryPageRequestDTO requestDTO = new XfaceCmsAdminRoleInquiryPageRequestDTO();
         //组装分页对象
         PageModel pageModel = new PageModel();
         pageModel.setCurrent(page);
@@ -56,7 +56,7 @@ public class RoleController {
         //查询条件
         requestDTO.setRoleName(roleName);
         //调用微服务
-        XfaceSysRoleInquiryPageResponseDTO responseDTO = sysRoleMicroService.sysRoleInquiryPage(requestDTO);
+        XfaceCmsAdminRoleInquiryPageResponseDTO responseDTO = adminRoleMicroService.roleInquiryPage(requestDTO);
         //重组响应对象
         return ListResponseConverter.listResponseConverter(responseDTO.getTransactionStatus().isSuccess(),
                 responseDTO.getTransactionStatus().getErrorCode(),
@@ -66,58 +66,58 @@ public class RoleController {
     }
 
     @NeedAuthorize(value = "role:add")
-    @PostMapping("/sys/role/addition")
+    @PostMapping("/role/addition")
     @ResponseBody
-    public XfaceSysRoleAdditionResponseDTO sysRoleAddition(XfaceSysRoleAdditionRequestDTO requestDTO, HttpServletRequest request){
+    public XfaceCmsAdminRoleAdditionResponseDTO roleAddition(XfaceCmsAdminRoleAdditionRequestDTO requestDTO, HttpServletRequest request){
         SsoUser user = (SsoUser) request.getAttribute(SsoConstant.SSO_USER);
         requestDTO.setCreateOperator(user.getUserName());
-        XfaceSysRoleAdditionResponseDTO responseDTO = sysRoleMicroService.sysRoleAddition(requestDTO);
+        XfaceCmsAdminRoleAdditionResponseDTO responseDTO = adminRoleMicroService.roleAddition(requestDTO);
         return responseDTO;
     }
 
     @NeedAuthorize(value = "role:edit")
-    @PostMapping("/sys/role/modify/inquiry")
+    @PostMapping("/role/modify/inquiry")
     @ResponseBody
-    public XfaceSysRoleModifyInquiryResponseDTO sysRoleModifyInquiry(XfaceSysRoleModifyInquiryRequestDTO requestDTO){
-        XfaceSysRoleModifyInquiryResponseDTO responseDTO = sysRoleMicroService.sysRoleModifyInquiry(requestDTO);
+    public XfaceCmsAdminRoleModifyInquiryResponseDTO roleModifyInquiry(XfaceCmsAdminRoleModifyInquiryRequestDTO requestDTO){
+        XfaceCmsAdminRoleModifyInquiryResponseDTO responseDTO = adminRoleMicroService.roleModifyInquiry(requestDTO);
         return responseDTO;
     }
 
     @NeedAuthorize(value = "role:edit")
-    @PostMapping("/sys/role/modify")
+    @PostMapping("/role/modify")
     @ResponseBody
-    public XfaceSysRoleModifyResponseDTO sysRoleModify(XfaceSysRoleModifyRequestDTO requestDTO, HttpServletRequest request){
+    public XfaceCmsAdminRoleModifyResponseDTO roleModify(XfaceCmsAdminRoleModifyRequestDTO requestDTO, HttpServletRequest request){
         SsoUser user = (SsoUser) request.getAttribute(SsoConstant.SSO_USER);
         requestDTO.setModifyOperator(user.getUserName());
-        XfaceSysRoleModifyResponseDTO responseDTO = sysRoleMicroService.sysRoleModify(requestDTO);
+        XfaceCmsAdminRoleModifyResponseDTO responseDTO = adminRoleMicroService.roleModify(requestDTO);
         return responseDTO;
     }
 
     @NeedAuthorize(value = "role:status")
-    @PostMapping("/sys/role/modify/status")
+    @PostMapping("/role/modify/status")
     @ResponseBody
-    public XfaceSysRoleModifyStatusResponseDTO sysRoleModifyStatus(XfaceSysRoleModifyStatusRequestDTO requestDTO, HttpServletRequest request){
+    public XfaceCmsAdminRoleModifyStatusResponseDTO roleModifyStatus(XfaceCmsAdminRoleModifyStatusRequestDTO requestDTO, HttpServletRequest request){
         SsoUser user = (SsoUser) request.getAttribute(SsoConstant.SSO_USER);
         requestDTO.setModifyOperator(user.getUserName());
-        XfaceSysRoleModifyStatusResponseDTO responseDTO = sysRoleMicroService.sysRoleModifyStatus(requestDTO);
+        XfaceCmsAdminRoleModifyStatusResponseDTO responseDTO = adminRoleMicroService.roleModifyStatus(requestDTO);
         return responseDTO;
     }
 
     @NeedAuthorize(value = "role:auth")
-    @PostMapping("/sys/role/auth/inquiry")
+    @PostMapping("/role/auth/inquiry")
     @ResponseBody
-    public XfaceSysRoleAuthInquiryResponseDTO sysRoleAuthInquiry(XfaceSysRoleAuthInquiryRequestDTO requestDTO){
-        XfaceSysRoleAuthInquiryResponseDTO responseDTO = sysRoleMicroService.sysRoleAuthInquiry(requestDTO);
+    public XfaceCmsAdminRoleAuthInquiryResponseDTO roleAuthInquiry(XfaceCmsAdminRoleAuthInquiryRequestDTO requestDTO){
+        XfaceCmsAdminRoleAuthInquiryResponseDTO responseDTO = adminRoleMicroService.roleAuthInquiry(requestDTO);
         return responseDTO;
     }
 
     @NeedAuthorize(value = "role:auth")
-    @PostMapping("/sys/role/auth")
+    @PostMapping("/role/auth")
     @ResponseBody
-    public XfaceSysRoleAuthResponseDTO sysRoleAuth(XfaceSysRoleAuthRequestDTO requestDTO, HttpServletRequest request){
+    public XfaceCmsAdminRoleAuthResponseDTO roleAuth(XfaceCmsAdminRoleAuthRequestDTO requestDTO, HttpServletRequest request){
         SsoUser user = (SsoUser) request.getAttribute(SsoConstant.SSO_USER);
         requestDTO.setOperator(user.getUserName());
-        XfaceSysRoleAuthResponseDTO responseDTO = sysRoleMicroService.sysRoleAuth(requestDTO);
+        XfaceCmsAdminRoleAuthResponseDTO responseDTO = adminRoleMicroService.roleAuth(requestDTO);
         return responseDTO;
     }
 }

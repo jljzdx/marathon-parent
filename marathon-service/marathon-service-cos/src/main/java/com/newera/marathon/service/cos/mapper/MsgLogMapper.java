@@ -5,7 +5,7 @@ import com.newera.marathon.service.cos.entity.MsgLog;
 
 /**
  * <p>
- * MQ消息日志，用来确保消息100%投递成功 Mapper 接口
+ * MQ消息日志 Mapper 接口
  * </p>
  *
  * @author MicroBin

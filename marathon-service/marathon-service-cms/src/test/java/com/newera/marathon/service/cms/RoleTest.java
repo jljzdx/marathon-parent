@@ -1,8 +1,8 @@
 package com.newera.marathon.service.cms;
 
 import com.alibaba.fastjson.JSONObject;
-import com.newera.marathon.dto.system.maintenance.XfaceSysRoleAdditionRequestDTO;
-import com.newera.marathon.dto.system.maintenance.XfaceSysRoleModifyRequestDTO;
+import com.newera.marathon.dto.cms.maintenance.XfaceCmsAdminRoleAdditionRequestDTO;
+import com.newera.marathon.dto.cms.maintenance.XfaceCmsAdminRoleModifyRequestDTO;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.After;
 import org.junit.Before;
@@ -60,13 +60,13 @@ public class RoleTest {
      */
     @Test
     public void roleAdditionTest() throws Exception {
-        XfaceSysRoleAdditionRequestDTO requestDTO = new XfaceSysRoleAdditionRequestDTO();
+        XfaceCmsAdminRoleAdditionRequestDTO requestDTO = new XfaceCmsAdminRoleAdditionRequestDTO();
         requestDTO.setRoleName("mock_test");
         requestDTO.setRemark("mock_test");
         requestDTO.setCreateOperator("wwb");
         MvcResult mvcResult = this.mockMvc
                 .perform(
-                        post("/sys/role/addition")
+                        post("/role/addition")
                                 .contentType(MediaType.APPLICATION_JSON)
                                 .content(JSONObject.toJSONString(requestDTO)))
                 .andExpect(
@@ -81,14 +81,14 @@ public class RoleTest {
      */
     @Test
     public void roleModifyTest() throws Exception {
-        XfaceSysRoleModifyRequestDTO requestDTO = new XfaceSysRoleModifyRequestDTO();
+        XfaceCmsAdminRoleModifyRequestDTO requestDTO = new XfaceCmsAdminRoleModifyRequestDTO();
         requestDTO.setRoleName("mock_test");
         requestDTO.setRemark("mock_test");
         requestDTO.setId(10);
         requestDTO.setModifyOperator("wangwb");
         MvcResult mvcResult = this.mockMvc
                 .perform(
-                        post("/sys/role/modify")
+                        post("/role/modify")
                                 .contentType(MediaType.APPLICATION_JSON)
                                 .content(JSONObject.toJSONString(requestDTO)))
                 .andExpect(

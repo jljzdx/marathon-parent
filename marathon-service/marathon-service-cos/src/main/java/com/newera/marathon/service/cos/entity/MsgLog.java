@@ -12,7 +12,7 @@ import java.util.Date;
 
 /**
  * <p>
- * MQ消息日志，用来确保消息100%投递成功
+ * MQ消息日志
  * </p>
  *
  * @author MicroBin
@@ -21,7 +21,7 @@ import java.util.Date;
 @Data
 @EqualsAndHashCode(callSuper = false)
 @Accessors(chain = true)
-@TableName("t_msg_log")
+@TableName("COS_MSG_LOG")
 public class MsgLog implements Serializable {
 
     private static final long serialVersionUID = 1L;

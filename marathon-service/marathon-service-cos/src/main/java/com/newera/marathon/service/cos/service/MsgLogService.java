@@ -11,7 +11,7 @@ import com.newera.marathon.service.cos.entity.MsgLog;
 
 /**
  * <p>
- * MQ消息日志，用来确保消息100%投递成功 服务类
+ * MQ消息日志 服务类
  * </p>
  *
  * @author MicroBin

@@ -8,7 +8,7 @@ function(exports) {
     table = layui.table;
     table.render({
         elem: '#role-table',
-        url: '/sys/role/inquiry/page',
+        url: '/role/inquiry/page',
         method: 'post',
         page: {
             layout: ['limit', 'count', 'prev', 'page', 'next', 'refresh', 'skip']
@@ -86,7 +86,7 @@ function(exports) {
                         var field = data.field; //获取提交的字段
                         //提交 Ajax 成功后，静态更新表格中的数据
                         $.ajax({
-                            url: '/sys/role/addition',
+                            url: '/role/addition',
                             type: 'post',
                             dataType: 'text',
                             data: field,
@@ -134,7 +134,7 @@ function(exports) {
                         var field = data.field; //获取提交的字段
                         //提交 Ajax 成功后，静态更新表格中的数据
                         $.ajax({
-                            url: '/sys/role/modify',
+                            url: '/role/modify',
                             type: 'post',
                             dataType: 'text',
                             data: field,
@@ -154,7 +154,7 @@ function(exports) {
                 },
                 success: function(layero, index) {
                     $.ajax({
-                        url: '/sys/role/modify/inquiry',
+                        url: '/role/modify/inquiry',
                         type: 'post',
                         dataType: 'text',
                         data: {
@@ -188,7 +188,7 @@ function(exports) {
                 },
                 success: function(layero, index) {
                     $.ajax({
-                        url: '/sys/role/auth/inquiry',
+                        url: '/role/auth/inquiry',
                         type: 'post',
                         dataType: 'text',
                         data: {
@@ -227,7 +227,7 @@ function(exports) {
             status = 1;
         }
         $.ajax({
-            url: '/sys/role/modify/status',
+            url: '/role/modify/status',
             type: 'post',
             dataType: 'text',
             data: {

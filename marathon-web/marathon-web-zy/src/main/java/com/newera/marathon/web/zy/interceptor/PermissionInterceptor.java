@@ -1,9 +1,9 @@
 package com.newera.marathon.web.zy.interceptor;
 
 import com.newera.marathon.common.model.ApplicationError;
-import com.newera.marathon.dto.system.inquiry.XfaceSysPermissionsInquiryRequestDTO;
-import com.newera.marathon.dto.system.inquiry.XfaceSysPermissionsInquiryResponseDTO;
-import com.newera.marathon.microface.cms.system.SysUserMicroService;
+import com.newera.marathon.dto.cms.inquiry.XfaceCmsAdminPermissionsInquiryRequestDTO;
+import com.newera.marathon.dto.cms.inquiry.XfaceCmsAdminPermissionsInquiryResponseDTO;
+import com.newera.marathon.microface.cms.admin.AdminUserMicroService;
 import com.spaking.boot.starter.cas.model.SsoUser;
 import com.spaking.boot.starter.cas.utils.SsoConstant;
 import com.spaking.boot.starter.core.annotation.NeedAuthorize;
@@ -25,7 +25,7 @@ import java.util.List;
 public class PermissionInterceptor implements HandlerInterceptor {
 
     @Autowired
-    private SysUserMicroService sysUserMicroService;
+    private AdminUserMicroService adminUserMicroService;
 
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) throws Exception {
 
@@ -41,9 +41,9 @@ public class PermissionInterceptor implements HandlerInterceptor {
                 if (null == user) {
                     throw new BaseException(ApplicationError.LOGIN_USER_ERROR.getMessage(), ApplicationError.LOGIN_USER_ERROR.getCode());
                 }
-                XfaceSysPermissionsInquiryRequestDTO requestDTO = new XfaceSysPermissionsInquiryRequestDTO();
+                XfaceCmsAdminPermissionsInquiryRequestDTO requestDTO = new XfaceCmsAdminPermissionsInquiryRequestDTO();
                 requestDTO.setUserName(user.getUserName());
-                XfaceSysPermissionsInquiryResponseDTO responseDTO = sysUserMicroService.sysPermissionsInquiry(requestDTO);
+                XfaceCmsAdminPermissionsInquiryResponseDTO responseDTO = adminUserMicroService.permissionsInquiry(requestDTO);
                 String value = needAuthorize.value();
                 List<String> permissions = responseDTO.getPermissions();
                 log.info("permissions>>>>>>>>>"+permissions);

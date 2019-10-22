@@ -11,7 +11,7 @@ function(exports) {
     var renderTable = function () {
         treetable.render({
             elem: '#resource-tree-table',
-            url: '/sys/resource/inquiry/loop',
+            url: '/resource/inquiry/loop',
             method: 'post',
             treeColIndex: 1,
             treeSpid: -1,
@@ -121,7 +121,7 @@ function(exports) {
                         field.parentId = parentId;
                         //提交 Ajax 成功后，静态更新表格中的数据
                         $.ajax({
-                            url: '/sys/resource/addition',
+                            url: '/resource/addition',
                             type: 'post',
                             dataType: 'text',
                             data: field,
@@ -160,7 +160,7 @@ function(exports) {
                         field.id = resourceId;
                         //提交 Ajax 成功后，静态更新表格中的数据
                         $.ajax({
-                            url: '/sys/resource/modify',
+                            url: '/resource/modify',
                             type: 'post',
                             dataType: 'text',
                             data: field,
@@ -180,7 +180,7 @@ function(exports) {
                 },
                 success: function(layero, index) {
                     $.ajax({
-                        url: '/sys/resource/modify/inquiry',
+                        url: '/resource/modify/inquiry',
                         type: 'post',
                         dataType: 'text',
                         data: {
@@ -210,7 +210,7 @@ function(exports) {
             status = 1;
         }
         $.ajax({
-            url: '/sys/resource/modify/status',
+            url: '/resource/modify/status',
             type: 'post',
             dataType: 'text',
             data: {

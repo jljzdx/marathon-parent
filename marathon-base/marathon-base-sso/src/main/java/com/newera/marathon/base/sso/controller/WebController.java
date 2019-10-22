@@ -2,7 +2,7 @@ package com.newera.marathon.base.sso.controller;
 
 import com.newera.marathon.base.sso.service.UserService;
 import com.newera.marathon.dto.cos.maintenance.XfaceCosGenearteCaptchaResponseDTO;
-import com.newera.marathon.dto.system.maintenance.XfaceSysLoginResponseDTO;
+import com.newera.marathon.dto.cms.maintenance.XfaceCmsAdminLoginResponseDTO;
 import com.spaking.boot.starter.cas.model.ReturnT;
 import com.spaking.boot.starter.cas.model.SsoUser;
 import com.spaking.boot.starter.cas.utils.SsoConstant;
@@ -102,7 +102,7 @@ public class WebController {
         boolean ifRem = (ifRemember!=null&&"on".equals(ifRemember))?true:false;
 
         // valid login
-        XfaceSysLoginResponseDTO result = userService.findUser(loginAccount, loginPassword, captchaId, captchaCode);
+        XfaceCmsAdminLoginResponseDTO result = userService.findUser(loginAccount, loginPassword, captchaId, captchaCode);
         if (!result.getTransactionStatus().isSuccess()) {
             return new ReturnT(999, result.getTransactionStatus().getReplyText());
         }

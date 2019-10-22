@@ -25,7 +25,7 @@ import java.util.List;
 
 /**
  * <p>
- * MQ消息日志，用来确保消息100%投递成功 服务实现类
+ * MQ消息日志 服务实现类
  * </p>
  *
  * @author MicroBin

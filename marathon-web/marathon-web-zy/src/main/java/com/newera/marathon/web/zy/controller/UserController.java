@@ -1,9 +1,12 @@
 package com.newera.marathon.web.zy.controller;
 
 import com.newera.marathon.common.web.ListResponseConverter;
-import com.newera.marathon.dto.system.inquiry.*;
-import com.newera.marathon.dto.system.maintenance.*;
-import com.newera.marathon.microface.cms.system.SysUserMicroService;
+import com.newera.marathon.dto.cms.inquiry.XfaceCmsAdminUserInquiryPageRequestDTO;
+import com.newera.marathon.dto.cms.inquiry.XfaceCmsAdminUserInquiryPageResponseDTO;
+import com.newera.marathon.dto.cms.inquiry.XfaceCmsAdminUserModifyInquiryRequestDTO;
+import com.newera.marathon.dto.cms.inquiry.XfaceCmsAdminUserModifyInquiryResponseDTO;
+import com.newera.marathon.dto.cms.maintenance.*;
+import com.newera.marathon.microface.cms.admin.AdminUserMicroService;
 import com.newera.marathon.web.zy.model.WebPage;
 import com.spaking.boot.starter.cas.model.SsoUser;
 import com.spaking.boot.starter.cas.utils.SsoConstant;
@@ -24,7 +27,7 @@ import java.util.Map;
 public class UserController {
 
     @Autowired
-    private SysUserMicroService sysUserMicroService;
+    private AdminUserMicroService adminUserMicroService;
     @GetMapping("/")
     public String index(Model model, HttpServletRequest request){
         SsoUser user = (SsoUser) request.getAttribute(SsoConstant.SSO_USER);
@@ -58,10 +61,10 @@ public class UserController {
 
 
     @NeedAuthorize(value = "user:list")
-    @PostMapping("/sys/user/inquiry/page")
+    @PostMapping("/user/inquiry/page")
     @ResponseBody
-    public Map sysUserInquiryPage(WebPage page, String userName, String loginTime){
-        XfaceSysUserInquiryPageRequestDTO requestDTO = new XfaceSysUserInquiryPageRequestDTO();
+    public Map userInquiryPage(WebPage page, String userName, String loginTime){
+        XfaceCmsAdminUserInquiryPageRequestDTO requestDTO = new XfaceCmsAdminUserInquiryPageRequestDTO();
         //组装分页对象
         PageModel pageModel = new PageModel();
         pageModel.setCurrent(page.getPage());
@@ -78,7 +81,7 @@ public class UserController {
             requestDTO.setEndDateTime(startEndTime[1].trim());
         }
         //调用微服务
-        XfaceSysUserInquiryPageResponseDTO responseDTO = sysUserMicroService.sysUserInquiryPage(requestDTO);
+        XfaceCmsAdminUserInquiryPageResponseDTO responseDTO = adminUserMicroService.userInquiryPage(requestDTO);
         //重组响应对象
         return ListResponseConverter.listResponseConverter(responseDTO.getTransactionStatus().isSuccess(),
                 responseDTO.getTransactionStatus().getErrorCode(),
@@ -88,51 +91,51 @@ public class UserController {
     }
 
     @NeedAuthorize(value = "user:add")
-    @PostMapping("/sys/user/addition")
+    @PostMapping("/user/addition")
     @ResponseBody
-    public XfaceSysUserAdditionResponseDTO sysUserAddition(XfaceSysUserAdditionRequestDTO requestDTO, HttpServletRequest request){
+    public XfaceCmsAdminUserAdditionResponseDTO userAddition(XfaceCmsAdminUserAdditionRequestDTO requestDTO, HttpServletRequest request){
         SsoUser user = (SsoUser) request.getAttribute(SsoConstant.SSO_USER);
         requestDTO.setCreateOperator(user.getUserName());
-        XfaceSysUserAdditionResponseDTO responseDTO = sysUserMicroService.sysUserAddition(requestDTO);
+        XfaceCmsAdminUserAdditionResponseDTO responseDTO = adminUserMicroService.userAddition(requestDTO);
         return responseDTO;
     }
     @NeedAuthorize(value = "user:edit")
-    @PostMapping("/sys/user/modify/inquiry")
+    @PostMapping("/user/modify/inquiry")
     @ResponseBody
-    public XfaceSysUserModifyInquiryResponseDTO sysUserModifyInquiry(XfaceSysUserModifyInquiryRequestDTO requestDTO, HttpServletRequest request){
+    public XfaceCmsAdminUserModifyInquiryResponseDTO userModifyInquiry(XfaceCmsAdminUserModifyInquiryRequestDTO requestDTO, HttpServletRequest request){
         if(null == requestDTO.getId()){
             SsoUser user = (SsoUser) request.getAttribute(SsoConstant.SSO_USER);
             requestDTO.setId(user.getUserId());
         }
-        XfaceSysUserModifyInquiryResponseDTO responseDTO = sysUserMicroService.sysUserModifyInquiry(requestDTO);
+        XfaceCmsAdminUserModifyInquiryResponseDTO responseDTO = adminUserMicroService.userModifyInquiry(requestDTO);
         return responseDTO;
     }
     @NeedAuthorize(value = "user:edit")
-    @PostMapping("/sys/user/modify")
+    @PostMapping("/user/modify")
     @ResponseBody
-    public XfaceSysUserModifyResponseDTO sysUserModify(XfaceSysUserModifyRequestDTO requestDTO, HttpServletRequest request){
+    public XfaceCmsAdminUserModifyResponseDTO userModify(XfaceCmsAdminUserModifyRequestDTO requestDTO, HttpServletRequest request){
         SsoUser user = (SsoUser) request.getAttribute(SsoConstant.SSO_USER);
         requestDTO.setModifyOperator(user.getUserName());
-        XfaceSysUserModifyResponseDTO responseDTO = sysUserMicroService.sysUserModify(requestDTO);
+        XfaceCmsAdminUserModifyResponseDTO responseDTO = adminUserMicroService.userModify(requestDTO);
         return responseDTO;
     }
 
     @NeedAuthorize(value = "user:status")
-    @PostMapping("/sys/user/modify/status")
+    @PostMapping("/user/modify/status")
     @ResponseBody
-    public XfaceSysUserModifyStatusResponseDTO sysUserModify(XfaceSysUserModifyStatusRequestDTO requestDTO, HttpServletRequest request){
+    public XfaceCmsAdminUserModifyStatusResponseDTO userModify(XfaceCmsAdminUserModifyStatusRequestDTO requestDTO, HttpServletRequest request){
         SsoUser user = (SsoUser) request.getAttribute(SsoConstant.SSO_USER);
         requestDTO.setModifyOperator(user.getUserName());
-        XfaceSysUserModifyStatusResponseDTO responseDTO = sysUserMicroService.sysUserModifyStatus(requestDTO);
+        XfaceCmsAdminUserModifyStatusResponseDTO responseDTO = adminUserMicroService.userModifyStatus(requestDTO);
         return responseDTO;
     }
     @NeedAuthorize(value = "user:pwreset")
-    @PostMapping("/sys/user/reset/password")
+    @PostMapping("/user/reset/password")
     @ResponseBody
-    public XfaceSysUserResetPasswordResponseDTO sysUserModifyPassword(XfaceSysUserResetPasswordRequestDTO requestDTO,HttpServletRequest request){
+    public XfaceCmsAdminUserResetPasswordResponseDTO userModifyPassword(XfaceCmsAdminUserResetPasswordRequestDTO requestDTO, HttpServletRequest request){
         SsoUser user = (SsoUser) request.getAttribute(SsoConstant.SSO_USER);
         requestDTO.setModifyOperator(user.getUserName());
-        XfaceSysUserResetPasswordResponseDTO responseDTO = sysUserMicroService.sysUserResetPassword(requestDTO);
+        XfaceCmsAdminUserResetPasswordResponseDTO responseDTO = adminUserMicroService.userResetPassword(requestDTO);
         return responseDTO;
     }
 }

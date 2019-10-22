@@ -19,14 +19,14 @@ import javax.validation.Valid;
 public class CustomerController {
 
     @Autowired
-    private CustomerService sysUserService;
+    private CustomerService customerService;
 
     @BusinessLogger(key = "CUST",value = "customerRegister")
     @ApiOperation(value="客户注册", notes="客户注册")
     @ApiImplicitParam(name = "requestDTO", value = "入参对象", dataType = "XfaceCustCustomerRegisterRequestDTO")
     @PostMapping("/cust/customer/register")
     public XfaceCustCustomerRegisterResponseDTO customerRegister(@Valid @RequestBody XfaceCustCustomerRegisterRequestDTO requestDTO){
-        XfaceCustCustomerRegisterResponseDTO responseDTO = sysUserService.doCustomerRegister(requestDTO);
+        XfaceCustCustomerRegisterResponseDTO responseDTO = customerService.doCustomerRegister(requestDTO);
         return responseDTO;
     }
 
@@ -35,7 +35,7 @@ public class CustomerController {
     @ApiImplicitParam(name = "requestDTO", value = "入参对象", dataType = "XfaceCustCustomerLoginRequestDTO")
     @PostMapping("/cust/customer/login")
     public XfaceCustCustomerLoginResponseDTO customerLogin(@Valid @RequestBody XfaceCustCustomerLoginRequestDTO requestDTO){
-        XfaceCustCustomerLoginResponseDTO responseDTO = sysUserService.doCustomerLogin(requestDTO);
+        XfaceCustCustomerLoginResponseDTO responseDTO = customerService.doCustomerLogin(requestDTO);
         return responseDTO;
     }
 }
