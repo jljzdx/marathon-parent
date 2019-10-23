@@ -11,4 +11,11 @@
 
     <artifactId>marathon-web-zy</artifactId>
 
+    <dependencies>
+        <!--logstash-->
+        <dependency>
+            <groupId>net.logstash.logback</groupId>
+            <artifactId>logstash-logback-encoder</artifactId>
+        </dependency>
+    </dependencies>
 </project>
