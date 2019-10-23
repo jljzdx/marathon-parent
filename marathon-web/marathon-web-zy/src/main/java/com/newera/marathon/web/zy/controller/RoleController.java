@@ -3,7 +3,7 @@ package com.newera.marathon.web.zy.controller;
 import com.newera.marathon.common.web.ListResponseConverter;
 import com.newera.marathon.dto.cms.inquiry.*;
 import com.newera.marathon.dto.cms.maintenance.*;
-import com.newera.marathon.microface.cms.admin.AdminRoleMicroService;
+import com.newera.marathon.microface.cms.admin.CmsAdminRoleMicroService;
 import com.spaking.boot.starter.cas.model.SsoUser;
 import com.spaking.boot.starter.cas.utils.SsoConstant;
 import com.spaking.boot.starter.core.annotation.NeedAuthorize;
@@ -21,7 +21,7 @@ import java.util.Map;
 public class RoleController {
 
     @Autowired
-    private AdminRoleMicroService adminRoleMicroService;
+    private CmsAdminRoleMicroService cmsAdminRoleMicroService;
 
 
     @GetMapping("/role/list/html")
@@ -56,7 +56,7 @@ public class RoleController {
         //查询条件
         requestDTO.setRoleName(roleName);
         //调用微服务
-        XfaceCmsAdminRoleInquiryPageResponseDTO responseDTO = adminRoleMicroService.roleInquiryPage(requestDTO);
+        XfaceCmsAdminRoleInquiryPageResponseDTO responseDTO = cmsAdminRoleMicroService.roleInquiryPage(requestDTO);
         //重组响应对象
         return ListResponseConverter.listResponseConverter(responseDTO.getTransactionStatus().isSuccess(),
                 responseDTO.getTransactionStatus().getErrorCode(),
@@ -71,7 +71,7 @@ public class RoleController {
     public XfaceCmsAdminRoleAdditionResponseDTO roleAddition(XfaceCmsAdminRoleAdditionRequestDTO requestDTO, HttpServletRequest request){
         SsoUser user = (SsoUser) request.getAttribute(SsoConstant.SSO_USER);
         requestDTO.setCreateOperator(user.getUserName());
-        XfaceCmsAdminRoleAdditionResponseDTO responseDTO = adminRoleMicroService.roleAddition(requestDTO);
+        XfaceCmsAdminRoleAdditionResponseDTO responseDTO = cmsAdminRoleMicroService.roleAddition(requestDTO);
         return responseDTO;
     }
 
@@ -79,7 +79,7 @@ public class RoleController {
     @PostMapping("/role/modify/inquiry")
     @ResponseBody
     public XfaceCmsAdminRoleModifyInquiryResponseDTO roleModifyInquiry(XfaceCmsAdminRoleModifyInquiryRequestDTO requestDTO){
-        XfaceCmsAdminRoleModifyInquiryResponseDTO responseDTO = adminRoleMicroService.roleModifyInquiry(requestDTO);
+        XfaceCmsAdminRoleModifyInquiryResponseDTO responseDTO = cmsAdminRoleMicroService.roleModifyInquiry(requestDTO);
         return responseDTO;
     }
 
@@ -89,7 +89,7 @@ public class RoleController {
     public XfaceCmsAdminRoleModifyResponseDTO roleModify(XfaceCmsAdminRoleModifyRequestDTO requestDTO, HttpServletRequest request){
         SsoUser user = (SsoUser) request.getAttribute(SsoConstant.SSO_USER);
         requestDTO.setModifyOperator(user.getUserName());
-        XfaceCmsAdminRoleModifyResponseDTO responseDTO = adminRoleMicroService.roleModify(requestDTO);
+        XfaceCmsAdminRoleModifyResponseDTO responseDTO = cmsAdminRoleMicroService.roleModify(requestDTO);
         return responseDTO;
     }
 
@@ -99,7 +99,7 @@ public class RoleController {
     public XfaceCmsAdminRoleModifyStatusResponseDTO roleModifyStatus(XfaceCmsAdminRoleModifyStatusRequestDTO requestDTO, HttpServletRequest request){
         SsoUser user = (SsoUser) request.getAttribute(SsoConstant.SSO_USER);
         requestDTO.setModifyOperator(user.getUserName());
-        XfaceCmsAdminRoleModifyStatusResponseDTO responseDTO = adminRoleMicroService.roleModifyStatus(requestDTO);
+        XfaceCmsAdminRoleModifyStatusResponseDTO responseDTO = cmsAdminRoleMicroService.roleModifyStatus(requestDTO);
         return responseDTO;
     }
 
@@ -107,7 +107,7 @@ public class RoleController {
     @PostMapping("/role/auth/inquiry")
     @ResponseBody
     public XfaceCmsAdminRoleAuthInquiryResponseDTO roleAuthInquiry(XfaceCmsAdminRoleAuthInquiryRequestDTO requestDTO){
-        XfaceCmsAdminRoleAuthInquiryResponseDTO responseDTO = adminRoleMicroService.roleAuthInquiry(requestDTO);
+        XfaceCmsAdminRoleAuthInquiryResponseDTO responseDTO = cmsAdminRoleMicroService.roleAuthInquiry(requestDTO);
         return responseDTO;
     }
 
@@ -117,7 +117,7 @@ public class RoleController {
     public XfaceCmsAdminRoleAuthResponseDTO roleAuth(XfaceCmsAdminRoleAuthRequestDTO requestDTO, HttpServletRequest request){
         SsoUser user = (SsoUser) request.getAttribute(SsoConstant.SSO_USER);
         requestDTO.setOperator(user.getUserName());
-        XfaceCmsAdminRoleAuthResponseDTO responseDTO = adminRoleMicroService.roleAuth(requestDTO);
+        XfaceCmsAdminRoleAuthResponseDTO responseDTO = cmsAdminRoleMicroService.roleAuth(requestDTO);
         return responseDTO;
     }
 }

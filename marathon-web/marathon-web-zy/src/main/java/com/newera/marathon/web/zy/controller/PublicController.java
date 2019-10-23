@@ -5,8 +5,8 @@ import com.newera.marathon.dto.cms.maintenance.XfaceCmsAdminUserBaseInfoModifyRe
 import com.newera.marathon.dto.cms.maintenance.XfaceCmsAdminUserBaseInfoModifyResponseDTO;
 import com.newera.marathon.dto.cms.maintenance.XfaceCmsAdminUserModifyPasswordRequestDTO;
 import com.newera.marathon.dto.cms.maintenance.XfaceCmsAdminUserModifyPasswordResponseDTO;
-import com.newera.marathon.microface.cms.admin.AdminRoleMicroService;
-import com.newera.marathon.microface.cms.admin.AdminUserMicroService;
+import com.newera.marathon.microface.cms.admin.CmsAdminRoleMicroService;
+import com.newera.marathon.microface.cms.admin.CmsAdminUserMicroService;
 import com.spaking.boot.starter.cas.model.SsoUser;
 import com.spaking.boot.starter.cas.utils.SsoConstant;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -27,16 +27,16 @@ import java.util.Map;
 public class PublicController {
 
     @Autowired
-    private AdminUserMicroService adminUserMicroService;
+    private CmsAdminUserMicroService cmsAdminUserMicroService;
     @Autowired
-    private AdminRoleMicroService adminRoleMicroService;
+    private CmsAdminRoleMicroService cmsAdminRoleMicroService;
 
 
     @GetMapping("/role/inquiry/select")
     @ResponseBody
     public List<Map> roleInquirySelect(){
         //调用微服务
-        XfaceCmsAdminRoleSelectInquiryResponseDTO responseDTO = adminRoleMicroService.roleInquirySelect();
+        XfaceCmsAdminRoleSelectInquiryResponseDTO responseDTO = cmsAdminRoleMicroService.roleInquirySelect();
         List<XfaceCmsAdminRoleSelectInquiryResponseSubDTO> dataList = responseDTO.getDataList();
         //重组响应对象
         List result = new ArrayList();
@@ -62,7 +62,7 @@ public class PublicController {
             SsoUser user = (SsoUser) request.getAttribute(SsoConstant.SSO_USER);
             requestDTO.setId(user.getUserId());
         }
-        XfaceCmsAdminUserBaseInfoModifyInquiryResponseDTO responseDTO = adminUserMicroService.userBaseInfoModifyInquiry(requestDTO);
+        XfaceCmsAdminUserBaseInfoModifyInquiryResponseDTO responseDTO = cmsAdminUserMicroService.userBaseInfoModifyInquiry(requestDTO);
         return responseDTO;
     }
     @PostMapping("/user/base/info/modify")
@@ -70,7 +70,7 @@ public class PublicController {
         SsoUser user = (SsoUser) request.getAttribute(SsoConstant.SSO_USER);
         requestDTO.setId(user.getUserId());
         requestDTO.setModifyOperator(user.getUserName());
-        XfaceCmsAdminUserBaseInfoModifyResponseDTO responseDTO = adminUserMicroService.userBaseInfoModify(requestDTO);
+        XfaceCmsAdminUserBaseInfoModifyResponseDTO responseDTO = cmsAdminUserMicroService.userBaseInfoModify(requestDTO);
         return responseDTO;
     }
 
@@ -83,7 +83,7 @@ public class PublicController {
             requestDTO.setId(user.getUserId());
         }
         requestDTO.setModifyOperator(user.getUserName());
-        XfaceCmsAdminUserModifyPasswordResponseDTO responseDTO = adminUserMicroService.userModifyPassword(requestDTO);
+        XfaceCmsAdminUserModifyPasswordResponseDTO responseDTO = cmsAdminUserMicroService.userModifyPassword(requestDTO);
         return responseDTO;
     }
 
@@ -92,7 +92,7 @@ public class PublicController {
     public XfaceCmsAdminLeftMenuInquiryResponseDTO leftMenuInquiry(XfaceCmsAdminLeftMenuInquiryRequestDTO requestDTO, HttpServletRequest request){
         SsoUser user = (SsoUser) request.getAttribute(SsoConstant.SSO_USER);
         requestDTO.setUserName(user.getUserName());
-        XfaceCmsAdminLeftMenuInquiryResponseDTO responseDTO = adminUserMicroService.leftMenuInquiry(requestDTO);
+        XfaceCmsAdminLeftMenuInquiryResponseDTO responseDTO = cmsAdminUserMicroService.leftMenuInquiry(requestDTO);
         return responseDTO;
     }
 }

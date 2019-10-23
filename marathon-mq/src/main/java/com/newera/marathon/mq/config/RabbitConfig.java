@@ -2,7 +2,7 @@ package com.newera.marathon.mq.config;
 
 import com.newera.marathon.dto.cos.maintenance.XfaceCosMsgLogModifyRequestDTO;
 import com.newera.marathon.dto.cos.maintenance.XfaceCosMsgLogModifyResponseDTO;
-import com.newera.marathon.microface.cos.MsgLogMicroService;
+import com.newera.marathon.microface.cos.CosMsgLogMicroService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.amqp.core.Binding;
 import org.springframework.amqp.core.BindingBuilder;
@@ -21,7 +21,7 @@ public class RabbitConfig {
     @Autowired
     private CachingConnectionFactory connectionFactory;
     @Autowired
-    private MsgLogMicroService msgLogMicroService;
+    private CosMsgLogMicroService cosMsgLogMicroService;
     @Bean
     public RabbitTemplate rabbitTemplate() {
         RabbitTemplate rabbitTemplate = new RabbitTemplate(connectionFactory);
@@ -34,7 +34,7 @@ public class RabbitConfig {
                 XfaceCosMsgLogModifyRequestDTO requestDTO = new XfaceCosMsgLogModifyRequestDTO();
                 requestDTO.setMsgId(msgId);
                 requestDTO.setStatus(2);
-                XfaceCosMsgLogModifyResponseDTO responseDTO = msgLogMicroService.msgLogModify(requestDTO);
+                XfaceCosMsgLogModifyResponseDTO responseDTO = cosMsgLogMicroService.msgLogModify(requestDTO);
                 if(!responseDTO.getTransactionStatus().isSuccess()){
                     log.error("【消费确认】：更新状态为'投递成功'失败");
                 }

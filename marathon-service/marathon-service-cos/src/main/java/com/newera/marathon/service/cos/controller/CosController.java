@@ -3,7 +3,7 @@ package com.newera.marathon.service.cos.controller;
 import com.newera.marathon.dto.cos.maintenance.*;
 import com.newera.marathon.dto.cos.maintenance.XfaceCosGenearteCaptchaResponseDTO;
 import com.newera.marathon.service.cos.service.MailService;
-import com.newera.marathon.service.cos.service.SendService;
+import com.newera.marathon.service.cos.service.CosService;
 import com.spaking.boot.starter.core.annotation.BusinessLogger;
 import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiOperation;
@@ -15,10 +15,10 @@ import org.springframework.web.bind.annotation.RestController;
 import javax.validation.Valid;
 
 @RestController
-public class SendController {
+public class CosController {
 
     @Autowired
-    private SendService sendService;
+    private CosService cosService;
     @Autowired
     private MailService mailService;
 
@@ -27,7 +27,7 @@ public class SendController {
     @ApiImplicitParam(name = "requestDTO", value = "入参对象", dataType = "XfaceCosSendSmsRequestDTO")
     @PostMapping("/cos/sms/send")
     public XfaceCosSendSmsResponseDTO sendSms(@Valid @RequestBody XfaceCosSendSmsRequestDTO requestDTO){
-        XfaceCosSendSmsResponseDTO responseDTO = sendService.doSmsSend(requestDTO);
+        XfaceCosSendSmsResponseDTO responseDTO = cosService.doSmsSend(requestDTO);
         return responseDTO;
     }
 
@@ -36,7 +36,7 @@ public class SendController {
     @ApiImplicitParam(name = "requestDTO", value = "入参对象", dataType = "XfaceCosCheckSmsCodeRequestDTO")
     @PostMapping("/cos/sms/code/check")
     public XfaceCosCheckSmsCodeResponseDTO checkSmsCode(@Valid @RequestBody XfaceCosCheckSmsCodeRequestDTO requestDTO){
-        XfaceCosCheckSmsCodeResponseDTO responseDTO = sendService.doCheckSmsCode(requestDTO);
+        XfaceCosCheckSmsCodeResponseDTO responseDTO = cosService.doCheckSmsCode(requestDTO);
         return responseDTO;
     }
 
@@ -44,7 +44,7 @@ public class SendController {
     @ApiOperation(value="生成图形验证码", notes="生成图形验证码")
     @PostMapping("/cos/generate/captcha")
     public XfaceCosGenearteCaptchaResponseDTO generateCaptcha(){
-        XfaceCosGenearteCaptchaResponseDTO responseDTO = sendService.doGenerateCaptcha();
+        XfaceCosGenearteCaptchaResponseDTO responseDTO = cosService.doGenerateCaptcha();
         return responseDTO;
     }
 
@@ -53,7 +53,7 @@ public class SendController {
     @ApiImplicitParam(name = "requestDTO", value = "入参对象", dataType = "XfaceCosMailSendRequestDTO")
     @PostMapping("/cos/mail/send")
     public XfaceCosMailSendResponseDTO sendMail(@Valid @RequestBody XfaceCosMailSendRequestDTO requestDTO){
-        XfaceCosMailSendResponseDTO responseDTO = sendService.doMailSend(requestDTO);
+        XfaceCosMailSendResponseDTO responseDTO = cosService.doMailSend(requestDTO);
         return responseDTO;
     }
 }

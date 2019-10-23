@@ -19,9 +19,9 @@ import javax.validation.Valid;
 
 @FeignClient(
         name = ServerName.APPLICATION_NAME,
-        fallbackFactory = MsgLogMicroService.MsgLogMicroServiceImpl.class
+        fallbackFactory = CosMsgLogMicroService.MsgLogMicroServiceImpl.class
 )
-public interface MsgLogMicroService {
+public interface CosMsgLogMicroService {
     @PostMapping("/cos/msg/log/list/inquiry")
     XfaceCosMsgLogListInquiryResponseDTO msgLogListInquiry(@Valid @RequestBody XfaceCosMsgLogListInquiryRequestDTO requestDTO);
 
@@ -32,12 +32,12 @@ public interface MsgLogMicroService {
     XfaceCosMsgLogModifyResponseDTO msgLogModify(@Valid @RequestBody XfaceCosMsgLogModifyRequestDTO requestDTO);
 
     @Component
-    class MsgLogMicroServiceImpl implements FallbackFactory<MsgLogMicroService> {
+    class MsgLogMicroServiceImpl implements FallbackFactory<CosMsgLogMicroService> {
         private Logger logger = LoggerFactory.getLogger(MsgLogMicroServiceImpl.class);
         @Override
-        public MsgLogMicroService create(Throwable throwable) {
+        public CosMsgLogMicroService create(Throwable throwable) {
             logger.error("fallback reason:{}",throwable.getMessage());
-            return new MsgLogMicroService(){
+            return new CosMsgLogMicroService(){
                 @Override
                 public XfaceCosMsgLogListInquiryResponseDTO msgLogListInquiry(XfaceCosMsgLogListInquiryRequestDTO requestDTO) {
                     XfaceCosMsgLogListInquiryResponseDTO responseDTO = new XfaceCosMsgLogListInquiryResponseDTO();

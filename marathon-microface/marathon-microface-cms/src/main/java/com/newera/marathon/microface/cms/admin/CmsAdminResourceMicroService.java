@@ -19,9 +19,9 @@ import javax.validation.Valid;
 
 @FeignClient(
         name = ServerName.APPLICATION_NAME,
-        fallbackFactory = AdminResourceMicroService.AdminResourceMicroServiceImpl.class
+        fallbackFactory = CmsAdminResourceMicroService.AdminResourceMicroServiceImpl.class
 )
-public interface AdminResourceMicroService {
+public interface CmsAdminResourceMicroService {
     @PostMapping("/cms/admin/resource/inquiry/loop")
     XfaceCmsAdminResourceLoopInquiryResponseDTO resourceInquiryLoop(@Valid @RequestBody XfaceCmsAdminResourceLoopInquiryRequestDTO requestDTO);
 
@@ -38,12 +38,12 @@ public interface AdminResourceMicroService {
     XfaceCmsAdminResourceModifyStatusResponseDTO resourceModifyStatus(@Valid @RequestBody XfaceCmsAdminResourceModifyStatusRequestDTO requestDTO);
 
     @Component
-    class AdminResourceMicroServiceImpl implements FallbackFactory<AdminResourceMicroService> {
+    class AdminResourceMicroServiceImpl implements FallbackFactory<CmsAdminResourceMicroService> {
         private Logger logger = LoggerFactory.getLogger(AdminResourceMicroServiceImpl.class);
         @Override
-        public AdminResourceMicroService create(Throwable throwable) {
+        public CmsAdminResourceMicroService create(Throwable throwable) {
             logger.error("fallback reason:{}",throwable.getMessage());
-            return new AdminResourceMicroService(){
+            return new CmsAdminResourceMicroService(){
                 @Override
                 public XfaceCmsAdminResourceLoopInquiryResponseDTO resourceInquiryLoop(@Valid XfaceCmsAdminResourceLoopInquiryRequestDTO requestDTO) {
                     XfaceCmsAdminResourceLoopInquiryResponseDTO responseDTO = new XfaceCmsAdminResourceLoopInquiryResponseDTO();

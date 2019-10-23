@@ -5,7 +5,7 @@ import com.newera.marathon.dto.cos.inquiry.XfaceCosMsgLogListInquiryResponseDTO;
 import com.newera.marathon.dto.cos.inquiry.XfaceCosMsgLogListInquiryResponseSubDTO;
 import com.newera.marathon.dto.cos.maintenance.XfaceCosMsgLogModifyRequestDTO;
 import com.newera.marathon.dto.cos.maintenance.XfaceCosMsgLogModifyResponseDTO;
-import com.newera.marathon.microface.cos.MsgLogMicroService;
+import com.newera.marathon.microface.cos.CosMsgLogMicroService;
 import com.xxl.job.core.biz.model.ReturnT;
 import com.xxl.job.core.handler.IJobHandler;
 import com.xxl.job.core.handler.annotation.JobHandler;
@@ -38,7 +38,7 @@ import java.util.List;
 @Slf4j
 public class MsgLogJobHandler extends IJobHandler {
     @Autowired
-    private MsgLogMicroService msgLogMicroService;
+    private CosMsgLogMicroService cosMsgLogMicroService;
     @Autowired
     private RabbitTemplate rabbitTemplate;
     // 最大投递次数
@@ -49,7 +49,7 @@ public class MsgLogJobHandler extends IJobHandler {
         XfaceCosMsgLogListInquiryRequestDTO msgLogListInquiryRequestDTO = new XfaceCosMsgLogListInquiryRequestDTO();
         msgLogListInquiryRequestDTO.setStatus(1);
         //查询所有状态为"投递中"的消息
-        XfaceCosMsgLogListInquiryResponseDTO msgLogListInquiryResponseDTO = msgLogMicroService.msgLogListInquiry(msgLogListInquiryRequestDTO);
+        XfaceCosMsgLogListInquiryResponseDTO msgLogListInquiryResponseDTO = cosMsgLogMicroService.msgLogListInquiry(msgLogListInquiryRequestDTO);
         List<XfaceCosMsgLogListInquiryResponseSubDTO> responseSubDTOS = msgLogListInquiryResponseDTO.getDataList();
         responseSubDTOS.forEach(w->{
             if (w.getTryCount() >= MAX_TRY_COUNT) {
@@ -58,7 +58,7 @@ public class MsgLogJobHandler extends IJobHandler {
                 msgLogModifyRequestDTO.setMsgId(w.getMsgId());
                 msgLogModifyRequestDTO.setStatus(3);
                 //更新状态为投递失败
-                XfaceCosMsgLogModifyResponseDTO msgLogModifyResponseDTO = msgLogMicroService.msgLogModify(msgLogModifyRequestDTO);
+                XfaceCosMsgLogModifyResponseDTO msgLogModifyResponseDTO = cosMsgLogMicroService.msgLogModify(msgLogModifyRequestDTO);
                 if(!msgLogModifyResponseDTO.getTransactionStatus().isSuccess()){
                     log.error("【消息定时任务】：更新状态为'投递失败'失败");
                 }
@@ -68,7 +68,7 @@ public class MsgLogJobHandler extends IJobHandler {
                 msgLogModifyRequestDTO.setMsgId(w.getMsgId());
                 msgLogModifyRequestDTO.setTryCount(w.getTryCount()+1);
                 //更新重试次数+1
-                XfaceCosMsgLogModifyResponseDTO msgLogModifyResponseDTO = msgLogMicroService.msgLogModify(msgLogModifyRequestDTO);
+                XfaceCosMsgLogModifyResponseDTO msgLogModifyResponseDTO = cosMsgLogMicroService.msgLogModify(msgLogModifyRequestDTO);
                 if(!msgLogModifyResponseDTO.getTransactionStatus().isSuccess()){
                     log.error("【消息定时任务】：更新重试次数失败");
                 }

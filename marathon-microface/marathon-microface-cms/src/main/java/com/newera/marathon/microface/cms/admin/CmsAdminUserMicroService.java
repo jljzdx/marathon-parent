@@ -16,9 +16,9 @@ import javax.validation.Valid;
 
 @FeignClient(
         name = ServerName.APPLICATION_NAME,
-        fallbackFactory = AdminUserMicroService.AdminUserMicroServiceImpl.class
+        fallbackFactory = CmsAdminUserMicroService.AdminUserMicroServiceImpl.class
 )
-public interface AdminUserMicroService {
+public interface CmsAdminUserMicroService {
     @PostMapping("/cms/admin/user/inquiry/page")
     XfaceCmsAdminUserInquiryPageResponseDTO userInquiryPage(@Valid @RequestBody XfaceCmsAdminUserInquiryPageRequestDTO requestDTO);
 
@@ -53,12 +53,12 @@ public interface AdminUserMicroService {
     XfaceCmsAdminPermissionsInquiryResponseDTO permissionsInquiry(@Valid @RequestBody XfaceCmsAdminPermissionsInquiryRequestDTO requestDTO);
 
     @Component
-    class AdminUserMicroServiceImpl implements FallbackFactory<AdminUserMicroService> {
+    class AdminUserMicroServiceImpl implements FallbackFactory<CmsAdminUserMicroService> {
         private Logger logger = LoggerFactory.getLogger(AdminUserMicroServiceImpl.class);
         @Override
-        public AdminUserMicroService create(Throwable throwable) {
+        public CmsAdminUserMicroService create(Throwable throwable) {
             logger.error("fallback reason:{}",throwable.getMessage());
-            return new AdminUserMicroService(){
+            return new CmsAdminUserMicroService(){
                 @Override
                 public XfaceCmsAdminUserInquiryPageResponseDTO userInquiryPage(@Valid XfaceCmsAdminUserInquiryPageRequestDTO requestDTO) {
                     XfaceCmsAdminUserInquiryPageResponseDTO responseDTO = new XfaceCmsAdminUserInquiryPageResponseDTO();

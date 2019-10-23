@@ -16,9 +16,9 @@ import javax.validation.Valid;
 
 @FeignClient(
         name = ServerName.APPLICATION_NAME,
-        fallbackFactory = AdminRoleMicroService.AdminRoleMicroServiceImpl.class
+        fallbackFactory = CmsAdminRoleMicroService.AdminRoleMicroServiceImpl.class
 )
-public interface AdminRoleMicroService {
+public interface CmsAdminRoleMicroService {
     @PostMapping("/cms/admin/role/inquiry/select")
     XfaceCmsAdminRoleSelectInquiryResponseDTO roleInquirySelect();
 
@@ -44,12 +44,12 @@ public interface AdminRoleMicroService {
     XfaceCmsAdminRoleAuthResponseDTO roleAuth(@Valid @RequestBody XfaceCmsAdminRoleAuthRequestDTO requestDTO);
 
     @Component
-    class AdminRoleMicroServiceImpl implements FallbackFactory<AdminRoleMicroService> {
+    class AdminRoleMicroServiceImpl implements FallbackFactory<CmsAdminRoleMicroService> {
         private Logger logger = LoggerFactory.getLogger(AdminRoleMicroServiceImpl.class);
         @Override
-        public AdminRoleMicroService create(Throwable throwable) {
+        public CmsAdminRoleMicroService create(Throwable throwable) {
             logger.error("fallback reason:{}",throwable.getMessage());
-            return new AdminRoleMicroService(){
+            return new CmsAdminRoleMicroService(){
                 @Override
                 public XfaceCmsAdminRoleSelectInquiryResponseDTO roleInquirySelect() {
                     XfaceCmsAdminRoleSelectInquiryResponseDTO responseDTO = new XfaceCmsAdminRoleSelectInquiryResponseDTO();

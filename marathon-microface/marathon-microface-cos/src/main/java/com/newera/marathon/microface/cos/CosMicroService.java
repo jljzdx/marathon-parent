@@ -14,9 +14,9 @@ import javax.validation.Valid;
 
 @FeignClient(
         name = ServerName.APPLICATION_NAME,
-        fallbackFactory = SendMicroService.SendMicroServiceImpl.class
+        fallbackFactory = CosMicroService.SendMicroServiceImpl.class
 )
-public interface SendMicroService {
+public interface CosMicroService {
     @PostMapping("/cos/sms/send")
     XfaceCosSendSmsResponseDTO sendSms(@Valid @RequestBody XfaceCosSendSmsRequestDTO requestDTO);
 
@@ -30,12 +30,12 @@ public interface SendMicroService {
     XfaceCosMailSendResponseDTO sendMail(@Valid @RequestBody XfaceCosMailSendRequestDTO requestDTO);
 
     @Component
-    class SendMicroServiceImpl implements FallbackFactory<SendMicroService> {
+    class SendMicroServiceImpl implements FallbackFactory<CosMicroService> {
         private Logger logger = LoggerFactory.getLogger(SendMicroServiceImpl.class);
         @Override
-        public SendMicroService create(Throwable throwable) {
+        public CosMicroService create(Throwable throwable) {
             logger.error("fallback reason:{}",throwable.getMessage());
-            return new SendMicroService(){
+            return new CosMicroService(){
                 @Override
                 public XfaceCosSendSmsResponseDTO sendSms(@Valid XfaceCosSendSmsRequestDTO requestDTO) {
                     XfaceCosSendSmsResponseDTO responseDTO = new XfaceCosSendSmsResponseDTO();

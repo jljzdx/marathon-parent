@@ -28,5 +28,11 @@
             <artifactId>marathon-microface-cos</artifactId>
             <scope>provided</scope>
         </dependency>
+        <!--marathon-common-->
+        <dependency>
+            <groupId>com.newera.marathon</groupId>
+            <artifactId>marathon-common</artifactId>
+            <scope>provided</scope>
+        </dependency>
     </dependencies>
 </project>

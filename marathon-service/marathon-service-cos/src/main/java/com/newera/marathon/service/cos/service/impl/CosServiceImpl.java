@@ -7,7 +7,7 @@ import com.newera.marathon.common.utils.DateUtils;
 import com.newera.marathon.common.utils.RandomUtil;
 import com.newera.marathon.dto.cos.maintenance.*;
 import com.newera.marathon.service.cos.service.MailService;
-import com.newera.marathon.service.cos.service.SendService;
+import com.newera.marathon.service.cos.service.CosService;
 import com.spaking.boot.starter.core.exception.BaseException;
 import com.spaking.boot.starter.core.model.TransactionStatus;
 import com.spaking.boot.starter.redis.utils.RedisUtil;
@@ -21,7 +21,7 @@ import java.util.Map;
 
 @Slf4j
 @Service
-public class SendServiceImpl implements SendService {
+public class CosServiceImpl implements CosService {
     private final String SMS_KEY = "sms_key";
     private final String SMS_COUNT_KEY = "sms_count_key";
     private final Long SMS_EXPIRE_SECONDS = 300L;

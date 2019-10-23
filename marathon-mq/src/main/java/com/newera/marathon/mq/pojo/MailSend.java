@@ -1,14 +1,9 @@
-package com.newera.marathon.service.cms.mq.pojo;
+package com.newera.marathon.mq.pojo;
 
 import lombok.Data;
 
 @Data
-public class MailSend {
-
-    /**
-     * 消息ID
-     */
-    private String msgId;
+public class MailSend extends Base {
 
     /**
      * 收件人

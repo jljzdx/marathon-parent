@@ -3,7 +3,7 @@ package com.newera.marathon.web.zy.interceptor;
 import com.newera.marathon.common.model.ApplicationError;
 import com.newera.marathon.dto.cms.inquiry.XfaceCmsAdminPermissionsInquiryRequestDTO;
 import com.newera.marathon.dto.cms.inquiry.XfaceCmsAdminPermissionsInquiryResponseDTO;
-import com.newera.marathon.microface.cms.admin.AdminUserMicroService;
+import com.newera.marathon.microface.cms.admin.CmsAdminUserMicroService;
 import com.spaking.boot.starter.cas.model.SsoUser;
 import com.spaking.boot.starter.cas.utils.SsoConstant;
 import com.spaking.boot.starter.core.annotation.NeedAuthorize;
@@ -25,7 +25,7 @@ import java.util.List;
 public class PermissionInterceptor implements HandlerInterceptor {
 
     @Autowired
-    private AdminUserMicroService adminUserMicroService;
+    private CmsAdminUserMicroService cmsAdminUserMicroService;
 
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) throws Exception {
 
@@ -43,7 +43,7 @@ public class PermissionInterceptor implements HandlerInterceptor {
                 }
                 XfaceCmsAdminPermissionsInquiryRequestDTO requestDTO = new XfaceCmsAdminPermissionsInquiryRequestDTO();
                 requestDTO.setUserName(user.getUserName());
-                XfaceCmsAdminPermissionsInquiryResponseDTO responseDTO = adminUserMicroService.permissionsInquiry(requestDTO);
+                XfaceCmsAdminPermissionsInquiryResponseDTO responseDTO = cmsAdminUserMicroService.permissionsInquiry(requestDTO);
                 String value = needAuthorize.value();
                 List<String> permissions = responseDTO.getPermissions();
                 log.info("permissions>>>>>>>>>"+permissions);
