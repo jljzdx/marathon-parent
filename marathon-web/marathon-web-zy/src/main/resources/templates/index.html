@@ -130,7 +130,10 @@ function() {
                 $.each(result.dataList,
                 function(i, obj) {
                     var content = '<li data-name="user" class="layui-nav-item layui-nav-itemed">';
-                    content += '<a href="javascript:;" lay-tips="' + obj.name + '" lay-direction="2"><i class="iconfont layui-icon-extend' + obj.icon + '"></i><cite>' + obj.name + '</cite></a> ';
+                    content += '<a href="javascript:;" lay-tips="' + obj.name + '" lay-direction="2">';
+                    content += '<i class="iconfont layui-icon-extend' + obj.icon + '"></i>';
+                    content += '<cite>' + obj.name + '</cite>';
+                    content += '</a>';
                     //这里是添加所有的子菜单
                     content += loadchild(obj);
                     content += '</li>';
@@ -166,8 +169,10 @@ function() {
             $.each(obj.children,
             function(i, note) {
                 content += '<dd>';
+                content += '<a lay-href="' + note.url + '">';
                 content += '<i class="iconfont layui-icon-extend' + note.icon + '"></i>';
-                content += '<a lay-href="' + note.url + '">' + note.name + '</a> ';
+                content += '<cite>' + note.name + '</cite>';
+                content += '</a> ';
                 if (note.children == null) {
                     return;
                 }

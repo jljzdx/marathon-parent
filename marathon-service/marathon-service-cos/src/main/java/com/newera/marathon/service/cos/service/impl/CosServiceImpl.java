@@ -64,14 +64,14 @@ public class CosServiceImpl implements CosService {
             //短信发送成功，次数加1
             Long expireSeconds = DateUtils.getExpireSeconds();
             if(null == value){//今天第一次
-                redisUtil.setx(countKey,1,expireSeconds);
+                redisUtil.set(countKey,1,expireSeconds);
             }else{
                 redisUtil.increase(countKey);
             }
             //存储短信验证码（使用redis，key='sms_key'+phone+type，有效期5分钟）
             String key = SMS_KEY+phone+type;
             log.info("key="+key+";value="+verifyCode);
-            redisUtil.setx(key,verifyCode,SMS_EXPIRE_SECONDS);
+            redisUtil.set(key,verifyCode,SMS_EXPIRE_SECONDS);
         }
 
         responseDTO.setTransactionStatus(transactionStatus);
@@ -115,8 +115,7 @@ public class CosServiceImpl implements CosService {
         responseDTO.setPic(pic);
         responseDTO.setCaptchaId(key);
         responseDTO.setTransactionStatus(transactionStatus);
-        Boolean result = redisUtil.setx(key,map.get(CaptchaCodeUtil.RANDOMSTRING), RedisConstant.CAPTCHA_EXPIRY_SECOND);
-        log.info("doGenerateCaptcha："+result);
+        redisUtil.set(key,map.get(CaptchaCodeUtil.RANDOMSTRING), RedisConstant.CAPTCHA_EXPIRY_SECOND);
         log.info("doGenerateCaptcha end");
         return responseDTO;
     }
