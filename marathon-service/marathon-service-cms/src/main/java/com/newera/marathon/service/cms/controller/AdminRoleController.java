@@ -4,6 +4,7 @@ package com.newera.marathon.service.cms.controller;
 import com.newera.marathon.dto.cms.inquiry.*;
 import com.newera.marathon.dto.cms.maintenance.*;
 import com.newera.marathon.service.cms.service.AdminRoleService;
+import com.spaking.boot.starter.core.annotation.AvoidRepeatSubmit;
 import com.spaking.boot.starter.core.annotation.BusinessLogger;
 import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiOperation;
@@ -28,7 +29,6 @@ public class AdminRoleController {
     @Autowired
     private AdminRoleService adminRoleService;
 
-
     @BusinessLogger(key = "CMS",value = "roleInquirySelect")
     @ApiOperation(value="查询所有角色--下拉", notes="查询所有角色--下拉")
     @PostMapping("/cms/admin/role/inquiry/select")
@@ -46,6 +46,7 @@ public class AdminRoleController {
         return responseDTO;
     }
 
+    @AvoidRepeatSubmit
     @BusinessLogger(key = "CMS",value = "roleAddition")
     @PostMapping("/cms/admin/role/addition")
     public XfaceCmsAdminRoleAdditionResponseDTO roleAddition(@Valid @RequestBody XfaceCmsAdminRoleAdditionRequestDTO requestDTO){

@@ -27,7 +27,7 @@ public class SwaggerConfig implements WebMvcConfigurer {
     public Docket createRestApi() {
         List<Parameter> parameters = new ArrayList<>();
         parameters.add(new ParameterBuilder()
-                .name("token")
+                .name("Authorization")
                 .description("认证token")
                 .modelRef(new ModelRef("string"))
                 .parameterType("header")

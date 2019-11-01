@@ -28,10 +28,5 @@
             <groupId>com.newera.marathon</groupId>
             <artifactId>marathon-mq</artifactId>
         </dependency>
-        <!--logstash-->
-        <dependency>
-            <groupId>net.logstash.logback</groupId>
-            <artifactId>logstash-logback-encoder</artifactId>
-        </dependency>
     </dependencies>
 </project>

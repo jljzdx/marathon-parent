@@ -51,7 +51,7 @@ public class TokenGlobalFilter implements GlobalFilter, Ordered {
         }).count();
         if (count == 0) {
             HttpHeaders headers = request.getHeaders();
-            String token = headers.getFirst("token");
+            String token = headers.getFirst("Authorization");
             log.info("token >>>>>>>>>" + token);
             if (StringUtils.isBlank(token)|| StringUtils.isBlank(JWTUtil.getUserId(token))) {
                 log.info("token is empty !");
