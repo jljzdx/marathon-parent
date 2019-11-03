@@ -2,6 +2,6 @@ spring:
   main:
     allow-bean-definition-overriding: true
   profiles:
-    active: dev
+    active: uat
   application:
     name: marathon-service-cms

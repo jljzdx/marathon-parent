@@ -1,5 +1,5 @@
 server:
-  port: 8310
+  port: 8320
 spring:
   cloud:
     nacos:
@@ -18,10 +18,21 @@ spring:
         ext-config[2]:
           data-id: mysql.yaml
           refresh: true
-        ext-config[3]:
-          data-id: rabbitmq.yaml
-          refresh: true
       discovery:
         server-addr: 127.0.0.1:8848
+  mail:
+    properties:
+      mail:
+        smtp:
+          connectiontimeout: 5000
+          timeout: 3000
+          writetimeout: 5000
+    host: smtp.163.com
+    username: neweramicrobin@163.com
+    password: MicroBin5689 # 授权码
+    port: 25 #465用于SSL
+    protocol: smtp
+    default-encoding: UTF-8
+    from: neweramicrobin@163.com
 mybatis-plus:
-  mapper-locations: classpath*:mappers/**/*.xml
+  mapper-locations: classpath*:mappers/*.xml

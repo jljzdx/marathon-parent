@@ -1,5 +1,5 @@
 server:
-  port: 8310
+  port: 8081
 spring:
   cloud:
     nacos:
@@ -10,18 +10,13 @@ spring:
         group: MARATHON_GROUP
         prefix: marathon-service-dynamic-config
         ext-config[0]:
-          data-id: feign-ribbon-hystrix.yaml
+          data-id: freemarker.yaml
           refresh: true
         ext-config[1]:
-          data-id: redis.yaml
+          data-id: feign-ribbon-hystrix.yaml
           refresh: true
         ext-config[2]:
-          data-id: mysql.yaml
-          refresh: true
-        ext-config[3]:
-          data-id: rabbitmq.yaml
+          data-id: redis.yaml
           refresh: true
       discovery:
         server-addr: 127.0.0.1:8848
-mybatis-plus:
-  mapper-locations: classpath*:mappers/**/*.xml
