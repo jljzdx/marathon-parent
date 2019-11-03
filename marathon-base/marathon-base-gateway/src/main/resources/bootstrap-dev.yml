@@ -8,8 +8,69 @@ spring:
         file-extension: yaml
         namespace: 826edc0d-f59e-4bee-9b62-b1d8eb78127f
         group: MARATHON_GROUP
+        prefix: marathon-service-dynamic-config
         ext-config[0]:
           data-id: redis.yaml
           refresh: true
       discovery:
         server-addr: 127.0.0.1:8848
+    gateway:
+      default-filters:
+        - name: Hystrix
+          args:
+            name: fallbackcmd
+            fallbackUri: forward:/hystrix/fallback
+      discovery:
+        locator:
+          #表明gateway开启服务注册和发现的功能
+          enabled: true
+          #将请求路径上的服务名配置为小写
+          lower-case-service-id: true
+      routes:
+        #当路由找不到返回友好提示
+        #- id: not-found-route
+        #uri: forward:/not/found/route
+        #order: 100
+        #predicates:
+        #- Path=/**
+        - id: cos
+          uri: lb://marathon-service-cos
+          predicates:
+            - Path=/gw-cos/**
+          filters:
+            #在转发之前将/demo去掉
+            - StripPrefix=1
+            - name: RequestRateLimiter
+              args:
+                #SpEL 表达式根据#{@beanName}从 Spring 容器中获取 Bean 对象
+                key-resolver: '#{@userKeyResolver}'
+                #令牌桶每秒填充平均速率
+                redis-rate-limiter.replenishRate: 1
+                #令牌桶总容量
+                redis-rate-limiter.burstCapacity: 6
+        - id: cust
+          uri: lb://marathon-service-cust
+          predicates:
+            - Path=/gw-cust/**
+          filters:
+            #在转发之前将/demo去掉
+            - StripPrefix=1
+        - id: cms
+          uri: lb://marathon-service-cms
+          predicates:
+            - Path=/gw-cms/**
+          filters:
+            #在转发之前将/demo去掉
+            - StripPrefix=1
+            - name: Test
+              args:
+                code: 1
+                name: 2
+                value: 3
+hystrix:
+  command:
+    fallbackcmd:
+      execution:
+        isolation:
+          thread:
+            timeoutInMilliseconds: 5000
