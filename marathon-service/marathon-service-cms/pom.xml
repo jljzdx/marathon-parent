@@ -11,19 +11,13 @@
 
     <artifactId>marathon-service-cms</artifactId>
 
-
     <dependencies>
-        <dependency>
-            <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-starter-test</artifactId>
-            <scope>test</scope>
-        </dependency>
-        <!--marathon-microface-cos-->
+        <!--marathon-microface-->
         <dependency>
             <groupId>com.newera.marathon</groupId>
             <artifactId>marathon-microface-cos</artifactId>
         </dependency>
-        <!--marathon-mq-->
+        <!--marathon-->
         <dependency>
             <groupId>com.newera.marathon</groupId>
             <artifactId>marathon-mq</artifactId>

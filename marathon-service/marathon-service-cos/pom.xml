@@ -11,14 +11,13 @@
 
     <artifactId>marathon-service-cos</artifactId>
 
-
     <dependencies>
-        <!--marathon-microface-cms-->
+        <!--marathon-microface-->
         <dependency>
             <groupId>com.newera.marathon</groupId>
             <artifactId>marathon-microface-cust</artifactId>
         </dependency>
-        <!--mail-->
+        <!--spring-boot-starter-->
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-mail</artifactId>

@@ -18,65 +18,72 @@
     </modules>
 
     <dependencies>
-        <!--spaking-core-->
+        <!--marathon-->
+        <dependency>
+            <groupId>com.newera.marathon</groupId>
+            <artifactId>marathon-common</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>com.newera.marathon</groupId>
+            <artifactId>marathon-dto</artifactId>
+        </dependency>
+        <!--spaking-->
         <dependency>
             <groupId>com.spakingframework.boot</groupId>
             <artifactId>spaking-boot-starter-core</artifactId>
         </dependency>
-        <!--spaking-mysql-->
         <dependency>
             <groupId>com.spakingframework.boot</groupId>
             <artifactId>spaking-boot-starter-mysql</artifactId>
         </dependency>
-        <!--spaking-redis-->
         <dependency>
             <groupId>com.spakingframework.boot</groupId>
             <artifactId>spaking-boot-starter-redis</artifactId>
         </dependency>
+        <!--spring-boot-starter-->
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-web</artifactId>
         </dependency>
-        <!--健康检查-->
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-actuator</artifactId>
         </dependency>
-        <!--openfeign-->
-        <dependency>
-            <groupId>org.springframework.cloud</groupId>
-            <artifactId>spring-cloud-starter-openfeign</artifactId>
-        </dependency>
-        <!--nacos-discovery-->
-        <dependency>
-            <groupId>com.alibaba.cloud</groupId>
-            <artifactId>spring-cloud-starter-alibaba-nacos-discovery</artifactId>
-        </dependency>
-        <!--nacos-config-->
-        <dependency>
-            <groupId>com.alibaba.cloud</groupId>
-            <artifactId>spring-cloud-starter-alibaba-nacos-config</artifactId>
-        </dependency>
-        <!--测试-->
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-test</artifactId>
             <scope>test</scope>
         </dependency>
-        <!--marathon-common-->
+        <!--spring-cloud-starter-->
         <dependency>
-            <groupId>com.newera.marathon</groupId>
-            <artifactId>marathon-common</artifactId>
+            <groupId>org.springframework.cloud</groupId>
+            <artifactId>spring-cloud-starter-openfeign</artifactId>
         </dependency>
-        <!--marathon-dto-->
         <dependency>
-            <groupId>com.newera.marathon</groupId>
-            <artifactId>marathon-dto</artifactId>
+            <groupId>org.springframework.cloud</groupId>
+            <artifactId>spring-cloud-starter-netflix-hystrix</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>com.alibaba.cloud</groupId>
+            <artifactId>spring-cloud-starter-alibaba-nacos-discovery</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>com.alibaba.cloud</groupId>
+            <artifactId>spring-cloud-starter-alibaba-nacos-config</artifactId>
         </dependency>
         <!--logstash-->
         <dependency>
             <groupId>net.logstash.logback</groupId>
             <artifactId>logstash-logback-encoder</artifactId>
+        </dependency>
+        <!--swagger2-->
+        <dependency>
+            <groupId>io.springfox</groupId>
+            <artifactId>springfox-swagger2</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>io.springfox</groupId>
+            <artifactId>springfox-swagger-ui</artifactId>
         </dependency>
     </dependencies>
 </project>

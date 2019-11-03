@@ -12,6 +12,7 @@
     <artifactId>marathon-common</artifactId>
 
     <dependencies>
+        <!--spring-boot-starter-->
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-web</artifactId>
@@ -21,6 +22,7 @@
         <dependency>
             <groupId>commons-codec</groupId>
             <artifactId>commons-codec</artifactId>
+            <version>1.12</version>
         </dependency>
     </dependencies>
 </project>

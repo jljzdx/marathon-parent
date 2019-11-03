@@ -12,56 +12,60 @@
     <artifactId>marathon-base-sso</artifactId>
 
     <dependencies>
-        <!--spaking-boot-starter-redis-->
-        <dependency>
-            <groupId>com.spakingframework.boot</groupId>
-            <artifactId>spaking-boot-starter-redis</artifactId>
-        </dependency>
-        <!--spaking-boot-starter-cas-->
-        <dependency>
-            <groupId>com.spakingframework.boot</groupId>
-            <artifactId>spaking-boot-starter-cas</artifactId>
-        </dependency>
-        <!--marathon-microface-cms-->
+        <!--marathon-microface-->
         <dependency>
             <groupId>com.newera.marathon</groupId>
             <artifactId>marathon-microface-cms</artifactId>
         </dependency>
-        <!--marathon-microface-cos-->
         <dependency>
             <groupId>com.newera.marathon</groupId>
             <artifactId>marathon-microface-cos</artifactId>
         </dependency>
+        <!--marathon-->
+        <dependency>
+            <groupId>com.newera.marathon</groupId>
+            <artifactId>marathon-dto</artifactId>
+        </dependency>
+        <!--spaking-->
+        <dependency>
+            <groupId>com.spakingframework.boot</groupId>
+            <artifactId>spaking-boot-starter-redis</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>com.spakingframework.boot</groupId>
+            <artifactId>spaking-boot-starter-cas</artifactId>
+        </dependency>
+        <!--spring-boot-starter-->
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-web</artifactId>
         </dependency>
         <dependency>
             <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-starter-test</artifactId>
-            <scope>test</scope>
-        </dependency>
-        <!-- freemarker -->
-        <dependency>
-            <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-freemarker</artifactId>
         </dependency>
-        <!--健康检查-->
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-actuator</artifactId>
         </dependency>
-        <!--openfeign-->
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-test</artifactId>
+            <scope>test</scope>
+        </dependency>
+        <!--spring-cloud-starter-->
         <dependency>
             <groupId>org.springframework.cloud</groupId>
             <artifactId>spring-cloud-starter-openfeign</artifactId>
         </dependency>
-        <!--nacos-discovery-->
+        <dependency>
+            <groupId>org.springframework.cloud</groupId>
+            <artifactId>spring-cloud-starter-netflix-hystrix</artifactId>
+        </dependency>
         <dependency>
             <groupId>com.alibaba.cloud</groupId>
             <artifactId>spring-cloud-starter-alibaba-nacos-discovery</artifactId>
         </dependency>
-        <!--nacos-config-->
         <dependency>
             <groupId>com.alibaba.cloud</groupId>
             <artifactId>spring-cloud-starter-alibaba-nacos-config</artifactId>

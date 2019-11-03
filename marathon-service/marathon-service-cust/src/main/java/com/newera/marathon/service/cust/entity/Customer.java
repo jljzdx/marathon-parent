@@ -3,12 +3,12 @@ package com.newera.marathon.service.cust.entity;
 import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
+import com.newera.marathon.common.model.BaseEntity;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.experimental.Accessors;
 
 import java.io.Serializable;
-import java.util.Date;
 
 /**
  * <p>
@@ -22,7 +22,7 @@ import java.util.Date;
 @EqualsAndHashCode(callSuper = false)
 @Accessors(chain = true)
 @TableName("CUSTOMER")
-public class Customer implements Serializable {
+public class Customer extends BaseEntity implements Serializable {
 
     private static final long serialVersionUID = 1L;
 
@@ -73,26 +73,6 @@ public class Customer implements Serializable {
      * 0/1：未删除/已删除
      */
     private Integer deleted;
-
-    /**
-     * 创建时间
-     */
-    private Date gmtCreate;
-
-    /**
-     * 创建人
-     */
-    private String createOperator;
-
-    /**
-     * 修改时间
-     */
-    private Date gmtModify;
-
-    /**
-     * 修改人
-     */
-    private String modifyOperator;
 
 
 }

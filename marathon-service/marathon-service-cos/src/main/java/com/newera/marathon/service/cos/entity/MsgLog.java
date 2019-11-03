@@ -3,12 +3,12 @@ package com.newera.marathon.service.cos.entity;
 import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
+import com.newera.marathon.common.model.BaseEntity;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.experimental.Accessors;
 
 import java.io.Serializable;
-import java.util.Date;
 
 /**
  * <p>
@@ -22,7 +22,7 @@ import java.util.Date;
 @EqualsAndHashCode(callSuper = false)
 @Accessors(chain = true)
 @TableName("COS_MSG_LOG")
-public class MsgLog implements Serializable {
+public class MsgLog extends BaseEntity implements Serializable {
 
     private static final long serialVersionUID = 1L;
 
@@ -58,16 +58,6 @@ public class MsgLog implements Serializable {
      * 1/2/3/4：投递中/投递成功/投递失败/已消费
      */
     private Integer status;
-
-    /**
-     * 创建时间
-     */
-    private Date gmtCreate;
-
-    /**
-     * 更新时间
-     */
-    private Date gmtModify;
 
 
 }

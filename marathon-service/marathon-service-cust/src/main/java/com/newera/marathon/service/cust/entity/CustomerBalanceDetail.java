@@ -3,13 +3,13 @@ package com.newera.marathon.service.cust.entity;
 import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
+import com.newera.marathon.common.model.BaseEntity;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.experimental.Accessors;
 
 import java.io.Serializable;
 import java.math.BigDecimal;
-import java.util.Date;
 
 /**
  * <p>
@@ -23,7 +23,7 @@ import java.util.Date;
 @EqualsAndHashCode(callSuper = false)
 @Accessors(chain = true)
 @TableName("CUSTOMER_BALANCE_DETAIL")
-public class CustomerBalanceDetail implements Serializable {
+public class CustomerBalanceDetail extends BaseEntity implements Serializable {
 
     private static final long serialVersionUID = 1L;
 
@@ -59,26 +59,6 @@ public class CustomerBalanceDetail implements Serializable {
      * 剩余金额
      */
     private BigDecimal balance;
-
-    /**
-     * 创建时间
-     */
-    private Date gmtCreate;
-
-    /**
-     * 创建人
-     */
-    private String createOperator;
-
-    /**
-     * 更新时间
-     */
-    private Date gmtModify;
-
-    /**
-     * 更新人
-     */
-    private String modifyOperator;
 
 
 }

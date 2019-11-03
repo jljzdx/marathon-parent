@@ -12,21 +12,43 @@
     <artifactId>marathon-job</artifactId>
 
     <dependencies>
+        <!--marathon-microface-->
+        <dependency>
+            <groupId>com.newera.marathon</groupId>
+            <artifactId>marathon-microface-cos</artifactId>
+        </dependency>
+        <!--marathon-->
+        <dependency>
+            <groupId>com.newera.marathon</groupId>
+            <artifactId>marathon-mq</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>com.newera.marathon</groupId>
+            <artifactId>marathon-dto</artifactId>
+        </dependency>
+        <!--spring-boot-starter-->
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-web</artifactId>
         </dependency>
-        <!--openfeign-->
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-test</artifactId>
+            <scope>test</scope>
+        </dependency>
+        <!--spring-cloud-starter-->
         <dependency>
             <groupId>org.springframework.cloud</groupId>
             <artifactId>spring-cloud-starter-openfeign</artifactId>
         </dependency>
-        <!--nacos-discovery-->
+        <dependency>
+            <groupId>org.springframework.cloud</groupId>
+            <artifactId>spring-cloud-starter-netflix-hystrix</artifactId>
+        </dependency>
         <dependency>
             <groupId>com.alibaba.cloud</groupId>
             <artifactId>spring-cloud-starter-alibaba-nacos-discovery</artifactId>
         </dependency>
-        <!--nacos-config-->
         <dependency>
             <groupId>com.alibaba.cloud</groupId>
             <artifactId>spring-cloud-starter-alibaba-nacos-config</artifactId>
@@ -36,21 +58,6 @@
             <groupId>com.xuxueli</groupId>
             <artifactId>xxl-job-core</artifactId>
             <version>2.1.0</version>
-        </dependency>
-        <!--marathon-microface-cos-->
-        <dependency>
-            <groupId>com.newera.marathon</groupId>
-            <artifactId>marathon-microface-cos</artifactId>
-        </dependency>
-        <!--marathon-microface-cms-->
-        <!--<dependency>
-            <groupId>com.newera.marathon</groupId>
-            <artifactId>marathon-microface-cms</artifactId>
-        </dependency>-->
-        <!--marathon-mq-->
-        <dependency>
-            <groupId>com.newera.marathon</groupId>
-            <artifactId>marathon-mq</artifactId>
         </dependency>
         <!--logstash-->
         <dependency>

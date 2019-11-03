@@ -5,7 +5,15 @@ import java.util.Calendar;
 import java.util.Date;
 
 public class DateUtils {
+
     public static final String FORMAT1 = "yyyy-MM-dd HH:mm:ss";
+
+    /**
+     * 日期转字符串
+     * @param date
+     * @param format
+     * @return
+     */
     public static String dateToStringFormat(Date date, String format){
         SimpleDateFormat sdf = new SimpleDateFormat(format);
         return sdf.format(date);

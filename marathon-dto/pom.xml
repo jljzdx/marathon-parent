@@ -12,25 +12,27 @@
     <artifactId>marathon-dto</artifactId>
 
     <dependencies>
+        <!--spaking-->
+        <dependency>
+            <groupId>com.spakingframework.boot</groupId>
+            <artifactId>spaking-boot-starter-core</artifactId>
+        </dependency>
+        <!--spring-boot-starter-->
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-validation</artifactId>
             <optional>true</optional>
         </dependency>
-        <dependency>
-            <groupId>com.spakingframework.boot</groupId>
-            <artifactId>spaking-boot-starter-core</artifactId>
-        </dependency>
         <!--swagger2-->
         <dependency>
             <groupId>io.springfox</groupId>
             <artifactId>springfox-swagger2</artifactId>
-            <version>2.9.2</version>
+            <scope>provided</scope>
         </dependency>
         <dependency>
             <groupId>io.springfox</groupId>
             <artifactId>springfox-swagger-ui</artifactId>
-            <version>2.9.2</version>
+            <scope>provided</scope>
         </dependency>
     </dependencies>
 </project>

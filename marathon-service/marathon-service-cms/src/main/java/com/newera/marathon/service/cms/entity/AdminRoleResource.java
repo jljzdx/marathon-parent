@@ -3,12 +3,12 @@ package com.newera.marathon.service.cms.entity;
 import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
+import com.newera.marathon.common.model.BaseEntity;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.experimental.Accessors;
 
 import java.io.Serializable;
-import java.util.Date;
 
 /**
  * <p>
@@ -22,7 +22,7 @@ import java.util.Date;
 @EqualsAndHashCode(callSuper = false)
 @Accessors(chain = true)
 @TableName("CMS_ADMIN_ROLE_RESOURCE")
-public class AdminRoleResource implements Serializable {
+public class AdminRoleResource extends BaseEntity implements Serializable {
 
     private static final long serialVersionUID = 1L;
 
@@ -32,26 +32,5 @@ public class AdminRoleResource implements Serializable {
     private Integer roleId;
 
     private Integer resourceId;
-
-    /**
-     * 创建时间
-     */
-    private Date gmtCreate;
-
-    /**
-     * 创建人
-     */
-    private String createOperator;
-
-    /**
-     * 更新时间
-     */
-    private Date gmtModify;
-
-    /**
-     * 更新人
-     */
-    private String modifyOperator;
-
 
 }

@@ -45,17 +45,22 @@
                 <artifactId>marathon-mq</artifactId>
                 <version>${project.newera.marathon.version}</version>
             </dependency>
-            <!-- commons-codec -->
-            <dependency>
-                <groupId>commons-codec</groupId>
-                <artifactId>commons-codec</artifactId>
-                <version>1.12</version>
-            </dependency>
             <!--logstash-->
             <dependency>
                 <groupId>net.logstash.logback</groupId>
                 <artifactId>logstash-logback-encoder</artifactId>
                 <version>5.3</version>
+            </dependency>
+            <!--swagger2-->
+            <dependency>
+                <groupId>io.springfox</groupId>
+                <artifactId>springfox-swagger2</artifactId>
+                <version>2.9.2</version>
+            </dependency>
+            <dependency>
+                <groupId>io.springfox</groupId>
+                <artifactId>springfox-swagger-ui</artifactId>
+                <version>2.9.2</version>
             </dependency>
         </dependencies>
     </dependencyManagement>
