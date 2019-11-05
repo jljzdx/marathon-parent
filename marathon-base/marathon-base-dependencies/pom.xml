@@ -45,6 +45,11 @@
                 <artifactId>marathon-mq</artifactId>
                 <version>${project.newera.marathon.version}</version>
             </dependency>
+            <dependency>
+                <groupId>com.newera.marathon</groupId>
+                <artifactId>marathon-ext</artifactId>
+                <version>${project.newera.marathon.version}</version>
+            </dependency>
             <!--logstash-->
             <dependency>
                 <groupId>net.logstash.logback</groupId>

@@ -8,7 +8,7 @@ spring:
         file-extension: yaml
         namespace: 826edc0d-f59e-4bee-9b62-b1d8eb78127f
         group: MARATHON_GROUP
-        prefix: marathon-sys-service-system
+        prefix: marathon-service-dynamic-config
         ext-config[0]:
           data-id: feign-ribbon-hystrix.yaml
           refresh: true

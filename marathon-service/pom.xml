@@ -15,6 +15,7 @@
         <module>marathon-service-cms</module>
         <module>marathon-service-cust</module>
         <module>marathon-service-cos</module>
+        <module>marathon-service-order</module>
     </modules>
 
     <dependencies>
