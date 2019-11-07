@@ -16,6 +16,10 @@ import org.springframework.stereotype.Component;
  * g++ -shared -I /Library/Java/JavaVirtualMachines/jdk1.8.0_211.jdk/Contents/Home/include JniTest.cpp -o libNativeCode.jnili
  * 4、加载动态库
  * System.load("/Users/microbin/Downloads/jni/libNativeCode.jnilib");
+ *
+ * 注意：
+ * 编译C文件使用gcc：gcc T1.c T1.c -fPIC -shared -o libGoT.so
+ * 编译C++文件使用的是g++：g++ T1.cpp T1.cpp -fPIC -shared -o libhello.so
  */
 @Component
 @Slf4j
