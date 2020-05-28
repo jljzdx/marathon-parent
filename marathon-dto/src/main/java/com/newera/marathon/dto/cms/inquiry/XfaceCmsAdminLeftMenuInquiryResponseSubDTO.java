@@ -25,6 +25,11 @@ public class XfaceCmsAdminLeftMenuInquiryResponseSubDTO {
     private String url;
 
     /**
+     * 显示顺序
+     */
+    private String priority;
+
+    /**
      * 子节点集合
      */
     private List<XfaceCmsAdminLeftMenuInquiryResponseSubDTO> children;

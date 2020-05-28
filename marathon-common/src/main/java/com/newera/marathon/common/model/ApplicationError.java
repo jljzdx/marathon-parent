@@ -25,9 +25,11 @@ public enum ApplicationError {
     PASSWWORD_UNSAME("两次密码不一致", "400003"),
     LOGIN_ACCOUNT_UNEXIST("登陆账号不存在", "400004"),
     LOGIN_PASSWWORD_ERROR("登陆密码不正确", "400005"),
+    //---------order
+    SEND_ALL_FAILED("群发失败", "500001"),
     //---------web
-    LOGIN_USER_ERROR("获取不到用户信息", "500001"),
-    NON_AUTHORITATIVE_INFORMATION("未授权，请联系管理员", "500002"),
+    LOGIN_USER_ERROR("获取不到用户信息", "600001"),
+    NON_AUTHORITATIVE_INFORMATION("未授权，请联系管理员", "600002"),
     ;
     private String message;
     private String code;

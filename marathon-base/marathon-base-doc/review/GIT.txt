@@ -1,0 +1,46 @@
+1、基础
+|-获取Git仓库
+  |--第一种是在现有项目或目录下导入所有文件到 Git 中
+     |---进入项目目录，git init
+     |---git add *（这个命令让文件处于已跟踪状态）
+     |---git commit -m 'init project'
+  |--第二种是从一个服务器 克隆一个现有的 Git 仓库
+     |---git clone https://github.com/newera/marathon-parent marathons（自定义仓库名称）
+|-文件状态
+  |--已跟踪：初次克隆某个仓库的时候，工作目录中的所有文件都属于已跟踪文件，并处于未修改状态
+  |--未跟踪：除了已跟踪，所有其它文件都属于未跟踪文件，比如：刚添加的文件，或删除文件
+  |--Git文件的生命周期（看图）
+|-Git常用命令
+  |--git status：查看文件状态
+     |---git status命令的输出十分详细，但其用语有些繁琐，所以可以使用git status -s
+  |--git add：这是一个多功能命令
+     |---可以用它开始跟踪新文件
+     |---或者把已跟踪的文件放到暂存区
+     |---还能用于合并时把有冲突的文件标记为已解决状态等
+     |---将这个 命令理解为“添加内容到下一次提交中”而不是“将一个文件添加到项目中”要更加合适
+  |--git commit
+     |---git commit -a -m 'commit'（使用-a选项可以把所以已跟踪文件暂存起来一并提交，也就是已跟踪且没有在暂存区的文件也会提交）
+     |---习惯：每次准备提交前，先用git status看下，是不是都已暂存起来了，然后再运行提交命令git commit
+  |--git rm：移除文件
+     |---删除工作目录文件，并且移除暂存区
+     rm readme.txt
+     git rm readme.txt
+     |---只移除暂存区（应用场景：比如不小心将一些需要忽略的文件加到了暂存区）
+     git rm --cached *.yml
+  |--git reset HEAD readme.txt（取消暂存的文件）
+|-远程仓库
+  |--列出所有远程仓库：git remote -v
+  |--git clone git@github.com:jljzdx/git-test.git（默认以 “origin” 为简写）
+  |--git fetch origin
+  |--git pull origin
+  |--git push origin master（当别人先推送到上游然后你再推送到上游，你的推送就会毫无疑问地被拒绝）
+  |--git remote show origin（查看远程仓库）
+  |--
+
+
+
+
+
+
+
+

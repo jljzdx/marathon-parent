@@ -1,0 +1,178 @@
+1、索引
+|-类型：
+  |--普通索引
+  |--唯一索引
+  |--全文索引
+  |--组合索引
+|-分类：
+  |--聚集索引：其实就是主键，每张表只能有一个聚集索引
+  |--非聚集索引：一张表可以有多个非聚集索引
+  |--联合索引（a、b、c做为联合索引）
+     |---a,ab,abc最左匹配
+     |---where a=3 and c=7（a用到了索引，c没有）
+     |---where a=3 and b>7 and c=3（a和b用到了索引，c没有）
+     |---group by\order by（1、必须在有where的前提才走索引；2、需要和联合索引顺序一致才会走索引）
+         |----group by c1 | order by c1（不走索引）
+         |----where c1 = '1' group | order by c2（c1,c2都走索引）
+         |----where c1 = '1' group | order by c2,c3（c1,c2,c3都走索引）
+         |----where c1 = '1' group | order by c3,c2（只有c1走索引）
+     |---where a=3 order by b（a和b都用到了索引）
+     |---where b=3 order by a（a和b都没有用到索引）
+  |--覆盖索引：
+     |---就是查询的字段都是索引，如下name,age
+     |---select name,age where name>'wang'，index(name,age)
+|-几种数据结构：
+  |--算法工具：https://www.cs.usfca.edu/~galles/visualization/Algorithms.html
+  |--哈希表：不支持范围查询
+  |--平衡二叉树：虽然支持范围查询，但效率比较低；磁盘IO次数多；插入需要做旋转
+  |--BTree：不是二叉树，是一种树状数据结构，减少了平衡二叉树的高度，也就是磁盘IO;虽然支持范围查询，但效率比较低；
+  |--B+Tree：
+     |---B+Tree是从最早的平衡二叉树演化而来，也是BTree的升级版，但是B+Tree不是一个二叉树
+     |---B+Tree解决了BTree范围查询效率低的问题，因为叶子节点使用了有序链表连接。
+     |---B+Tree分为聚集索引和非聚集索引
+     |---非叶子节点只包含key（也就是索引的值），叶子节点包含key和value（key=索引的值；value=一个地址指针或行数据）
+     |---缺点：在叶子节点冗余了非叶子节点的数据，比较占用硬盘空间
+|-为什么不使用hash、二叉树、BTree，而采用B+Tree？
+  |--1、磁盘IO次数更少2、叶子节点形成有序链表，执行范围操作效率高（where id<6）
+|-Myisam（非聚集索引）原理：
+  |--创建表就会生成这3个文件：user.myi 索引文件、user.myd 数据文件、user.frm 创建表语句，所以叫非聚集索引
+  |--select * from user where id = 1的执行流程：
+  1、查看该表的myi文件有没有以id为索引的索引树。
+  2、根据这个id索引找到叶子节点的id值，从而得到它里面的数据地址。(叶子节点存的是索引和数据地址)。
+  3、根据数据地址去myd文件里面找到对应的数据返回出来。
+|-Innodb（聚集索引）：
+  |--创建表就会生成这2个文件：user.ibd 索引文件、user.frm 创建表语句，所以叫非聚集索引
+  |--创建一个以name为索引，select * from user where name = '吴磊'的执行流程：
+  1、找到name索引树。
+  2、根据name的值找到该树下叶子的name索引和主键值。
+  3、用主键值去主键索引树的叶子节点找到该条数据信息。
+|-为什么Mysql在建表时必须指定主键？
+  |--看图InnoDB索引原理.png
+  |--因为在创建表时，InnoDB就会主动建立好主键ID索引树
+
+2、MyISAM（非聚集索引） 和 InnoDB（聚集索引）的区别：
+|-事务：InnoDB支持事务，MyISAM不支持事务
+|-外键：InnoDB支持外键，MyISAM不支持外键
+|-锁机制：InnoDB是行锁，MyISAM是表锁
+|-都是使用了B+Tree数据结构，但是叶子节点不同，InnoDB叶子节点的value存放的是行数据，MyISAM叶子节点的value存放的是指针，指向具体的行数据
+
+3、mysql优化：
+|-数据库结构优化：表设计（索引、冗余、给默认值）
+  |--最常见的就是加索引
+  |--数据量大的时候尽量单表查询，不要做关联查询，这样就需要表结构设计需要适当的冗余字段
+  |--字段值尽量不要null值，可以设置默认值，避免null判断
+|-架构优化：高可用（Mycat）、读写分离（一主多从，主写从读）、分库分表（按一定规则存放，查询时也按此规则查询哪个库表）
+|-服务器硬件优化：没有去研究
+|-sql语句优化：
+  |--使用explain查看执行情况
+  |--避免索引失效：
+     |---or
+     |---like '%a'
+     |---函数操作
+     |---表达式操作（where num/2=100）
+  |--不要使用select *
+  |--如果明知道结果只返回一条记录，后面最好加上limit 1
+  |--表沒有主键(Primary key), 那么count(1)比count(*)快，有主键的話，那主键作为count的条件时候count(主键)最快
+  |--避免在 where 子句中使用 !=或<> 操作符、in 和 not in 也要慎用（exists 代替）
+
+
+4、事务
+特性：
+|-原子性：要么全部执行成功，要么全部失败
+|-一致性：一个事务执行之前和执行之后都必须处于一致性状态
+|-隔离性：多个并发事务之间是相互隔离的
+|-持久性：一个事务一旦被提交了，数据的改变是永久性的
+隔离级别：
+|-Read uncommitted (读未提交)：
+  |--可以读到未提交的数据
+  |--脏读：事务A读取了事务B更新的数据，然后B回滚操作
+|-Read committed (读已提交)：
+  |--只能读到已经提交了的数据
+  |--不可重复读：事务 A 多次读取同一数据，事务 B 在事务A多次读取的过程中，对数据作了更新并提交，导致事务A多次读取同一数据时，结果 不一致。
+|-Repeatable read (可重复读)：
+  |--在一个事务内，多次读同一个数据，在这个事务还没结束时，其他事务不能更新该数据
+  |--幻读：主要是因为插入或删除才产生的。管理员A批量更新所有数据，管理员B添加一条数据，A查询发现还有一条没有更新，产生了幻觉。
+|-Serializable (串行化)：
+  |--要求事务序列化执行，事务只能一个接着一个地执行，但不能并发执行
+7种事务传播行为：
+|-PROPAGATION_REQUIRED：如果存在一个事务，则支持当前事务。如果没有事务则开启一个新的事务。
+|-PROPAGATION_SUPPORTS：表示当前方法不需要事务，但如果存在当前事务的话，那么该方法会在这个事务中运行。
+|-PROPAGATION_MANDATORY：表示该方法必须在事务中运行，否则抛出异常。
+|-PROPAGATION_REQUIRES_NEW：表示该方法必须运行在自己的事务中。一个新的事务将被启动，如果存在当前事务，在该方法执行期间，当前事务被挂起。
+|-PROPAGATION_NOT_SUPPORTED：表示该方法不应该运行在事务中，如果存在当前事务，在该方法运行期间，当前事务将被挂起。
+|-PROPAGATION_NEVER：表示该方法不应该运行在事务上下文中，如果存在当前事务在运行会抛异常。
+|-PROPAGATION_NESTED：表示如果当前已经存在一个事务，那么该方法将会在嵌套事务中运行，嵌套的事务可以独立于当前事务进行单独提交回滚；
+                      如果当前事务不存在，则跟PROPAGATION_REQUIRED一样。
+
+5、主从复制:
+|-原理：A：master；B：slave
+create/insert/delete/update ->A(这个时候会将sql语句写入到二进制文件binlog中) ->A开启一个logDump线程把本地binlog二进制文件传给B ->
+B会开启一个IO线程长链接到A获取binlog文件 ->B还会再开启一个sql线程用来执行刚才拿到的binlog二进制文件 ->这样就达到了主从复制
+|-步骤：
+【master】修改my.cnf文件，添加两行
+server_id = 177
+log-bin = mysql-bin
+验证是否成功：
+service mysqld restart
+show variables like '%server_id%'
+show master status
+
+【slave】修改my.cnf文件，添加两行
+server_id=178
+log-bin=mysql-bin
+binlog_do_db=test1,test2 #需要同步的数据库
+验证是否成功：
+service mysqld restart
+show variables like '%server_id%'
+从服务器同步主服务器配置:
+change master to master_host='192.168.212.177',master_user='root',master_password='admin',master_log_file='mysql-bin.000002',master_log_pos=216;
+开始同步：
+start slave
+检查从服务器复制功能状态：
+show slave status
+
+数据库集群产生的问题：
+|-自增id重复问题
+  |--UUID（Mysql不推荐使用，Oracle可以使用）
+  |--设置数据库步长（缺点：需要确定好集群数量）
+     |---修改自增步长：set @@auto_increment_increment = 2;
+     |---修改起始值：set @@auto_increment_offset = 1;
+|-关联表查询问题
+|-数据同步问题
+|-垂直拆分（分库）
+  |--跨数据库查询、产生分布式事务
+|-水平拆分（分表）
+  |--
+|-Mycat
+|-sharding-jdbc（当当网开源框架）
+
+1,2,3
+4,5,6
+7,8,9
+
+6、连接池
+|-原本我们是通过JDBC进行连接的，但是每次创建一次连接太昂贵了，所以使用连接池
+
+7、Mysql锁
+|-行锁：开销大；加锁慢；会出现死锁；但处理并发的能力强
+|-表锁：开销小；加锁快；无死锁；并发处理能力低
+|-共享锁：允许事务读一行数据
+|-排他锁：允许事务删除或更新一行数据
+|-死锁情况：
+  |--sessionA：
+    --T1时刻
+    BEGIN;
+    --行级锁 id=1 的记录
+    select * from test1 where id=1 for update ;
+    --T3时刻
+    --更新 id=2 的记录
+    update test1 set id=id where id=2;
+
+  |--sessionB：
+    --T2时刻
+    BEGIN;
+    --行级锁 id=2 的记录
+    select * from test1 where id=2 for update ;
+    --T4时刻
+    --更新 id=1 的记录
+    update test1 set id=id where id=1;

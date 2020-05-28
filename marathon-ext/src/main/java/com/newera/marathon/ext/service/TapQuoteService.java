@@ -6,13 +6,15 @@ public interface TapQuoteService {
 
     Boolean setHostAddress();
 
-    TapAPIQuotLoginRspInfo login(TapAPIQuoteLoginAuth tapAPIQuoteLoginAuth);
+    Boolean login(TapAPIQuoteLoginAuth tapAPIQuoteLoginAuth);
 
-    TapAPIQuoteCommodityInfo qryCommodity();
+    Boolean disconnect();
 
-    TapAPIQuoteContractInfo qryContract(TapAPICommodity tapAPICommodity);
+    Boolean qryCommodity();
 
-    TapAPIQuoteWhole subscribeQuote(TapAPIContract tapAPIContract);
+    Boolean qryContract(TapAPICommodity tapAPICommodity);
 
-    TapAPIContract unSubscribeQuote(TapAPIContract tapAPIContract);
+    Boolean subscribeQuote(TapAPIContract tapAPIContract);
+
+    Boolean unSubscribeQuote(TapAPIContract tapAPIContract);
 }

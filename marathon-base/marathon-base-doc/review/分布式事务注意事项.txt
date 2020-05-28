@@ -1,4 +1,0 @@
-#这里要关闭降级，否则LCN测试会失败
-feign:
-  hystrix:
-    enabled: false

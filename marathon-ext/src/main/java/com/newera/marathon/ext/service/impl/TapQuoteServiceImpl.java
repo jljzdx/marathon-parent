@@ -1,8 +1,11 @@
 package com.newera.marathon.ext.service.impl;
 
 import com.alibaba.fastjson.JSON;
+import com.newera.marathon.common.constant.OtherConstant;
 import com.newera.marathon.ext.jni.TapQuoteApi;
-import com.newera.marathon.ext.pojo.jni.*;
+import com.newera.marathon.ext.pojo.jni.TapAPICommodity;
+import com.newera.marathon.ext.pojo.jni.TapAPIContract;
+import com.newera.marathon.ext.pojo.jni.TapAPIQuoteLoginAuth;
 import com.newera.marathon.ext.service.TapQuoteService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -29,36 +32,71 @@ public class TapQuoteServiceImpl implements TapQuoteService {
     public Boolean setHostAddress(){
         log.info("setHostAddress->IP = [{}];PORT = [{}]",ip,port);
         int result = tapQuoteApi.setHostAddress(ip,port);
-        if(result != 0){
+        if(result != OtherConstant.ZERO){
+            log.info("setHostAddress failed!");
             return false;
         }
         return true;
     }
     @Override
-    public TapAPIQuotLoginRspInfo login(TapAPIQuoteLoginAuth tapAPIQuoteLoginAuth){
+    public Boolean login(TapAPIQuoteLoginAuth tapAPIQuoteLoginAuth){
         tapAPIQuoteLoginAuth.setUserNo(userNo);
         tapAPIQuoteLoginAuth.setPassword(password);
         log.info("login->TapAPIQuoteLoginAuth = [{}]", JSON.toJSONString(tapAPIQuoteLoginAuth));
-        return tapQuoteApi.login(tapAPIQuoteLoginAuth);
+        int result = tapQuoteApi.login(tapAPIQuoteLoginAuth);
+        if(result != OtherConstant.ZERO){
+            log.info("login failed!");
+            return false;
+        }
+        return true;
     }
     @Override
-    public TapAPIQuoteCommodityInfo qryCommodity(){
-        return tapQuoteApi.qryCommodity();
+    public Boolean disconnect(){
+        int result = tapQuoteApi.disconnect();
+        if(result != OtherConstant.ZERO){
+            log.info("login failed!");
+            return false;
+        }
+        return true;
     }
     @Override
-    public TapAPIQuoteContractInfo qryContract(TapAPICommodity tapAPICommodity){
+    public Boolean qryCommodity(){
+        int result = tapQuoteApi.qryCommodity();
+        if(result != OtherConstant.ZERO){
+            log.info("qryCommodity failed!");
+            return false;
+        }
+        return true;
+    }
+    @Override
+    public Boolean qryContract(TapAPICommodity tapAPICommodity){
         log.info("qryContract->TapAPICommodity = [{}]",JSON.toJSONString(tapAPICommodity));
-        return tapQuoteApi.qryContract(tapAPICommodity);
+        int result = tapQuoteApi.qryContract(tapAPICommodity);
+        if(result != OtherConstant.ZERO){
+            log.info("qryContract failed!");
+            return false;
+        }
+        return true;
     }
     @Override
-    public TapAPIQuoteWhole subscribeQuote(TapAPIContract tapAPIContract){
+    public Boolean subscribeQuote(TapAPIContract tapAPIContract){
         log.info("subscribeQuote->TapAPIContract = [{}]",JSON.toJSONString(tapAPIContract));
-        return tapQuoteApi.subscribeQuote(tapAPIContract);
+        int result = tapQuoteApi.subscribeQuote(tapAPIContract);
+        if(result != OtherConstant.ZERO){
+            log.info("subscribeQuote failed!");
+            return false;
+        }
+        return true;
     }
     @Override
-    public TapAPIContract unSubscribeQuote(TapAPIContract tapAPIContract){
+    public Boolean unSubscribeQuote(TapAPIContract tapAPIContract){
         log.info("unSubscribeQuote->TapAPIContract = [{}]",JSON.toJSONString(tapAPIContract));
-        return tapQuoteApi.unSubscribeQuote(tapAPIContract);
+        int result = tapQuoteApi.unSubscribeQuote(tapAPIContract);
+        if(result != OtherConstant.ZERO){
+            log.info("unSubscribeQuote failed!");
+            return false;
+        }
+        return true;
     }
 
 }

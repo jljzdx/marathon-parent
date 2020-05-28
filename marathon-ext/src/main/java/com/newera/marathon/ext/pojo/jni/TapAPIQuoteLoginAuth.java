@@ -2,6 +2,9 @@ package com.newera.marathon.ext.pojo.jni;
 
 import lombok.Data;
 
+/**
+ * 登录认证信息
+ */
 @Data
 public class TapAPIQuoteLoginAuth {
 
@@ -9,7 +12,7 @@ public class TapAPIQuoteLoginAuth {
     private String userNo;
 
     //是否修改密码，'Y'表示是，'N'表示否
-    private char modifyPassword;
+    private char iSModifyPassword;
 
     //用户密码
     private String password;
@@ -21,8 +24,8 @@ public class TapAPIQuoteLoginAuth {
     private String quoteTempPassword;
 
     //是否需要动态认证，'Y'表示是，'N'表示否
-    private char dda;
+    private char iSDDA;
 
     //动态认证序列号
-    private String ddaSerialNo;
+    private String dDASerialNo;
 }

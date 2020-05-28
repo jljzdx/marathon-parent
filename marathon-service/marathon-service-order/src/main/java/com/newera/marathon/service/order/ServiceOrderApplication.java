@@ -12,16 +12,19 @@ import org.springframework.transaction.annotation.EnableTransactionManagement;
 @MapperScan({"com.newera.marathon.service.*.mapper"})
 @EnableTransactionManagement
 @SpringBootApplication
-@EnableFeignClients
+@EnableFeignClients(basePackages = {"com.newera.marathon.microface.cos"})
 @EnableDiscoveryClient
 @EnableCaching
 @ComponentScan(basePackages = {
+		"com.newera.marathon.microface.cos",
 		"com.spaking.boot.starter",
 		"com.newera.marathon.ext",
+		"com.newera.marathon.mq",
 		"com.newera.marathon.service"})
 public class ServiceOrderApplication {
 
 	public static void main(String[] args) {
+		//System.setProperty("es.set.netty.runtime.available.processors", "false");
 		SpringApplication.run(ServiceOrderApplication.class, args);
 	}
 

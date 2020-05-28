@@ -2,6 +2,9 @@ package com.newera.marathon.ext.pojo.jni;
 
 import lombok.Data;
 
+/**
+ * 合约编码实体
+ */
 @Data
 public class TapAPIContract {
 

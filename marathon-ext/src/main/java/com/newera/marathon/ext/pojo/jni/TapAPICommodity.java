@@ -2,6 +2,9 @@ package com.newera.marathon.ext.pojo.jni;
 
 import lombok.Data;
 
+/**
+ * 品种编码实体
+ */
 @Data
 public class TapAPICommodity {
     //交易所编码

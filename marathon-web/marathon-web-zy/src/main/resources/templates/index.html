@@ -129,7 +129,12 @@ function() {
             if (result.transactionStatus.success) {
                 $.each(result.dataList,
                 function(i, obj) {
-                    var content = '<li data-name="user" class="layui-nav-item layui-nav-itemed">';
+                    var content;
+                    if(obj.priority == 1){
+                        content = '<li data-name="user" class="layui-nav-item layui-nav-itemed">';
+                    }else{
+                        content = '<li data-name="user" class="layui-nav-item ">';
+                    }
                     content += '<a href="javascript:;" lay-tips="' + obj.name + '" lay-direction="2">';
                     content += '<i class="iconfont layui-icon-extend' + obj.icon + '"></i>';
                     content += '<cite>' + obj.name + '</cite>';

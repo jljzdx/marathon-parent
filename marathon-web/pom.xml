@@ -25,6 +25,10 @@
             <groupId>com.newera.marathon</groupId>
             <artifactId>marathon-microface-cms</artifactId>
         </dependency>
+        <dependency>
+            <groupId>com.newera.marathon</groupId>
+            <artifactId>marathon-microface-order</artifactId>
+        </dependency>
         <!--marathon-->
         <dependency>
             <groupId>com.newera.marathon</groupId>

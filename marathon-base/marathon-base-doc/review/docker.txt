@@ -1,0 +1,43 @@
+1、docker部署springboot
+|-编写Dockerfile
+|-制作镜像：docker build -t demotest .
+|-查看镜像：docker images
+|-启动容器：docker run -d -p 8080:8080 demotest
+|-查看运行的容器：docker ps -a
+|-停止容器：docker stop aecac6030069
+|-注意：记得配置docker加速器，否则下载官方镜像会报超时。
+  |--"registry-mirrors": ["https://docker.mirrors.ustc.edu.cn"]
+2、docker常用指令
+|-docker search：搜索Docker Hub中的镜像【Docker Hub地址：https://hub.docker.com/】
+  |--如：docker search ubuntu【列出来的镜像中，不带/的才是官方的镜像】
+|-docker pull：拉去Docker Hub中的镜像
+  |--如：docker pull ubuntu
+|-docker build -t imagename .：构建镜像
+  |--.代表Dockerfile文件在当前目录，如果你不在Dockerfile目录下运行，则需要指定路径,如：/home/dockerspace/.
+|-docker images：列出镜像
+|-docker rmi -f imagename1/imageid1 imagename2/imageid2：删除多个镜像
+|-docker run -d -p 8088:8080 --name containername imagename：创建并启动容器
+  |--containername是为容器取名
+  |--8088:8080：将容器内的8080端口，映射到外部访问端口8088
+|-docker ps -a：列出所有容器
+|-docker exec containerid/containername ls -l：与运行的容器进行通讯
+  |--上面的命令将该容器中的所有文件展示出来
+|-docker stop containerid/containername
+  |--也可以使用docker kill containerid/containername
+|-docker start containerid/containername：启动停止的容器
+|-docker restart containerid/containername：重启容器
+|-docker rm containerid/containername：删除已停止的容器
+  |--docker rm -f containerid：可删除正在运行的容器
+
+
+
+
+
+
+
+
+
+
+
+
+

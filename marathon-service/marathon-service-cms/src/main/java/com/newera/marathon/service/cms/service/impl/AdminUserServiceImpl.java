@@ -350,6 +350,7 @@ public class AdminUserServiceImpl extends ServiceImpl<AdminUserMapper, AdminUser
                 treeObject.setName(resource.getName());
                 treeObject.setIcon(resource.getIcon());
                 treeObject.setUrl(resource.getUrl());
+                treeObject.setPriority(resource.getPriority());
                 treeObject.setChildren(getChildren(resource.getId(),resourceList));
                 list.add(treeObject);
             }
@@ -365,6 +366,7 @@ public class AdminUserServiceImpl extends ServiceImpl<AdminUserMapper, AdminUser
                 treeObject.setName(resource.getName());
                 treeObject.setIcon(resource.getIcon());
                 treeObject.setUrl(resource.getUrl());
+                treeObject.setPriority(resource.getPriority());
                 treeObject.setChildren(getChildren(resource.getId(),resourceList));
                 list.add(treeObject);
             }

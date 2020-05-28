@@ -1,7 +1,6 @@
 package com.newera.marathon.mq.config;
 
 import com.newera.marathon.dto.cos.maintenance.XfaceCosMsgLogModifyRequestDTO;
-import com.newera.marathon.dto.cos.maintenance.XfaceCosMsgLogModifyResponseDTO;
 import com.newera.marathon.microface.cos.CosMsgLogMicroService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.amqp.core.Binding;
@@ -29,14 +28,16 @@ public class RabbitConfig {
         // 消息是否成功发送到Exchange
         rabbitTemplate.setConfirmCallback((correlationData, ack, cause) -> {
             if (ack) {
-                String msgId = correlationData.getId();
-                log.info("消息成功发送到Exchange，msgId：{}",msgId);
-                XfaceCosMsgLogModifyRequestDTO requestDTO = new XfaceCosMsgLogModifyRequestDTO();
-                requestDTO.setMsgId(msgId);
-                requestDTO.setStatus(2);
-                XfaceCosMsgLogModifyResponseDTO responseDTO = cosMsgLogMicroService.msgLogModify(requestDTO);
-                if(!responseDTO.getTransactionStatus().isSuccess()){
-                    log.error("【消费确认】：更新状态为'投递成功'失败");
+                if(null != correlationData){
+                    String msgId = correlationData.getId();
+                    log.info("消息成功发送到Exchange，msgId：{}",msgId);
+                    XfaceCosMsgLogModifyRequestDTO requestDTO = new XfaceCosMsgLogModifyRequestDTO();
+                    requestDTO.setMsgId(msgId);
+                    requestDTO.setStatus(2);
+                    /*XfaceCosMsgLogModifyResponseDTO responseDTO = cosMsgLogMicroService.msgLogModify(requestDTO);
+                    if(!responseDTO.getTransactionStatus().isSuccess()){
+                        log.error("【消费确认】：更新状态为'投递成功'失败");
+                    }*/
                 }
             } else {
                 log.info("消息发送到Exchange失败, {}, cause: {}", correlationData, cause);
@@ -65,6 +66,22 @@ public class RabbitConfig {
     @Bean
     public Binding mailBinding() {
         return BindingBuilder.bind(mailQueue()).to(mailExchange()).with(MAIL_ROUTING_KEY);
+    }
+
+    public static final String TEST_QUEUE = "test.queue";
+    public static final String TEST_EXCHANGE = "test.exchange";
+    public static final String TEST_ROUTING_KEY = "test.routing.key";
+    @Bean
+    public Queue testQueue() {
+        return new Queue(TEST_QUEUE,true);
+    }
+    @Bean
+    public DirectExchange testExchange() {
+        return new DirectExchange(TEST_EXCHANGE, true, false);
+    }
+    @Bean
+    public Binding testBinding() {
+        return BindingBuilder.bind(testQueue()).to(testExchange()).with(TEST_ROUTING_KEY);
     }
 
 }

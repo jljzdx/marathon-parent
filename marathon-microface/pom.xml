@@ -15,6 +15,7 @@
         <module>marathon-microface-cust</module>
         <module>marathon-microface-cos</module>
         <module>marathon-microface-cms</module>
+        <module>marathon-microface-order</module>
     </modules>
 
     <dependencies>

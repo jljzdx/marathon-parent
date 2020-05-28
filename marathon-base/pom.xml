@@ -17,6 +17,7 @@
         <module>marathon-base-generator</module>
         <module>marathon-base-dependencies</module>
         <module>marathon-base-gateway</module>
+        <module>marathon-base-demo</module>
     </modules>
 
 </project>

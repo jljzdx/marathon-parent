@@ -32,7 +32,7 @@
     </select>
     <select id="queryLeftMenu" parameterType="java.lang.String" resultType="com.newera.marathon.service.cms.vo.LeftMenuListVO">
         select
-        r.id,r.`name`,r.parent_id parentId,r.parent_ids parentIds,r.icon,r.url
+        r.id,r.`name`,r.parent_id parentId,r.parent_ids parentIds,r.icon,r.url,r.priority
         from CMS_ADMIN_USER u,CMS_ADMIN_USER_ROLE ur,CMS_ADMIN_ROLE role,CMS_ADMIN_ROLE_RESOURCE rr,CMS_ADMIN_RESOURCE r
         where
         u.id = ur.user_id

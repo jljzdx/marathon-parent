@@ -13,6 +13,12 @@
 
 
     <dependencies>
+        <!--marathon-->
+        <dependency>
+            <groupId>com.newera.marathon</groupId>
+            <artifactId>marathon-common</artifactId>
+            <scope>provided</scope>
+        </dependency>
         <!--spring-boot-starter-->
         <dependency>
             <groupId>org.springframework.boot</groupId>

@@ -1,0 +1,4 @@
+1、查看JDK安装目录
+/usr/libexec/java_home -V
+2、格式化代码
+option+command+l

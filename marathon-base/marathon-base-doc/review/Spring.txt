@@ -1,0 +1,105 @@
+1、SpringMVC原理
+|-客户端请求进入DS
+|-DS请求HM查找Handler，然后返回执行链（拦截器和处理器）
+|-DS请求HA执行Controller，返回MV
+|-DS请求VR进行试图解析，返回V
+|-DS根据View进行渲染视图（即将模型数据填充至视图中）
+|-DS响应用户
+2、@Resource和@Autowired区别：
+|-@Autowired是Spring提供的注解；@Resource由J2EE提供，需要导入包javax.annotation.Resource；
+|-@Autowired是byType，如果想使用byName可以结合@Qualifier注解一起使用；@Resource默认是byName，@Resource有两个重要的属性：name和type
+|-一个接口多个实现类的情况：@Autowired @Qualifier("imgDataDao")或@Resource DataDao imgDataDao;或@Resource(name="imgDataDao")DataDao dataDao;
+@Resource装配顺序：
+①如果同时指定了name和type，则从Spring上下文中找到唯一匹配的bean进行装配，找不到则抛出异常。
+②如果指定了name，则从上下文中查找名称（id）匹配的bean进行装配，找不到则抛出异常。
+③如果指定了type，则从上下文中找到类似匹配的唯一bean进行装配，找不到或是找到多个，都会抛出异常。
+④如果既没有指定name，又没有指定type，则自动按照byName方式进行装配；如果没有匹配，则回退为一个原始类型进行匹配，如果匹配则自动装配。
+4、Spring注入方式
+|-setter注入
+|-构造注入
+|-接口注入
+|-注解注入
+5、Mybatis
+|-缓存机制
+  |--每个线程都有自己的sqlsession实例
+  |--一级缓存：
+     |---sqlsession级别的缓存，使用Prepetual类中的HashMap缓存数据
+     |---缺点：当服务集群的时候，各个节点拥有自己的sqlsession，当其中一个节点更新数据，其他节点查询还是查到自己缓存的数据。
+  |--二级缓存（需要手动配置）：
+     |---mapper级别的缓存，多个sqlsession共享同一个mapper查询数据
+     |---可以使用redis、Ehcache、硬盘做缓存
+     |---在一级缓存基础上扩展自己的二级缓存，使用的就是装饰模式
+6、Mybatis原理
+InputStream inputStream = Resources.getResourceAsStream("mybatis-config.xml");
+|-配置解析过程（最终封装到Configuration 对象中）
+  |--SqlSessionFactory sqlSessionFactory = new SqlSessionFactoryBuilder().build(inputStream);
+  |--返回DefaultSqlsessionFactory
+  |--XMLConfigBuilder：用来解析全局配置文件
+  |--XMLMapperBuilder：解析 Mapper 映射器（解析BlogMapper.xml）
+  |--XMLStatementBuilder：解析增删改查标签（解析BlogMapper.xml里面的sql标签）
+|-SqlSession的创建
+  |--SqlSession session = sqlSessionFactory.openSession();
+  |--返回DefaultSqlSessionFactory
+  |--创建Executor接口，根据配置是否开启了二级缓存，来决定是否使用CachingExecutor
+|-Mapper代理的生成
+  |--UserMapper mapper = session.getMapper(UserMapper.class);
+  |--使用JDK动态代理，给UserMapper接口生成一个代理对象（类型是MapperProxy）
+|-执行查询语句
+  |--User user = mapper.selectById(1);
+  |--实际上执行的是MapperProxy的invoke方法
+|-四大对象
+  |--Executor：负责维护一级缓存和二级缓存，并提供事务管理的相关操作，它会将数据库相关操作委托给 StatementHandler 完成
+  |--StatementHandler：首先通过【ParameterHandler】 完成SQL语句的实参绑定，然后通过java.sql.Statement对象执行SQL语句并得到结果集，
+     最后通过【ResultSetHandler】 完成结果集的映射，得到结果对象并返回。
+
+6、BeanFactory和ApplicationContext有什么区别
+|-BeanFactory采用的是延迟加载的形式来注入Bean；ApplicationContext在启动的时候就把所有的Bean全部实例化
+|-BeanFactory：
+  |--BeanFactory是Spring里面最低层的接口，ApplicationContext是BeanFactory的子接口，所以ApplicationContext包含了BeanFactory所有特性
+|-ApplicationContext：
+  |--支持国际化
+  |--强大的事件机制
+  |--统一的资源文件访问
+  |--同时加载多个配置文件
+7、Spring Bean的生命周期
+|-实例化Bean
+|-依赖注入，也就是设置属性
+|-如果Bean实现了BeanNameAware接口，则调用setBeanName方法
+|-如果Bean实现了BeanFactoryAware接口，则调用setBeanFactory方法
+|-如果Bean实现了ApplicationContextAware接口，则调用setApplicationContext方法
+|-如果Bean实现了BeanPostProcessor接口，则调用postProcessBeforeInitialization方法
+|-如果Bean实现了InitializingBean接口，则调用afterPropertiesSet方法
+|-如果配置了init-method 属性，则调用初始化方法
+|-如果Bean实现了BeanPostProcessor接口，则调用postProcessAfterInitialization方法
+|-执行业务代码
+|-当Bean不再需要时，如果 Bean 实现 DisposableBean接口，则调用destroy方法
+|-如果配置了destroy-method属性，则调用销毁方法
+
+8、过滤器和拦截器的区别：
+|-过滤器依赖于servlet，基于函数回调；拦截器依赖于spring框架，基于Java的反射机制
+|-过滤器不能注入spring容器中的Bean，拦截器可以
+|-过滤器只能在容器初始化时调用一次；拦截器在一个controller生命周期之内可以多次调用
+|-过滤器主要用来获取请求数据，并修改数据，比如：在过滤器中修改字符编码；在过滤器中修改HttpServletRequest的一些参数，包括：过滤低俗文字、危险字符等；
+  拦截器可以做权限
+
+9、spring中使用到的设计模式
+|-工厂模式：BeanFactory和ApplicationContext创建Bean
+|-动态代理模式：AOP
+|-装饰模式：IO流、Mybatis二级缓存
+|-适配器模式：Spring AOP 模块对 BeforeAdvice、 AfterAdvice、 ThrowsAdvice使用适配器模式来实现的
+|-模版模式：*Template【JdbcTemplate、TransactionTemplate、RedisTemplate、HibernateTemplate、JmsTemplate】
+  |--通常使用继承的方式实现模版模式
+  |--Spring使用Callback+模版方法模式结合execute(RedisCallback<T> action)，既达到了代码复用的效果，同时增加了灵活性
+|-观察者模式：事件驱动
+|-单例模式
+
+
+
+
+
+
+
+
+
+
+

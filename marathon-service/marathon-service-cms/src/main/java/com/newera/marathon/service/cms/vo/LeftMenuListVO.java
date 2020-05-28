@@ -25,6 +25,11 @@ public class LeftMenuListVO {
     private String icon;
 
     /**
+     * 显示顺序
+     */
+    private String priority;
+
+    /**
      * 访问路径
      */
     private String url;

@@ -42,6 +42,11 @@
             </dependency>
             <dependency>
                 <groupId>com.newera.marathon</groupId>
+                <artifactId>marathon-microface-order</artifactId>
+                <version>${project.newera.marathon.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.newera.marathon</groupId>
                 <artifactId>marathon-mq</artifactId>
                 <version>${project.newera.marathon.version}</version>
             </dependency>

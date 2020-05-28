@@ -15,7 +15,9 @@ import org.springframework.transaction.annotation.EnableTransactionManagement;
 @EnableFeignClients(basePackages = {"com.newera.marathon.microface.cust"})
 @EnableDiscoveryClient
 @EnableCaching
-@ComponentScan(basePackages = {"com.spaking.boot.starter","com.newera.marathon.microface.cust","com.newera.marathon.service"})
+@ComponentScan(basePackages = {"com.spaking.boot.starter",
+		"com.newera.marathon.microface.cust",
+		"com.newera.marathon.service"})
 public class ServiceCosApplication {
 
 	public static void main(String[] args) {

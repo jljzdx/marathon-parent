@@ -18,7 +18,14 @@ spring:
         ext-config[2]:
           data-id: mysql.yaml
           refresh: true
+        ext-config[3]:
+          data-id: rabbitmq.yaml
+          refresh: true
       discovery:
         server-addr: 127.0.0.1:8848
 mybatis-plus:
   mapper-locations: classpath*:mappers/*.xml
+elasticsearch:
+  clusterName: esnode
+  hostName: 127.0.0.1:9201,127.0.0.1:9202,127.0.0.1:9203,127.0.0.1:9204,127.0.0.1:9205,127.0.0.1:9206
+

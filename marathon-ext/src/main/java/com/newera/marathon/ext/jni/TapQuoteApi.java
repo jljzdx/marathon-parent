@@ -20,32 +20,38 @@ public class TapQuoteApi {
      * @param tapAPIQuoteLoginAuth
      * @return
      */
-    public native TapAPIQuotLoginRspInfo login(TapAPIQuoteLoginAuth tapAPIQuoteLoginAuth);
+    public native int login(TapAPIQuoteLoginAuth tapAPIQuoteLoginAuth);
 
     /**
-     * 得到所有品种：使用此函数前需要先QryCommodity()取得品种信息，然后选择需要的品种将信息填入TapAPICommodity结构体中完成查询请求。
+     * 断开和服务器的链路连接
      * @return
      */
-    public native TapAPIQuoteCommodityInfo qryCommodity();
+    public native int disconnect();
 
     /**
-     * 查询系统中指定品种的合约信息
+     * 得到所有品种。
+     * @return
+     */
+    public native int qryCommodity();
+
+    /**
+     * 查询系统中指定品种的合约信息：使用此函数前需要先QryCommodity()取得品种信息。
      * @param tapAPICommodity
      * @return
      */
-    public native TapAPIQuoteContractInfo qryContract(TapAPICommodity tapAPICommodity);
+    public native int qryContract(TapAPICommodity tapAPICommodity);
 
     /**
      * 订阅指定合约的行情：调用此函数前先获取合约信息，然后从合约信息中取出合约填入contract
      * @param tapAPIContract
      * @return
      */
-    public native TapAPIQuoteWhole subscribeQuote(TapAPIContract tapAPIContract);
+    public native int subscribeQuote(TapAPIContract tapAPIContract);
 
     /**
      * 退订指定合约的行情：
      * @param tapAPIContract
      * @return
      */
-    public native TapAPIContract unSubscribeQuote(TapAPIContract tapAPIContract);
+    public native int unSubscribeQuote(TapAPIContract tapAPIContract);
 }

@@ -7,9 +7,15 @@ import org.springframework.cloud.openfeign.EnableFeignClients;
 import org.springframework.context.annotation.ComponentScan;
 
 @SpringBootApplication
-@ComponentScan(basePackages = {"com.spaking.boot.starter", "com.newera.marathon.microface.cms", "com.newera.marathon.web.zy"})
+@ComponentScan(basePackages = {
+        "com.spaking.boot.starter",
+        "com.newera.marathon.microface.cms",
+        "com.newera.marathon.microface.order",
+        "com.newera.marathon.web.zy"})
 @EnableDiscoveryClient
-@EnableFeignClients(basePackages = {"com.newera.marathon.microface.cms"})
+@EnableFeignClients(basePackages = {
+        "com.newera.marathon.microface.cms",
+        "com.newera.marathon.microface.order"})
 public class WebZyApplication {
 
     public static void main(String[] args) {

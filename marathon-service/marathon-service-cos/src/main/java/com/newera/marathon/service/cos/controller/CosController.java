@@ -53,6 +53,11 @@ public class CosController {
     @ApiImplicitParam(name = "requestDTO", value = "入参对象", dataType = "XfaceCosMailSendRequestDTO")
     @PostMapping("/cos/mail/send")
     public XfaceCosMailSendResponseDTO sendMail(@Valid @RequestBody XfaceCosMailSendRequestDTO requestDTO){
+        try {
+            Thread.sleep(100000);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
         XfaceCosMailSendResponseDTO responseDTO = cosService.doMailSend(requestDTO);
         return responseDTO;
     }

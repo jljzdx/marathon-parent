@@ -3,3 +3,5 @@ spring:
     active: dev
   application:
     name: marathon-service-cust
+  zipkin:
+    base-url: http://localhost:9411/
