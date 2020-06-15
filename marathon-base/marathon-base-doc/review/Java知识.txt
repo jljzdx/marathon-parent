@@ -103,7 +103,10 @@
      |---可中断锁（Lock）：如果某一线程A正在执行锁中的代码，另一线程B正在等待获取该锁，可能由于等待时间过长，线程B不想等待了，想先处理其他事情，我们可以让它中断自己或者在别的线程中中断它，这种就是可中断锁。
      |---公平锁（Lock可以设置成公平锁，ReentrantLock lock = new ReentrantLock(true);）：以请求锁的顺序来获取锁，等待时间最久的线程（最先请求的线程）会获得该锁。
      |---读写锁（ReentrantReadWriteLock）：1、获得读锁后，其它线程可获得读锁而不能获取写锁；2、获得写锁后，其它线程既不能获得读锁也不能获得写锁。
-
+|-如何控制多个线程执行顺序
+  |--join();
+  |--SingleThreadExecutor
+  |--信号量Semaphore
 |-线程池
   |--新任务进入时线程池的执行策略：
      |---1、如果运行的线程少于corePoolSize，则 Executor始终首选添加新的线程，而不进行排队。
@@ -238,6 +241,15 @@
 
 3、JVM
 |-JVM内存结构：运行时数据区、
+|-面试问CPU100%怎么排查
+  |--查消耗cpu最高的进程号PID
+     |---top –c
+     |---键入P (大写p)，进程按照CPU使用率排序
+  |--根据PID查出消耗cpu最高的线程号，并转成16进制
+     |---top -Hp 17376
+     |---printf '%xn' 17378 17379 17412 17426
+  |--导出进程快照：jstack 3033【进程PID】 > yao.stack
+  |--分析快照，定位到具体代码：cat -n yao.dump | grep -A10【显示后续10行】 '0x4404'
 |-StackOverflowError
   |--栈深度大于虚拟机所能提供的深度，会抛出StackOverflowError，比如递归
 |-OutOfMemoryError

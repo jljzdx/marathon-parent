@@ -5,7 +5,7 @@
   |--计数器
   |--分布式锁
 |-redis是单线程的，不过多个命令就不具备原子性，想要保证原子性，就要通过LUA脚本。
-|-RESP 是redis客户端和服务端之前使用的一种通讯协议；实现简单、快速解析、可读性好。
+|-连接远程redis：redis-cli -h 106.12.241.148 -p 33069 -a xinyar#1508。
 |-批量删除指定库的key：
   |--本地：./redis-cli keys "name*" | xargs ./redis-cli del
   |--远程：./redis-cli -h 10.121.31.83 -p 9002 -n 3 keys "name*" | xargs ./redis-cli -h 10.121.31.83 -p 9002 -n 3 del

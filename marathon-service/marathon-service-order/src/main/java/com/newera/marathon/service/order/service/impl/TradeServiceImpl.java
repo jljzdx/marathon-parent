@@ -43,6 +43,7 @@ import java.util.concurrent.TimeUnit;
 @Slf4j
 @Service
 public class TradeServiceImpl implements TradeService {
+
     @Autowired
     RestHighLevelClient restHighLevelClient;
 

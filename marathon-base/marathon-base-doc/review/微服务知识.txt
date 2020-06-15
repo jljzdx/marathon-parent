@@ -152,6 +152,8 @@
      </dependency>
   |--源码
   |--Feign集成Ribbon负载均衡原理
+     |---原理：在RestTemplate进行http请求时，这个请求就会被拦截器拦截，然后实现负载均衡调用。
+         负载均衡的基本实现就是利用applicationName从服务注册中心获取可用的服务地址列表，然后通过一定算法负载，决定使用哪一个服务地址来进行http调用。
      |---LoadBalancerFeignClient
      |---默认使用轮询
 |-getway

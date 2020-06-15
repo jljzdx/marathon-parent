@@ -8,15 +8,19 @@ import org.springframework.stereotype.Component;
 
 @Component
 @Slf4j
-public class TopicDemoProducer extends BaseProducer {
+public class TopicDemoProducer extends BaseProducer
+{
 
     @Autowired
     private RabbitTemplate rabbitTemplate;
 
-    public void sendNews() {
-        rabbitTemplate.convertAndSend(QueueDemoConfig.EXCHANGE_TOPIC_KAIFENG,"kaifeng.news","开封今年粮食产量提升10%");
+    public void sendNews()
+    {
+        rabbitTemplate.convertAndSend(QueueDemoConfig.EXCHANGE_TOPIC_KAIFENG, "kaifeng.news", "开封今年粮食产量提升10%");
     }
-    public void sendWeather() {
-        rabbitTemplate.convertAndSend(QueueDemoConfig.EXCHANGE_TOPIC_KAIFENG,"kaifeng.weather","开封明天白天多云15℃");
+
+    public void sendWeather()
+    {
+        rabbitTemplate.convertAndSend(QueueDemoConfig.EXCHANGE_TOPIC_KAIFENG, "kaifeng.weather", "开封明天白天多云15℃");
     }
 }

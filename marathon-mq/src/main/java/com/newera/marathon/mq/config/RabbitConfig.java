@@ -68,20 +68,5 @@ public class RabbitConfig {
         return BindingBuilder.bind(mailQueue()).to(mailExchange()).with(MAIL_ROUTING_KEY);
     }
 
-    public static final String TEST_QUEUE = "test.queue";
-    public static final String TEST_EXCHANGE = "test.exchange";
-    public static final String TEST_ROUTING_KEY = "test.routing.key";
-    @Bean
-    public Queue testQueue() {
-        return new Queue(TEST_QUEUE,true);
-    }
-    @Bean
-    public DirectExchange testExchange() {
-        return new DirectExchange(TEST_EXCHANGE, true, false);
-    }
-    @Bean
-    public Binding testBinding() {
-        return BindingBuilder.bind(testQueue()).to(testExchange()).with(TEST_ROUTING_KEY);
-    }
 
 }

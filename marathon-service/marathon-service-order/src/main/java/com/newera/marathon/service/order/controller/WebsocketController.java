@@ -14,27 +14,44 @@ import org.springframework.web.bind.annotation.RestController;
 import javax.validation.Valid;
 
 @RestController
-public class WebsocketController {
+public class WebsocketController
+{
 
     @Autowired
     private WebsocketService websocketService;
 
-    @BusinessLogger(key = "ORDER",value = "websocketInquiryPage")
+    @BusinessLogger(key = "ORDER", value = "websocketInquiryPage")
     @PostMapping("/order/websocket/inquiry/page")
-    public XfaceOrderWebsocketDetailInquiryResponseDTO websocketInquiryPage(@Valid @RequestBody XfaceOrderWebsocketDetailInquiryRequestDTO requestDTO){
+    public XfaceOrderWebsocketDetailInquiryResponseDTO websocketInquiryPage(@Valid @RequestBody XfaceOrderWebsocketDetailInquiryRequestDTO requestDTO)
+    {
         XfaceOrderWebsocketDetailInquiryResponseDTO responseDTO = websocketService.doOnlineDetailInquiryPage(requestDTO);
         return responseDTO;
     }
 
-    @BusinessLogger(key = "ORDER",value = "websocketSendAll")
+    @BusinessLogger(key = "ORDER", value = "websocketSendAll")
     @PostMapping("/order/websocket/send/all")
-    public XfaceOrderWebsocketSendAllResponseDTO websocketSendAll(@Valid @RequestBody XfaceOrderWebSocketSendAllRequestDTO requestDTO){
+    public XfaceOrderWebsocketSendAllResponseDTO websocketSendAll(@Valid @RequestBody XfaceOrderWebSocketSendAllRequestDTO requestDTO)
+    {
         XfaceOrderWebsocketSendAllResponseDTO responseDTO = websocketService.doSendAll(requestDTO);
         return responseDTO;
     }
-    @BusinessLogger(key = "ORDER",value = "rabbitmqTest")
-    @PostMapping("/order/rabbitmq/test")
-    public void rabbitmqTest(){
-        websocketService.doRabbitmqTest();
+
+    @BusinessLogger(key = "ORDER", value = "rabbitmqTest")
+    @PostMapping("/order/rabbitmq/direct")
+    public void rabbitmqDirect()
+    {
+        websocketService.doRabbitmqDirect();
+    }
+    @BusinessLogger(key = "ORDER", value = "rabbitmqTest")
+    @PostMapping("/order/rabbitmq/fanout")
+    public void rabbitmqFanout()
+    {
+        websocketService.doRabbitmqFanout();
+    }
+    @BusinessLogger(key = "ORDER", value = "rabbitmqTest")
+    @PostMapping("/order/rabbitmq/topic")
+    public void rabbitmqTopic()
+    {
+        websocketService.doRabbitmqTopic();
     }
 }

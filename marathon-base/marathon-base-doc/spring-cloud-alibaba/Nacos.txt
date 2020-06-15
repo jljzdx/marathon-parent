@@ -58,8 +58,8 @@ db.user=root
 db.password=root
 |-问题：启动报错连不上mysql
   |--下载源码
-  |--把pom.xml中的mysql-connector-java版本换成自己合适的
-  |--打包:mvn -Prelease-nacos clean install -U
+  |--把pom.xml中的mysql-connector-java版本换成自己合适的，代码有些包找不到报错，重新引一下就好了
+  |--打包:mvn -Prelease-nacos -Dmaven.test.skip=true clean install -U
   |--直接进入distribution/target/nacos-server-1.1.3/nacos/bin目录启动Nacos
 7、Nacos集群
 |-修改conf/cluster.conf

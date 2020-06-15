@@ -10,5 +10,9 @@ public interface WebsocketService {
 
     XfaceOrderWebsocketSendAllResponseDTO doSendAll(XfaceOrderWebSocketSendAllRequestDTO requestDTO);
 
-    void doRabbitmqTest();
+    void doRabbitmqDirect();
+
+    void doRabbitmqFanout();
+
+    void doRabbitmqTopic();
 }
