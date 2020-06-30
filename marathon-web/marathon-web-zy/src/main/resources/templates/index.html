@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html>
+<html xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="utf-8">
     <title>后台管理系统</title>
@@ -7,10 +7,10 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
     <meta name="viewport"
           content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=0">
-    <link rel="stylesheet" href="${request.contextPath}/layuiadmin/layui/css/layui.css" media="all">
+    <link rel="stylesheet" th:href="@{/layuiadmin/layui/css/layui.css}" media="all">
     <!--阿里巴巴矢量图标-->
-    <link rel="stylesheet" href="${request.contextPath}/layuiadmin/layui/css/modules/layui-icon-extend/iconfont.css" media="all">
-    <link rel="stylesheet" href="${request.contextPath}/myself/style/admin.css" media="all">
+    <link rel="stylesheet" th:href="@{/layuiadmin/layui/css/modules/layui-icon-extend/iconfont.css}" media="all">
+    <link rel="stylesheet" th:href="@{/myself/style/admin.css}" media="all">
 </head>
 <body class="layui-layout-body">
 <div id="LAY_app">
@@ -34,22 +34,20 @@
                     <a href="javascript:;">
                         <img src="/myself/images/defaultPic.jpg"
                              class="layui-nav-img">
-                        <#if user?exists>
-                        ${user.realName}
-                    </#if>
+                        [[${#authentication.name}]]
                     </a>
                     <dl class="layui-nav-child">
-                        <dd><a lay-href="${request.contextPath}/user/base/info/html">基本资料</a></dd>
-                        <dd><a lay-href="${request.contextPath}/user/modify/password/html">修改密码</a></dd>
+                        <dd><a lay-href="/user/base/info/html">基本资料</a></dd>
+                        <dd><a lay-href="/user/modify/password/html">修改密码</a></dd>
                     </dl>
                 </li>
-                <li class="layui-nav-item"><a href="/logout?redirect_url=http://127.0.0.1:8081">退出</a></li>
+                <li class="layui-nav-item"><a href="/logout">退出</a></li>
             </ul>
         </div>
         <!-- 侧边菜单 -->
         <div class="layui-side layui-side-menu">
             <div class="layui-side-scroll">
-                <div class="layui-logo" lay-href="${request.contextPath}/home/tab/html">
+                <div class="layui-logo" lay-href="/home/tab/html">
                     <span>后台管理系统</span>
                 </div>
 
@@ -63,15 +61,15 @@
                         <dl class="layui-nav-child">
                             <dd>
                                 <i class="layui-icon layui-icon-set"></i>
-                                <a lay-href="${request.contextPath}/user/list/html">用户管理</a>
+                                <a lay-href="/user/list/html">用户管理</a>
                             </dd>
                             <dd>
                                 <i class="layui-icon layui-icon-set"></i>
-                                <a lay-href="${request.contextPath}/role/list/html">角色管理</a>
+                                <a lay-href="/role/list/html">角色管理</a>
                             </dd>
                             <dd>
                                 <i class="layui-icon layui-icon-set"></i>
-                                <a lay-href="${request.contextPath}/resource/list/html">资源管理</a>
+                                <a lay-href="/resource/list/html">资源管理</a>
                             </dd>
                         </dl>
                     </li>-->
@@ -96,7 +94,7 @@
             </div>
             <div class="layui-tab" lay-unauto lay-allowClose="true" lay-filter="layadmin-layout-tabs">
                 <ul class="layui-tab-title" id="LAY_app_tabsheader">
-                    <li lay-attr="${request.contextPath}/home/tab/html" class="layui-this">
+                    <li lay-attr="/home/tab/html" class="layui-this">
                         <i class="layui-icon layui-icon-home"></i>
                     </li>
                 </ul>
@@ -105,7 +103,7 @@
         <!-- 主体内容 -->
         <div class="layui-body" id="LAY_app_body">
             <div class="layadmin-tabsbody-item layui-show">
-                <iframe src="${request.contextPath}/home/tab/html" frameborder="0" class="layadmin-iframe"></iframe>
+                <iframe src="/home/tab/html" frameborder="0" class="layadmin-iframe"></iframe>
             </div>
         </div>
         <!-- 底部固定区域
@@ -114,7 +112,7 @@
         </div>-->
     </div>
 </div>
-<script src="${request.contextPath}/layuiadmin/layui/layui.js" charset="utf-8"></script>
+<script th:src="@{/layuiadmin/layui/layui.js}" charset="utf-8"></script>
 <script>
 layui.use(['jquery', 'layer'],
 function() {
@@ -154,7 +152,7 @@ function() {
                 layer.msg(result.transactionStatus.replyText);
             }
             layui.config({
-                base: '${request.contextPath}/layuiadmin/'
+                base: '/layuiadmin/'
             }).extend({
                 index: 'res/js/modules/index' //主入口模块
             }).use('index', {});

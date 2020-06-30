@@ -112,7 +112,7 @@ public class AdminUserServiceImpl extends ServiceImpl<AdminUserMapper, AdminUser
         TransactionStatus transactionStatus = new TransactionStatus();
         //判断用户名是否存在
         QueryWrapper<AdminUser> wrapper = new QueryWrapper();
-        wrapper.lambda().eq(AdminUser::getUserName,requestDTO.getUserName());
+        wrapper.lambda().eq(AdminUser::getUsername,requestDTO.getUserName());
         Integer count = count(wrapper);
         if(count > 0){
             throw new BaseException(ApplicationError.USER_NAME_ALREADY_EXIST.getMessage(), ApplicationError.USER_NAME_ALREADY_EXIST.getCode());
@@ -120,7 +120,7 @@ public class AdminUserServiceImpl extends ServiceImpl<AdminUserMapper, AdminUser
         //组装用户数据
         AdminUser user = new AdminUser();
         BeanUtils.copyProperties(requestDTO,user);
-        user.setPassword(PasswordUtil.generate(user.getUserName()));
+        user.setPassword(PasswordUtil.generate(user.getUsername()));
         //添加操作
         Boolean result = save(user);
         if(!result){
@@ -263,14 +263,14 @@ public class AdminUserServiceImpl extends ServiceImpl<AdminUserMapper, AdminUser
         //重置密码
         AdminUser user2 = new AdminUser();
         user2.setId(requestDTO.getId());
-        user2.setPassword(PasswordUtil.generate(user.getUserName()));
+        user2.setPassword(PasswordUtil.generate(user.getUsername()));
         user2.setModifyOperator(requestDTO.getModifyOperator());
         updateById(user2);
         //发送邮件
         MailSend mailSend = new MailSend();
         mailSend.setToMail(user.getEmail());
         mailSend.setSubject("后台用户密码重置");
-        mailSend.setContent("亲爱的"+user.getUserName()+"用户，您的新密码为："+user.getUserName());
+        mailSend.setContent("亲爱的"+user.getUsername()+"用户，您的新密码为："+user.getUsername());
         mailSend.setType(1);
         mailSendProducer.send(mailSend);
         responseDTO.setTransactionStatus(transactionStatus);

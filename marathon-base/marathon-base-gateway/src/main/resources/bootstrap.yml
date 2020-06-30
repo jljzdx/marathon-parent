@@ -3,3 +3,5 @@ spring:
     active: dev
   application:
     name: marathon-base-gateway
+server:
+  port: 8585

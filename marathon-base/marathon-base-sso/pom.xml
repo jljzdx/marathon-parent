@@ -12,16 +12,11 @@
     <artifactId>marathon-base-sso</artifactId>
 
     <dependencies>
-        <!--marathon-microface-->
-        <dependency>
-            <groupId>com.newera.marathon</groupId>
-            <artifactId>marathon-microface-cms</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>com.newera.marathon</groupId>
-            <artifactId>marathon-microface-cos</artifactId>
-        </dependency>
         <!--marathon-->
+        <dependency>
+            <groupId>com.newera.marathon</groupId>
+            <artifactId>marathon-common</artifactId>
+        </dependency>
         <dependency>
             <groupId>com.newera.marathon</groupId>
             <artifactId>marathon-dto</artifactId>
@@ -33,7 +28,11 @@
         </dependency>
         <dependency>
             <groupId>com.spakingframework.boot</groupId>
-            <artifactId>spaking-boot-starter-cas</artifactId>
+            <artifactId>spaking-boot-starter-mysql</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>com.spakingframework.boot</groupId>
+            <artifactId>spaking-boot-starter-core</artifactId>
         </dependency>
         <!--spring-boot-starter-->
         <dependency>
@@ -42,11 +41,7 @@
         </dependency>
         <dependency>
             <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-starter-freemarker</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-starter-actuator</artifactId>
+            <artifactId>spring-boot-starter-thymeleaf</artifactId>
         </dependency>
         <dependency>
             <groupId>org.springframework.boot</groupId>
@@ -66,6 +61,10 @@
             <groupId>com.alibaba.cloud</groupId>
             <artifactId>spring-cloud-starter-alibaba-nacos-config</artifactId>
         </dependency>
+        <dependency>
+            <groupId>org.springframework.cloud</groupId>
+            <artifactId>spring-cloud-starter-oauth2</artifactId>
+        </dependency>
         <!--logstash-->
         <dependency>
             <groupId>net.logstash.logback</groupId>
@@ -74,6 +73,16 @@
     </dependencies>
     <build>
         <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-resources-plugin</artifactId>
+                <configuration>
+                    <nonFilteredFileExtensions>
+                        <nonFilteredFileExtension>cert</nonFilteredFileExtension>
+                        <nonFilteredFileExtension>jks</nonFilteredFileExtension>
+                    </nonFilteredFileExtensions>
+                </configuration>
+            </plugin>
             <plugin>
                 <groupId>org.springframework.boot</groupId>
                 <artifactId>spring-boot-maven-plugin</artifactId>

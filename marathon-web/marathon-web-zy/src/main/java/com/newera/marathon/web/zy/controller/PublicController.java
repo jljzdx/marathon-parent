@@ -7,9 +7,12 @@ import com.newera.marathon.dto.cms.maintenance.XfaceCmsAdminUserModifyPasswordRe
 import com.newera.marathon.dto.cms.maintenance.XfaceCmsAdminUserModifyPasswordResponseDTO;
 import com.newera.marathon.microface.cms.admin.CmsAdminRoleMicroService;
 import com.newera.marathon.microface.cms.admin.CmsAdminUserMicroService;
-import com.spaking.boot.starter.cas.model.SsoUser;
-import com.spaking.boot.starter.cas.utils.SsoConstant;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.AuthorityUtils;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.oauth2.provider.OAuth2Authentication;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -17,10 +20,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import javax.servlet.http.HttpServletRequest;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import javax.servlet.http.HttpSession;
+import java.util.*;
 
 @Controller
 @RequestMapping("/public")
@@ -32,6 +33,31 @@ public class PublicController {
     private CmsAdminRoleMicroService cmsAdminRoleMicroService;
 
 
+    @GetMapping("userinfo")
+    @ResponseBody
+    public String getUserInfo(HttpServletRequest request, HttpSession session){
+        Authentication authentication =
+                SecurityContextHolder.getContext().getAuthentication();
+        // 如果解析到令牌就会封装到OAuth2Authentication对象
+        if( !(authentication instanceof OAuth2Authentication)) {
+            return null;
+        }
+
+        // 用户名,没有其他用户信息
+        Object principal = authentication.getPrincipal();
+        // 获取用户所拥有的权限
+        Collection<? extends GrantedAuthority> authorities
+                = authentication.getAuthorities();
+        Set<String> authoritySet = AuthorityUtils.authorityListToSet(authorities);
+        // 请求详情
+        Object details = authentication.getDetails();
+
+        Map<String, Object> result =  new HashMap<>();
+        result.put("principal", principal);
+        result.put("authorities", authoritySet);
+        result.put("details", details);
+        return "success";
+    }
     @GetMapping("/role/inquiry/select")
     @ResponseBody
     public List<Map> roleInquirySelect(){
@@ -59,17 +85,17 @@ public class PublicController {
     @ResponseBody
     public XfaceCmsAdminUserBaseInfoModifyInquiryResponseDTO userBaseInfoModifyInquiry(XfaceCmsAdminUserBaseInfoModifyInquiryRequestDTO requestDTO, HttpServletRequest request){
         if(null == requestDTO.getId()){
-            SsoUser user = (SsoUser) request.getAttribute(SsoConstant.SSO_USER);
-            requestDTO.setId(user.getUserId());
+//            SsoUser user = (SsoUser) request.getAttribute(SsoConstant.SSO_USER);
+//            requestDTO.setId(user.getUserId());
         }
         XfaceCmsAdminUserBaseInfoModifyInquiryResponseDTO responseDTO = cmsAdminUserMicroService.userBaseInfoModifyInquiry(requestDTO);
         return responseDTO;
     }
     @PostMapping("/user/base/info/modify")
     public XfaceCmsAdminUserBaseInfoModifyResponseDTO userBaseInfoModify(XfaceCmsAdminUserBaseInfoModifyRequestDTO requestDTO, HttpServletRequest request){
-        SsoUser user = (SsoUser) request.getAttribute(SsoConstant.SSO_USER);
-        requestDTO.setId(user.getUserId());
-        requestDTO.setModifyOperator(user.getUserName());
+//        SsoUser user = (SsoUser) request.getAttribute(SsoConstant.SSO_USER);
+//        requestDTO.setId(user.getUserId());
+//        requestDTO.setModifyOperator(user.getUserName());
         XfaceCmsAdminUserBaseInfoModifyResponseDTO responseDTO = cmsAdminUserMicroService.userBaseInfoModify(requestDTO);
         return responseDTO;
     }
@@ -78,11 +104,11 @@ public class PublicController {
     @ResponseBody
     public XfaceCmsAdminUserModifyPasswordResponseDTO userModifyPassword(XfaceCmsAdminUserModifyPasswordRequestDTO requestDTO, HttpServletRequest request){
         //获取当前用户ID
-        SsoUser user = (SsoUser) request.getAttribute(SsoConstant.SSO_USER);
+        /*SsoUser user = (SsoUser) request.getAttribute(SsoConstant.SSO_USER);
         if(null != user){
             requestDTO.setId(user.getUserId());
         }
-        requestDTO.setModifyOperator(user.getUserName());
+        requestDTO.setModifyOperator(user.getUserName());*/
         XfaceCmsAdminUserModifyPasswordResponseDTO responseDTO = cmsAdminUserMicroService.userModifyPassword(requestDTO);
         return responseDTO;
     }
@@ -90,8 +116,8 @@ public class PublicController {
     @PostMapping("/user/left/menu/inquiry")
     @ResponseBody
     public XfaceCmsAdminLeftMenuInquiryResponseDTO leftMenuInquiry(XfaceCmsAdminLeftMenuInquiryRequestDTO requestDTO, HttpServletRequest request){
-        SsoUser user = (SsoUser) request.getAttribute(SsoConstant.SSO_USER);
-        requestDTO.setUserName(user.getUserName());
+//        SsoUser user = (SsoUser) request.getAttribute(SsoConstant.SSO_USER);
+        requestDTO.setUserName("MicroBin");
         XfaceCmsAdminLeftMenuInquiryResponseDTO responseDTO = cmsAdminUserMicroService.leftMenuInquiry(requestDTO);
         return responseDTO;
     }

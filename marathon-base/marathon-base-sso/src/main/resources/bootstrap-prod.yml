@@ -10,13 +10,13 @@ spring:
         group: MARATHON_GROUP
         prefix: marathon-service-dynamic-config
         ext-config[0]:
-          data-id: freemarker.yaml
-          refresh: true
-        ext-config[1]:
           data-id: feign-ribbon-hystrix.yaml
           refresh: true
-        ext-config[2]:
+        ext-config[1]:
           data-id: redis.yaml
+          refresh: true
+        ext-config[2]:
+          data-id: mysql.yaml
           refresh: true
       discovery:
         server-addr: 127.0.0.1:8848

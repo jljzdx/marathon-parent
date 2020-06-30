@@ -23,12 +23,16 @@ public class AdminUser extends BaseEntity implements Serializable {
     /**
      * 后台登陆账号
      */
-    private String userName;
+    private String username;
 
     /**
      * 真实名称
      */
     private String realName;
+    /**
+     * 昵称
+     */
+    private String nickName;
 
     /**
      * 性别

@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.newera.marathon.base.sso.mapper.AdminResourceMapper">
+
+    <select id="queryPermissions" parameterType="java.lang.String" resultType="java.lang.String">
+        select
+        r.permission
+        from CMS_ADMIN_USER u,CMS_ADMIN_USER_ROLE ur,CMS_ADMIN_ROLE role,CMS_ADMIN_ROLE_RESOURCE rr,CMS_ADMIN_RESOURCE r
+        where
+        u.id = ur.user_id
+        and ur.role_id = rr.role_id
+        and rr.resource_id = r.id
+        and role.id = ur.role_id
+        and r.type in (4)
+        and r.available = 1
+        and role.available = 1
+        and u.username = #{value}
+    </select>
+</mapper>

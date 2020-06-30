@@ -1,23 +1,27 @@
 package com.newera.marathon.base.sso.service.impl;
 
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.newera.marathon.base.sso.entity.AdminUser;
+import com.newera.marathon.base.sso.mapper.AdminUserMapper;
 import com.newera.marathon.base.sso.service.UserService;
-import com.newera.marathon.dto.cms.maintenance.XfaceCmsAdminLoginRequestDTO;
-import com.newera.marathon.dto.cos.maintenance.XfaceCosGenearteCaptchaResponseDTO;
-import com.newera.marathon.dto.cms.maintenance.XfaceCmsAdminLoginResponseDTO;
-import com.newera.marathon.microface.cos.CosMicroService;
-import com.newera.marathon.microface.cms.admin.CmsMicroService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 @Service
 public class UserServiceImpl implements UserService {
-
     @Autowired
-    private CmsMicroService cmsMicroService;
-    @Autowired
-    private CosMicroService cosMicroService;
+    private AdminUserMapper adminUserMapper;
 
     @Override
+    public AdminUser findByUserName(String userName)
+    {
+        QueryWrapper<AdminUser> queryWrapper = new QueryWrapper<>();
+        queryWrapper.eq("username", userName);
+        return adminUserMapper.selectOne(queryWrapper);
+    }
+
+
+    /*@Override
     public XfaceCmsAdminLoginResponseDTO findUser(String username, String password, String captchaId, String captchaCode) {
         XfaceCmsAdminLoginRequestDTO requestDTO = new XfaceCmsAdminLoginRequestDTO();
         requestDTO.setUserName(username);
@@ -26,12 +30,6 @@ public class UserServiceImpl implements UserService {
         requestDTO.setCaptchaCode(captchaCode);
         XfaceCmsAdminLoginResponseDTO responseDTO = cmsMicroService.loginAuth(requestDTO);
         return responseDTO;
-    }
-
-    @Override
-    public XfaceCosGenearteCaptchaResponseDTO doGenerateCaptcha() {
-        XfaceCosGenearteCaptchaResponseDTO responseDTO = cosMicroService.generateCaptcha();
-        return responseDTO;
-    }
+    }*/
 
 }

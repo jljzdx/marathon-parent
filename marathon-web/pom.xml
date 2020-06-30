@@ -20,15 +20,6 @@
             <artifactId>spring-boot-devtools</artifactId>
             <optional>true</optional>
         </dependency>-->
-        <!--marathon-microface-->
-        <dependency>
-            <groupId>com.newera.marathon</groupId>
-            <artifactId>marathon-microface-cms</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>com.newera.marathon</groupId>
-            <artifactId>marathon-microface-order</artifactId>
-        </dependency>
         <!--marathon-->
         <dependency>
             <groupId>com.newera.marathon</groupId>
@@ -43,14 +34,6 @@
             <groupId>com.spakingframework.boot</groupId>
             <artifactId>spaking-boot-starter-core</artifactId>
         </dependency>
-        <dependency>
-            <groupId>com.spakingframework.boot</groupId>
-            <artifactId>spaking-boot-starter-cas</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>com.spakingframework.boot</groupId>
-            <artifactId>spaking-boot-starter-redis</artifactId>
-        </dependency>
         <!--spring-boot-starter-->
         <dependency>
             <groupId>org.springframework.boot</groupId>
@@ -58,29 +41,12 @@
         </dependency>
         <dependency>
             <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-starter-freemarker</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-starter-actuator</artifactId>
+            <artifactId>spring-boot-starter-thymeleaf</artifactId>
         </dependency>
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-test</artifactId>
             <scope>test</scope>
-        </dependency>
-        <!--spring-cloud-starter-->
-        <dependency>
-            <groupId>org.springframework.cloud</groupId>
-            <artifactId>spring-cloud-starter-openfeign</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>com.alibaba.cloud</groupId>
-            <artifactId>spring-cloud-starter-alibaba-nacos-discovery</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>com.alibaba.cloud</groupId>
-            <artifactId>spring-cloud-starter-alibaba-nacos-config</artifactId>
         </dependency>
     </dependencies>
     <build>

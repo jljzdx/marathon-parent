@@ -3,7 +3,7 @@
 <mapper namespace="com.newera.marathon.service.cms.mapper.AdminUserMapper">
     <sql id="SysUserWhere">
         <if test="null != requestDTO.userName and requestDTO.userName != ''">
-            and user_name LIKE CONCAT('%', '${requestDTO.userName}', '%')
+            and username LIKE CONCAT('%', '${requestDTO.userName}', '%')
         </if>
         <if test="null != requestDTO.startDateTime and requestDTO.startDateTime != ''">
             and login_time &gt;= #{requestDTO.startDateTime}
@@ -42,7 +42,7 @@
         and r.type in (2,3)
         and r.available = 1
         and role.available = 1
-        and u.user_name = #{value}
+        and u.username = #{value}
         order by priority
     </select>
     <select id="queryPermissions" parameterType="java.lang.String" resultType="java.lang.String">
@@ -57,6 +57,6 @@
         and r.type in (4)
         and r.available = 1
         and role.available = 1
-        and u.user_name = #{value}
+        and u.username = #{value}
     </select>
 </mapper>

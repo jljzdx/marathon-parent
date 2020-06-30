@@ -7,8 +7,6 @@ import com.newera.marathon.dto.cms.inquiry.XfaceCmsAdminResourceModifyInquiryReq
 import com.newera.marathon.dto.cms.inquiry.XfaceCmsAdminResourceModifyInquiryResponseDTO;
 import com.newera.marathon.dto.cms.maintenance.*;
 import com.newera.marathon.microface.cms.admin.CmsAdminResourceMicroService;
-import com.spaking.boot.starter.cas.model.SsoUser;
-import com.spaking.boot.starter.cas.utils.SsoConstant;
 import com.spaking.boot.starter.core.annotation.NeedAuthorize;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -20,43 +18,50 @@ import javax.servlet.http.HttpServletRequest;
 import java.util.Map;
 
 @Controller
-public class ResourceController {
+public class ResourceController
+{
 
     @Autowired
     private CmsAdminResourceMicroService cmsAdminResourceMicroService;
+
     @GetMapping("/resource/list/html")
-    public String resourceListHtml(){
+    public String resourceListHtml()
+    {
         return "resource/resourceList";
     }
+
     @GetMapping("/resource/add/html")
-    public String resourceAddHtml(){
+    public String resourceAddHtml()
+    {
         return "resource/resourceAdd";
     }
+
     @GetMapping("/resource/edit/html")
-    public String resourceEditHtml(){
+    public String resourceEditHtml()
+    {
         return "resource/resourceEdit";
     }
-
 
     @NeedAuthorize(value = "resource:list")
     @PostMapping("/resource/inquiry/loop")
     @ResponseBody
-    public Map resourceInquiryPage(XfaceCmsAdminResourceLoopInquiryRequestDTO requestDTO){
+    public Map resourceInquiryPage(XfaceCmsAdminResourceLoopInquiryRequestDTO requestDTO)
+    {
         //调用微服务
         XfaceCmsAdminResourceLoopInquiryResponseDTO responseDTO = cmsAdminResourceMicroService.resourceInquiryLoop(requestDTO);
         //重组响应对象
-        return ListResponseConverter.listResponseConverter(responseDTO.getTransactionStatus().isSuccess(),
-                responseDTO.getTransactionStatus().getErrorCode(),
-                responseDTO.getTransactionStatus().getReplyText(),
-                responseDTO.getDataList());
+        return ListResponseConverter
+                .listResponseConverter(responseDTO.getTransactionStatus().isSuccess(), responseDTO.getTransactionStatus().getErrorCode(),
+                                       responseDTO.getTransactionStatus().getReplyText(), responseDTO.getDataList());
     }
 
     @NeedAuthorize(value = "resource:add")
     @PostMapping("/resource/addition")
     @ResponseBody
-    public XfaceCmsAdminResourceAdditionResponseDTO resourceAddition(XfaceCmsAdminResourceAdditionRequestDTO requestDTO, HttpServletRequest request){
-        SsoUser user = (SsoUser) request.getAttribute(SsoConstant.SSO_USER);
-        requestDTO.setCreateOperator(user.getUserName());
+    public XfaceCmsAdminResourceAdditionResponseDTO resourceAddition(XfaceCmsAdminResourceAdditionRequestDTO requestDTO, HttpServletRequest request)
+    {
+        //        SsoUser user = (SsoUser) request.getAttribute(SsoConstant.SSO_USER);
+        //        requestDTO.setCreateOperator(user.getUserName());
         XfaceCmsAdminResourceAdditionResponseDTO responseDTO = cmsAdminResourceMicroService.resourceAddition(requestDTO);
         return responseDTO;
     }
@@ -64,7 +69,8 @@ public class ResourceController {
     @NeedAuthorize(value = "resource:edit")
     @PostMapping("/resource/modify/inquiry")
     @ResponseBody
-    public XfaceCmsAdminResourceModifyInquiryResponseDTO resourceModifyInquiry(XfaceCmsAdminResourceModifyInquiryRequestDTO requestDTO){
+    public XfaceCmsAdminResourceModifyInquiryResponseDTO resourceModifyInquiry(XfaceCmsAdminResourceModifyInquiryRequestDTO requestDTO)
+    {
         XfaceCmsAdminResourceModifyInquiryResponseDTO responseDTO = cmsAdminResourceMicroService.resourceModifyInquiry(requestDTO);
         return responseDTO;
     }
@@ -72,9 +78,10 @@ public class ResourceController {
     @NeedAuthorize(value = "resource:edit")
     @PostMapping("/resource/modify")
     @ResponseBody
-    public XfaceCmsAdminResourceModifyResponseDTO resourceModify(XfaceCmsAdminResourceModifyRequestDTO requestDTO, HttpServletRequest request){
-        SsoUser user = (SsoUser) request.getAttribute(SsoConstant.SSO_USER);
-        requestDTO.setModifyOperator(user.getUserName());
+    public XfaceCmsAdminResourceModifyResponseDTO resourceModify(XfaceCmsAdminResourceModifyRequestDTO requestDTO, HttpServletRequest request)
+    {
+        //        SsoUser user = (SsoUser) request.getAttribute(SsoConstant.SSO_USER);
+        //        requestDTO.setModifyOperator(user.getUserName());
         XfaceCmsAdminResourceModifyResponseDTO responseDTO = cmsAdminResourceMicroService.resourceModify(requestDTO);
         return responseDTO;
     }
@@ -82,9 +89,11 @@ public class ResourceController {
     @NeedAuthorize(value = "resource:status")
     @PostMapping("/resource/modify/status")
     @ResponseBody
-    public XfaceCmsAdminResourceModifyStatusResponseDTO resourceModifyStatus(XfaceCmsAdminResourceModifyStatusRequestDTO requestDTO, HttpServletRequest request){
-        SsoUser user = (SsoUser) request.getAttribute(SsoConstant.SSO_USER);
-        requestDTO.setModifyOperator(user.getUserName());
+    public XfaceCmsAdminResourceModifyStatusResponseDTO resourceModifyStatus(XfaceCmsAdminResourceModifyStatusRequestDTO requestDTO,
+            HttpServletRequest request)
+    {
+        //        SsoUser user = (SsoUser) request.getAttribute(SsoConstant.SSO_USER);
+        //        requestDTO.setModifyOperator(user.getUserName());
         XfaceCmsAdminResourceModifyStatusResponseDTO responseDTO = cmsAdminResourceMicroService.resourceModifyStatus(requestDTO);
         return responseDTO;
     }

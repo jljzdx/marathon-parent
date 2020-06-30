@@ -1,0 +1,5 @@
+1、OAuth2模式：
+|-授权码模式【最常用】，先在浏览器获取code：http://localhost:8082/oauth/authorize?client_id=product-pc&response_type=code
+|-简化模式
+|-密码模式
+|-客户端模式

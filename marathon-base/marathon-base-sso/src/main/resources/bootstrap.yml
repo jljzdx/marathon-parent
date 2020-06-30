@@ -1,12 +1,21 @@
+server:
+  port: 5858
+  servlet:
+    context-path: /auth # 应用名 localhost:8090/auth
 spring:
   profiles:
     active: dev
   application:
     name: marathon-base-sso
-  resources:
-    static-locations: classpath:/static/
-  mvc:
-    static-path-pattern: /static/**
-  main:
-    #2.0之后默认是false
-    allow-bean-definition-overriding: true
+template:
+  security:
+    authentication:
+      loginPage: /login/page # 响应认证(登录)页面的URL
+      loginProcessingUrl: /auth/doLogin # 登录表单提交处理的url
+      usernameParameter: loginAccount # 登录表单提交的用户名的属性名
+      passwordParameter: loginPassword  # 登录表单提交的密码的属性名
+      staticPaths: # 静态资源
+        - /layuiadmin/**
+        - /jquery/**
+      loginType: REDIRECT # 认证之后 响应的类型：JSON/REDIRECT
+      imageCodeUrl: /generate/captcha # 获取图形验证码地址

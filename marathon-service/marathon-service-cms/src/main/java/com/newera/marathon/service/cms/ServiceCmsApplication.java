@@ -15,15 +15,14 @@ import org.springframework.transaction.annotation.EnableTransactionManagement;
 @EnableCaching
 @MapperScan({"com.newera.marathon.service.*.mapper"})
 @EnableFeignClients(basePackages = {"com.newera.marathon.microface.cos"})
-@ComponentScan(basePackages = {
-		"com.newera.marathon.microface.cos",
-		"com.spaking.boot.starter",
-		"com.newera.marathon.mq",
-		"com.newera.marathon.service"})
-public class ServiceCmsApplication {
+@ComponentScan(basePackages = {"com.newera.marathon.microface.cos", "com.spaking.boot.starter", "com.newera.marathon.mq",
+        "com.newera.marathon.service"})
+public class ServiceCmsApplication
+{
 
-	public static void main(String[] args) {
-		SpringApplication.run(ServiceCmsApplication.class, args);
-	}
+    public static void main(String[] args)
+    {
+        SpringApplication.run(ServiceCmsApplication.class, args);
+    }
 
 }
