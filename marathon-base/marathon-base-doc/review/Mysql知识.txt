@@ -28,25 +28,26 @@
   |--BTree：不是二叉树，是一种树状数据结构，减少了平衡二叉树的高度，也就是磁盘IO;虽然支持范围查询，但效率比较低；
   |--B+Tree：
      |---B+Tree是从最早的平衡二叉树演化而来，也是BTree的升级版，但是B+Tree不是一个二叉树
-     |---B+Tree解决了BTree范围查询效率低的问题，因为叶子节点使用了有序链表连接。
+     |---B+Tree解决了BTree范围查询效率低的问题，因为叶子节点使用了有序双向链表连接。
      |---B+Tree分为聚集索引和非聚集索引
      |---非叶子节点只包含key（也就是索引的值），叶子节点包含key和value（key=索引的值；value=一个地址指针或行数据）
      |---缺点：在叶子节点冗余了非叶子节点的数据，比较占用硬盘空间
 |-为什么不使用hash、二叉树、BTree，而采用B+Tree？
   |--1、磁盘IO次数更少2、叶子节点形成有序链表，执行范围操作效率高（where id<6）
 |-Myisam（非聚集索引）原理：
-  |--创建表就会生成这3个文件：user.myi 索引文件、user.myd 数据文件、user.frm 创建表语句，所以叫非聚集索引
+  |--创建表就会生成这3个文件：user.MYI 索引文件、user.MYD 数据文件、user.frm 创建表语句，所以叫非聚集索引
   |--select * from user where id = 1的执行流程：
   1、查看该表的myi文件有没有以id为索引的索引树。
   2、根据这个id索引找到叶子节点的id值，从而得到它里面的数据地址。(叶子节点存的是索引和数据地址)。
   3、根据数据地址去myd文件里面找到对应的数据返回出来。
 |-Innodb（聚集索引）：
-  |--创建表就会生成这2个文件：user.ibd 索引文件、user.frm 创建表语句，所以叫非聚集索引
+  |--创建表就会生成这2个文件：user.ibd 索引文件、user.frm 创建表语句，所以叫聚集索引
   |--创建一个以name为索引，select * from user where name = '吴磊'的执行流程：
   1、找到name索引树。
   2、根据name的值找到该树下叶子的name索引和主键值。
   3、用主键值去主键索引树的叶子节点找到该条数据信息。
 |-为什么Mysql在建表时必须指定主键？
+  |--当然，不建也可以，这样mysql底层会帮我们维护一个主键，性能下降
   |--看图InnoDB索引原理.png
   |--因为在创建表时，InnoDB就会主动建立好主键ID索引树
 
@@ -75,6 +76,10 @@
      |---like '%a'【可以使用覆盖索引来解决】
      |---函数操作
      |---表达式操作（where num/2=100）
+     |---!=或<>
+     |---in或not in
+     |---is null或is not null
+     |---类型转换：where name=123
   |--不要使用select *
   |--如果明知道结果只返回一条记录，后面最好加上limit 1
   |--表沒有主键(Primary key), 那么count(1)比count(*)快，有主键的話，那主键作为count的条件时候count(主键)最快
@@ -160,10 +165,10 @@ show slave status
 
 7、Mysql锁
 |-行锁：开销大；加锁慢；会出现死锁；但处理并发的能力强
-|-表锁：开销小；加锁快；无死锁；并发处理能力低
+|-表锁：开销小；加锁快；无死锁；并发处理能力低，偏向MyISAM存储引擎
 |-共享锁：允许事务读一行数据
 |-排他锁：允许事务删除或更新一行数据
-|-死锁情况：
+|-死锁情况（肯定涉及两条数据，但不一定两条sql语句，因为一条sql语句可能锁多行）：
   |--sessionA：
     --T1时刻
     BEGIN;
@@ -181,3 +186,45 @@ show slave status
     --T4时刻
     --更新 id=1 的记录
     update test1 set id=id where id=1;
+8、百万数据分页优化
+|-利用覆盖索引+复合索引
+SELECT * FROM product a JOIN (select id from product limit 866613, 20) b ON a.ID = b.id
+9、explain
+|-select_type
+  |--primary：包含子查询的sql中的主查询，最外层
+  |--subquery：包含子查询的sql中的子查询
+  |--simple：简单查询。不包含自查询和union
+  |--derived：衍生查询。用到了临时表，比如：
+     |---在from子查询中只有一张表
+     |---在from子查询中，如果table1 union table2，则table1就是derived，table2就是union
+|-type
+  |--性能：system>const>eq_ref>ref>range>index>all
+  |--提示：system、const的性能是最好的，但是在实际开发中很难达到，能优化到ref和range就可以了
+  |--system：只有一条数据的系统表；或衍生表只有一条数据的主查询
+  |--const：仅仅能查出一条数据的sql，并且查询条件是primary key或unique
+  |--eq_ref：根据某个索引（如：name）条件查询的结果，不能有重复的，并且查出来不能0条数据，常见的比如：根据主键和唯一索引查询就能达到。
+             当两个表关联查询，想达到eq_ref，两个表的数据必须一样多，也就是一一对应，所以也很难达到
+  |--ref：根据某个索引（如：name）条件查询就行
+  |--range：根据某个索引查询指定范围的行（between、in、>、<、>=）
+            注意：in有时候可以，有时候不行（就是all），比较特殊
+  |--index：查询全部索引中的数据
+            比如：select id from teacher;就是只扫描id这一列，并且id是索引
+  |--all：查询全部表中的数据
+            比如：select name from teacher;name不是索引，所以全表扫描
+|-possible_keys：可能用到的索引，是一种预测，可能不准
+|-key：实际使用到的索引
+|-key_len：索引长度，通常用于判断复合索引是否被完全使用，utf-8一个字符占3个字节，如果字段允许为null，会+1
+|-ref：
+  |--select * from course c, teacher t where c.tid=t.tid and name='tx';
+  |--const：因为name='tx'是常量
+  |--myDB.t.tid：也就是说，c表的tid使用到了t表的tid
+|-raws：扫描的行数
+|-Extra
+  |--using filesort：代表额外进行了一次排序，耗性能，所以一般建议，where哪些字段，就order by哪些字段
+  select * from teacher where a1='zhang' order by a2;
+  |--using temporary：代表额外使用了临时表，经常出现在group by语句中。所以一般建议，查询哪些字段，就group by哪些字段
+  select a1 from teacher group by a2
+  |--using index：使用到了索引，性能好了
+  |--using where：回到了原表查
+  select age,name from teacher where age=3;【age是索引列，name不是】
+  因为age直接查索引表B+Tree，但是name不是索引列，需要回到原表查

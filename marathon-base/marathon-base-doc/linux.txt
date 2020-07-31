@@ -1,0 +1,31 @@
+1、腾讯云Mysql安装过程：
+wget http://repo.mysql.com/mysql57-community-release-el7-8.noarch.rpm
+rpm -ivh mysql57-community-release-el7-8.noarch.rpm
+yum install mysql-community-server -y
+service mysqld restart
+grep "password" /var/log/mysqld.log
+mysql -uroot -p'l>KbWhk6K&+Y'
+SET PASSWORD = PASSWORD('MicroBin568!');
+ALTER USER 'root'@'localhost' PASSWORD EXPIRE NEVER;
+flush privileges;
+grant all privileges on *.* to root@"%" identified by "MicroBin568!";
+grant all privileges on *.* to root@"localhost" identified by "MicroBin568!";
+flush privileges;
+
+2、查看内存、硬盘使用情况：
+grep MemTotal /proc/meminfo   # 查看内存总量
+grep MemFree /proc/meminfo    # 查看空闲内存量
+df -hl	# 查看磁盘使用情况
+top -u elk   #查看内存进程占用情况
+jps -l; jmap -heap 进程号     # 查看JVM内存使用情况
+
+3、查看进程占用端口号：
+ps -ef | grep 进程名
+netstat -nap | grep 进程pid
+
+4、Vim命令
+|-o 插入新的一行
+|-Ctrl+f 向下翻屏、Ctrl+b 向上翻屏
+|-u 取消操作、p 粘贴
+|-yy 复制光标所在位置的一行
+|-^ 光标移动至行首、$ 光标移动至行尾

@@ -12,6 +12,7 @@ public class QueueDemoConfig
 {
 
     //--------------Direct类型演示开始---------------//
+    //Direct是一对一的方式，一条消息只能被一个消费者消费
     public static final String DIRECT_QUEUE = "test.queue";
 
     public static final String DIRECT_EXCHANGE = "test.exchange";
@@ -38,6 +39,7 @@ public class QueueDemoConfig
     //--------------Direct类型演示结束---------------//
 
     //--------------Topic类型演示开始---------------//
+    //“*” 匹配特定位置的任意文本，“#” 匹配所有规则
     //队列
     public static final String QUEUE_NEWS = "queue_news";
 
@@ -76,7 +78,7 @@ public class QueueDemoConfig
 
     //声明交换机
     @Bean(EXCHANGE_TOPIC_KAIFENG)
-    public Exchange EXCHANGE_TOPIC_INFORM()
+    public Exchange EXCHANGE_TOPIC_KAIFENG()
     {
         //声明了一个Topic类型的交换机，durable是持久化（重启rabbitmq这个交换机不会被自动删除）
         return ExchangeBuilder.topicExchange(EXCHANGE_TOPIC_KAIFENG).durable(true).build();

@@ -70,4 +70,8 @@ db.password=root
 |-问题：Nacos的持久化和集群的缺点：成本和可用性
 8、注意事项
 |-nacos启动久了，有些配置会无效。
+9、动态配置
+@Autowired
+private ConfigurableApplicationContext configurableApplicationContext;
+configurableApplicationContext.getEnvironment().getProperty("common.name");
 

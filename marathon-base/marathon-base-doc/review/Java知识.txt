@@ -55,6 +55,7 @@
      private static AtomicBoolean mAtomicFlag = new AtomicBoolean(true);
   |--保证成员变量的可见性，禁止指令重排序，但不能保证操作的原子性。
   |--让变量每次在使用的时候，都从主内存中取，而不是从各个线程的“工作内存”。
+  |--当线程对共享变量修改时，会导致线程1的工作内存中缓存变量的缓存行无效，所以线程1只能再去主内存读取
   |--例子：
   public class Demo { public int counter = 0;}
   线程1：counter = 7;
@@ -121,7 +122,7 @@
      |---corePoolSize：核心线程数量，线程池维护线程的最少数量
          用于设定 thread pool 需要时刻保持的最小core threads的数量，即便这些core threads处于空闲状态啥事都不做也不会将它们回收掉
      |---maximumPoolSize：线程池维护线程的最大数量，放到队列的不算
-     |---keepAliveTime：空闲线程等待新任务的最长时间，超过该时间的空闲线程会被销毁
+     |---keepAliveTime：线程池中非核心线程空闲的存活时间大小，超过该时间的空闲线程会被销毁
          默认情况下，只有当线程池中的线程数大于corePoolSize时，keepAliveTime才会起作用
      |---workQueue：线程池所使用的任务缓冲队列
      |---handler：线程池对拒绝任务的处理策略
@@ -134,12 +135,19 @@
   |--队列
      |---有界队列（ArrayBlockingQueue）：容量固定的有界阻塞队列
      |---同步移交（SynchronousQueue）：不希望任务在队列中等待而是希望将任务直接移交给工作线程
-     |---无界队列（LinkedBlockingQueue）：
-     |---优先级队列（PriorityBlockingQueue）：
+     |---无界队列（LinkedBlockingQueue）：newFixedThreadPool
+     |---延迟队列（DelayQueue）：newScheduledThreadPool
+     |---优先级队列（PriorityBlockingQueue）：newCachedThreadPool
   |--五个线程池
      |---FixedThreadPool：固定大小的线程池，每次提交一个任务就创建一个线程，直到线程达到线程池的最大大小。
          ExecutorService fixedThreadPool = Executors.newFixedThreadPool(3);
-     |---CachedThreadPool：可缓存线程池
+         public static ExecutorService newFixedThreadPool(int nThreads, ThreadFactory threadFactory) {
+                 return new ThreadPoolExecutor(nThreads, nThreads,
+                                               0L, TimeUnit.MILLISECONDS,
+                                               new LinkedBlockingQueue<Runnable>(),
+                                               threadFactory);
+             }
+     |---CachedThreadPool：可缓存线程池，用于并发执行大量短期的小任务。
          ExecutorService cachedThreadPool = Executors.newCachedThreadPool();
      |---SingleThreadPool：单线程池，也就是该线程池只有一个线程在工作，所有的任务是串行执行的（按照任务的提交顺序执行）。
          ExecutorService singleThreadExecutor = Executors.newSingleThreadExecutor();
@@ -151,9 +159,9 @@
   |--强引用：Object obj = new Object();
   |--软引用：当内存空间足够，垃圾回收器就不会回收它，当内存空间不足了，就会回收这些对象的内存
             SoftReference<String> softRef=new SoftReference<String>(str);
-  |--弱引用：垃圾收集器扫描它所管辖的内存区域的过程中，如果发现了弱引用对象，不管内存空间是否足够，都会回收它的内存
+  |--弱引用：发生GC时，如果发现了弱引用对象，不管内存空间是否足够，都会回收它的内存
             WeakReference<String> abcWeakRef = new WeakReference<String>(str);
-  |--虚引用：任何时候都可能被垃圾收集器回收
+  |--虚引用：任何时候都可能被垃圾收集器回收（比如obj=null）
 2、设计模式
 |-动态代理模式：
   |--JDK:拦截器（InvocationHanlder）+反射机制生成一个实现代理接口的匿名类
@@ -166,7 +174,7 @@
 |-适配器模式：
   |--场景：你定义类一个接口，我也定义了一个接口，我们都不想改，这时就可以写一个适配器来适配这两个接口
   |--类适配器：使用继承的方式，看ClassAdapter类就懂了
-  |--对象适配器：看ObjectAdapter类就懂了
+  |--对象适配器：看ObjectAdapter类就懂了，扩展性好，子类也可以被适配
 |-装饰器模式：
   |--为什么使用：动态地给一个对象添加一些额外的职责。一般的，我们为了扩展一个类经常使用继承方式实现，并且随着扩展功能的增多，子类会很膨胀。
      装饰器模式相比生成子类更为灵活，简单的总结（不改变原类文件、不使用继承、动态扩展）。
@@ -233,14 +241,34 @@
 |-门面模式
   |--比如：张三（客户端）想建房子，本来需要自己去找会和泥的、会搬砖的、会砌墙的（这三个叫子系统），但现在有了包工头（门面角色），张三直接找包工头，包工头去做所有的事情。
 |-模板模式
-  |--一些方法通用，却在每一个子类都重新写了这一方法
+  |--一些方法通用，却在每一个子类都重新写了这一方法，比如：【下单、吃面、付钱；下单、吃烧烤、付钱】
 |-工厂模式：
   |--
 |-单例模式：
   |--双检锁：
+  public class Singleton {
+      private static volatile Singleton instance = null;
+      private Singleton() { }
+      public static Singleton getInstance() {
+          if (instance == null) {
+              synchronized(Singleton.class) {
+                  if (instance == null) {
+                      instance = new Singleton();
+                  }
+              }
+          }
+          return instance;
+      }
+  }
+  |--枚举：让JVM来帮我们保证线程安全
+  public enum Singleton {
+      INSTANCE;
+      public void doSomething() {
+          System.out.println("doSomething");
+      }
+  }
 
 3、JVM
-|-JVM内存结构：运行时数据区、
 |-面试问CPU100%怎么排查
   |--查消耗cpu最高的进程号PID
      |---top –c
@@ -248,11 +276,12 @@
   |--根据PID查出消耗cpu最高的线程号，并转成16进制
      |---top -Hp 17376
      |---printf '%xn' 17378 17379 17412 17426
-  |--导出进程快照：jstack 3033【进程PID】 > yao.stack
+  |--导出进程快照：jstack 17376【进程PID】 > yao.stack
   |--分析快照，定位到具体代码：cat -n yao.dump | grep -A10【显示后续10行】 '0x4404'
 |-StackOverflowError
   |--栈深度大于虚拟机所能提供的深度，会抛出StackOverflowError，比如递归
 |-OutOfMemoryError
+  |--一般是因为大对象产生的
   |--项目中怎么解决这种问题？
      |---查看错误日志
      |---检查对数据库查询中，是否有一次获得全部数据的查询。
@@ -261,22 +290,16 @@
      |---使用内存查看工具（jconsole、jvisualvm）动态查看内存使用情况
          |----生成堆快照（dump）：-XX:+HeapDumpOnOutOfMemoryError  -XX:HeapDumpPath=/Users/microbin/Downloads/test.dump  -XX:+PrintGCDetails -Xms14m -Xmx34m
          |----使用工具打开test.dump
-  |--永久带（Java8不会）
+         |----找到大对象
   |--创建的对象太多，可能是死循环，导致超过堆内存大小（可设置参数Xms（初始堆大小）和Xmx（最大堆大小））
   |--线程创建太多
-  |--遇到这种问题你是怎么解决的？
-     |---java -XX:+HeapDumpOnOutOfMemoryError Demo（会生成一个类似java_pid10836.hprof的文件）
-     |---使用IBM heapAnalyzer（下载下来是一个类似ha456.jar，直接运行java -jar ha456.jar）来分析java_pid10836.hprof文件
-     |---最后通过工具把java_pid10836.hprof选进来进行分析
-|-内存泄露：不再会被使用的对象的内存不能被回收（解决办法：将内存泄露对象手动赋值为null）
 参数调优：
 |-调优就是减少full GC，因为STW【stop the world】,会停止掉所有用户线程。
 |-设置使用哪种收集器：-XX:+UseConcMarkSweepGC -XX:-UseParNewGC 新生代：Serial；老年代：CMS
 |-查看使用哪种收集器：java -XX:+PrintCommandLineFlags -version -> java -XX:+PrintGCDetails -version
 |-常用参数：【注意：+是启用；-是关闭】
-  |-- -Xms20m:堆初始值20M
-  |-- -Xmx20m:堆最大可用值20M
-  |-- -Xss128k:每个线程的堆栈大小
+  |-- -Xms20m:堆初始值20M 、 -Xmx20m:堆最大可用值20M【这两个参数一般设置成一样】
+  |-- -Xss256k:每个线程的栈大小
   |-- -XX:ParallelGCThreads=n:并行垃圾收集时，使用的线程数
   |-- -XX:+UseAdaptiveSizePolicy:打开自适应GC策略
   |-- -XX:NewRatio=3:设置年轻代和年老代的比值；年轻代与年老代比值为1：3
@@ -285,11 +308,12 @@
   |-- -XX:MaxMetaspaceSize=20:配置元空间最大内存20M
 |-例子：java -Xms20m -Xmx20m -XX:+UseAdaptiveSizePolicy -XX:SurvivorRatio=4 -XX:NewRatio=3 -XX:MaxMetaspaceSize=20 -XX:+UseConcMarkSweepGC -XX:-UseParNewGC -XX:+PrintGCDetails
 JVM内存结构【hotspot jvm】：
-|-程序计数器【PC寄存器】：记录着当前线程所执行的字节码的行号（说白了，就是线程执行过程中突然挂起，当抢到资源需要只当之前执行到哪个位置了）
+|-程序计数器【PC寄存器】：记录着当前线程所执行的字节码的行号（说白了，就是线程执行过程中突然挂起，当抢到资源需要知道之前执行到哪个位置了）
   |--每个线程工作时都有属于自己的独立计数器
   |--执行java方法时，程序计数器是有值的，且记录的是正在执行的字节码指令的地址
   |--执行native本地方法时，程序计数器的值为空
 |-Java栈：栈帧组成，每个栈帧对应一个被调用的方法
+  |--内存逃逸：指方法中new的对象，原本是在栈帧分配空间【又叫做栈上分配】，后来由于别的地方需要引用方法中的对象或者创建的是大对象，导致对象被分配到堆中。
   |--局部变量表：存储方法参数变量
   |--操作数栈：程序中的所有计算过程都是在借助于操作数栈来完成的
   |--动态连接：指向当前方法所属的类的运行时常量池的引用
@@ -297,9 +321,7 @@ JVM内存结构【hotspot jvm】：
   |--一些额外的附加信息
 |-堆：存储对象以及数组，JDK7和JDK8不同之处在于堆【JDK6永久带；JDK7堆（JDK6永久带中的部分数据转移到了heap中，如：字面量、符号引用、类的静态变量，但永久代仍存在）；
       JDK8移除永久带，使用直接内存（又叫元空间）直接从操作系统中分配】
-|-方法区：很多人习惯将方法区称为“永久代”，是因为HotSpot虚拟机以永久代来实现方法区，存储了每个类的信息（包括类的名称、方法信息、字段信息）、静态变量、运行时常量池以及编译器编译后的代码等【JDK8换成直接内存了】
-|-Class文件中除了类的字段、方法、接口等描述信息外，还有一项信息是常量池，用来存储编译期间生成的字面量和符号引用
-|-方法区是一种规范，而永久代是一种实现
+|-方法区【JDK8叫元空间】：class对象（包括类的名称、方法信息、字段信息）、静态变量、常量（final修饰的）
 |-JDK7、JDK8字符串常量池移到堆中
 |-变量存储位置：
   |--成员变量：
@@ -310,11 +332,12 @@ JVM内存结构【hotspot jvm】：
      |---String a = new String("A");：a存储在栈中，new String存储中堆中，"A"存储在方法区的常量池
 GC:
 |-minor gc（Eden）、young gc（Eden+Survivor）、major gc（Old）、full gc（New+Old）
+  |--full GC一般是因为元空间不足或者老年代空间不足
 |-什么时候被移动到年老代呢？
   |--大对象直接进入老年代
   |--Survivor区中每熬过一次Minor GC，年龄就会增加1岁，当它的年龄增加到一定程度时
      （默认-XX:MaxTenuringThreshold=15岁，Parallel Scavenge中默认值为15，CMS中默认值为6，G1中默认值为15），就会被移动到年老代中
-  |--当Eden+From/To要移动到From/To时，如果存活的对象大于From/To的一半空间，就会分配到年老代。
+  |--当Eden+From/To要移动到From/To时，如果存活的对象大于From/To的一半空间，就会使用老年代的担保机制复制一部分对象到老年代。
 |-判断哪些内存需要被回收
   |--引用计数法：每个对象有一个引用计数属性，新增一个引用时计数加1，引用释放时计数减1，计数为0时可以回收
   |--可达性分析法：当一个对象到GC Roots没有任何引用链（强、软、弱、虚）相连时，则证明此对象是不可用的
@@ -346,17 +369,18 @@ GC:
      |---使用多线程和“标记-整理”算法
   |--CMS收集器：【老生代】
      |---以最小的停顿时间为目标的收集器，基于标记 - 清除算法，并发收集、低停顿，可结合Serial、ParNew使用。
-     |---缺点：对CPU资源非常敏感、无法处理浮动垃圾、产生大量碎片
+     |---缺点：对CPU资源非常敏感【主要是因为并发标记和并发清除阶段】、无法处理浮动垃圾【在重新标记期间，之前已经标记的对象可能变成垃圾了】、产生大量碎片
+     |---注意：不会等到老年代占满的时候才去回收，默认占到92%才去回收
      |---包括四个步骤：
 	     |----初始标记
-	          |-----第一次停顿
-	          |-----标记存活的对象
-	          1、标记老年代中所有的GC Roots对象
-	          2、标记年轻代中活着的对象引用到的老年代的对象
+	          |-----需要STW
+	          |-----标记老年代中所有存活的GC Roots对象
 	     |----并发标记
-	          |-----对初始标记中标记的存活对象进行trace
-	          |-----将在并发阶段新生代晋升到老年代的对象、直接在老年代分配的对象以及老年代引用关系发生变化的对象标记为dirty，避免在重新标记阶段扫描整个老年代。
-	     |----重新标记【为了修正并发标记期间因用户程序继续运作而导致标记变动的那一部分对象的标记记录，需要STW】
+	          |-----不需要STW
+	          |-----标记老年代中所有存活的GC Roots对象下关联的对象。
+	     |----重新标记
+	          |-----需要STW
+	          |-----标记年轻代中活着的对象引用到的老年代的对象、标记刚刚从年轻代移动到老年代的对象【为了修正并发标记期间因用户程序继续运作而导致标记变动的那一部分对象的标记记录，需要STW】
 	     |----并发清除【回收所有的垃圾对象】
 	 |---参数配置：-XX:+UseConcMarkSweepGC
   |--G1收集器：【整堆收集器，也就是单独使用在新生代和老年代】
@@ -380,9 +404,18 @@ GC:
   |--加载：找到类的字节码文件，利用类加载器创建一个Class对象
   |--连接：
      |---验证：验证加载的类信息符合JVM规范
-	 |---准备：为类变量分配内存，并设置默认初始值
-	 |---解析：将类的二进制数据中的符号引用替换为直接引用
-  |--初始化：主要是对类变量进行初始化
+	 |---准备：为静态变量分配内存，并设置默认初始值
+	     |----public static int value = 123;赋给value的值是0
+	     |----public static final int value = 123;赋给value的值是123
+	 |---解析：将常量池的符号引用替换为直接引用
+	 class Worker{
+         ......
+         public void gotoWork(){
+             car.run(); //这段代码在Worker类中的二进制表示为符号引用
+         }
+         ......
+     }
+  |--初始化：主要是对静态变量进行初始化
 |-类变量指定初始值有两种：
   |--声明类变量时指定初始值
   |--使用静态代码块指定初始值
@@ -391,11 +424,12 @@ GC:
   |--如果该类的直接父类还没有被初始化，则先初始化其直接父类。所以JVM最先初始化的总是Object类
   |--如果类中有初始化语句，则系统依次执行这些初始化语句
 |-初始化时机
-  |--创建类的实例
-  |--调用某个类的类方法
-  |--访问某个类或接口的类变量
-  |--使用反射创建某个类或接口的Class对象。
-  |--初始化某个类的子类
+  |--创建类的实例，new Person();
+  |--调用类的静态方法
+  |--访问类的静态变量
+  |--反射创建类Class.forName("");
+  |--初始化某个类的子类，触发父类初始化
+  |--main方法
   |--特例：
      class Test{
 		static{
@@ -423,14 +457,15 @@ GC:
 		}
 	 }
 |-类加载器
-  |--Bootstrap ClassLoader：启动类加载器（负责将存放在%JAVA_HOME%/lib路径中的类库加载到内存中）
+  |--Bootstrap ClassLoader：启动类加载器（负责加载%JAVA_HOME%/lib路径中的核心类库）
   |--Extension ClassLoader：扩展类加载器（负责加载%JAVA_HOME%/lib/ext路径中的类库）
-  |--System ClassLoader：系统类加载器（负责加载classpath下的类库）
+  |--Application ClassLoader：应用程序类加载器（负责加载classpath下的类库）
   |--自定义类加载器：
      |---extends ClassLoader:loadClass(String name, boolean resolve);findClass(String name);
+     |---什么场景？
 |-类加载机制
   |--双亲委派模型：
-     |---如果一个类加载器收到类加载的请求，它首先不会自己去尝试加载这个类，而是把这个请求委派给父类加载器完成。
+     |---如果一个类加载器收到类加载的请求，先判断类是否已经被加载过，它首先不会自己去尝试加载这个类，而是把这个请求委派给父类加载器完成。
          每个类加载器都是如此，只有当父加载器在自己的搜索范围内找不到指定的类时（即ClassNotFoundException），子加载器才会尝试自己去加载。
 	 |---为什么需要双亲委派模型？
 	 黑客自定义一个java.lang.String类，该String类具有系统的String类一样的功能，只是在某个函数稍作修改。
@@ -440,7 +475,8 @@ GC:
 	 而有了双亲委派模型，黑客自定义的java.lang.String类永远都不会被加载进内存。因为首先是最顶端的类加载器加载系统的java.lang.String类，最终自定义的类加载器无法加载java.lang.String类。
 	 或许你会想，我在自定义的类加载器里面强制加载自定义的java.lang.String类，不去通过调用父加载器不就好了吗?
 	 确实，这样是可行。但是，在JVM中，判断一个对象是否是某个类型时，如果该对象的实际类型与待比较的类型的类加载器不同，那么会返回false。
-     |---如何打破？需要继承ClassLoader类，还要重写loadClass和findClass方法
+  |--如何打破双亲委派模型？
+     |---比如JDBC通过Thread.currentThread().getContextClassLoader()得到线程上下文加载器来加载Driver实现类
 
 4、Java8函数式接口
 |-常用的函数式接口：

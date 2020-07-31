@@ -1,5 +1,3 @@
-server:
-  port: 8081
 spring:
   cloud:
     nacos:
@@ -10,12 +8,9 @@ spring:
         group: MARATHON_GROUP
         prefix: marathon-service-dynamic-config
         ext-config[0]:
-          data-id: freemarker.yaml
-          refresh: true
-        ext-config[1]:
           data-id: feign-ribbon-hystrix.yaml
           refresh: true
-        ext-config[2]:
+        ext-config[1]:
           data-id: redis.yaml
           refresh: true
       discovery:

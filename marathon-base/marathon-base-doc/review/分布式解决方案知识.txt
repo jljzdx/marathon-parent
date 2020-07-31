@@ -22,12 +22,12 @@ if (result == 1) {
 解锁：
 private static final Long RELEASE_SUCCESS = 1L;
 String script = "if redis.call('get', KEYS[1]) == ARGV[1] then return redis.call('del', KEYS[1]) else return 0 end";
-        Object result = jedis.eval(script, Collections.singletonList(lockKey), Collections.singletonList(requestId));
+Object result = jedis.eval(script, Collections.singletonList(lockKey), Collections.singletonList(requestId));
 
-        if (RELEASE_SUCCESS.equals(result)) {
-            return true;
-        }
-        return false;
+if (RELEASE_SUCCESS.equals(result)) {
+    return true;
+}
+return false;
 不要使用：
 // 判断加锁与解锁是不是同一个客户端
 if (requestId.equals(jedis.get(lockKey))) {
@@ -138,7 +138,7 @@ RabbitMQ解决分布式事务（最终一致性思想）：
   |--雪崩效应：由于默认情况下，只有一个线程池维护所有的服务接口，如果流量达到tomcat线程池默认的极限，可能导致服务无法访问
   |--服务隔离：保证每个服务接口互不影响。用来解决雪崩的，有两种方式【线程池、信号量】
   |--雪崩效应解决：
-     |---通过Hiytrix的服务降级【为了用户体验，fallback使用异步线程callable和future返回结果】
+     |---通过Hystrix的服务降级【为了用户体验，fallback使用异步线程callable和future返回结果】
      |---服务熔断机制【为了保护服务，如果流量超出设置的默认的阈值10，自动开启保护服务功能，和降级一起使用】
      |---服务隔离【线程池隔离：使用@HystrixCommand会另外开启一个线程池】，注意走降级超时时间，默认是1秒
 

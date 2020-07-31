@@ -1,3 +1,4 @@
+HUB:microbin/MicroBin568
 1、docker部署springboot
 |-编写Dockerfile
 |-制作镜像：docker build -t demotest .
@@ -28,7 +29,13 @@
 |-docker restart containerid/containername：重启容器
 |-docker rm containerid/containername：删除已停止的容器
   |--docker rm -f containerid：可删除正在运行的容器
-
+3、项目使用
+|-可以先将本地项目制作成镜像发送到阿里云，然后到服务器下载镜像运行
+4、制作镜像
+|-FROM java:8【基础镜像】
+|-MAINTAINER【备注】
+|-ADD【复制文件或目录到镜像】
+|-ENTRYPOINT【运行】
 
 
 

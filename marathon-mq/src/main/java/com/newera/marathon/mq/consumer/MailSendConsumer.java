@@ -21,43 +21,57 @@ import java.io.IOException;
 
 @Component
 @Slf4j
-public class MailSendConsumer extends BaseConsumer {
+public class MailSendConsumer extends BaseConsumer
+{
 
     @Autowired
     private CosMicroService cosMicroService;
+
     @Autowired
     private CosMsgLogMicroService cosMsgLogMicroService;
 
     @RabbitListener(queues = RabbitConfig.MAIL_QUEUE)
-    public void receive(@Payload String message, Channel channel, @Header(AmqpHeaders.DELIVERY_TAG) long tag, @Header(AmqpHeaders.REDELIVERED) boolean reDelivered) throws IOException {
+    public void receive(@Payload String message, Channel channel, @Header(AmqpHeaders.DELIVERY_TAG) long tag,
+            @Header(AmqpHeaders.REDELIVERED) boolean reDelivered) throws IOException
+    {
         log.info("【邮件队列消费者】消息体: {}", message);
         MailSend mailSend = JSONObject.parseObject(message, MailSend.class);
         //幂等性判断
-        if(!idempotent(mailSend.getMsgId())) return;
+        if (!idempotent(mailSend.getMsgId()))
+            return;
         //发送邮件
         XfaceCosMailSendRequestDTO cosMailSendRequestDTO = new XfaceCosMailSendRequestDTO();
         BeanUtils.copyProperties(mailSend, cosMailSendRequestDTO);
         XfaceCosMailSendResponseDTO cosMailSendResponseDTO = cosMicroService.sendMail(cosMailSendRequestDTO);
-        if (cosMailSendResponseDTO.getTransactionStatus().isSuccess()) {
+        if (cosMailSendResponseDTO.getTransactionStatus().isSuccess())
+        {
             //更新状态为已消费
             msgLogModify(mailSend.getMsgId());
             //basicReject和basicNack的区别：basicReject一次只能拒绝一条消息；basicNack一次可以拒绝多条消息
             //multiple：批量确认（true:将一次性拒绝所有小于deliveryTag的消息）；requeue：重新入列
-            try {
+            try
+            {
                 channel.basicAck(tag, false);
-            } catch (IOException e) {
-                if(reDelivered){
-                    log.info("消息已重复处理失败：{}",message);
-                    channel.basicReject(tag,false);
-                }else{
-                    log.error("消息处理失败",e);
+            }
+            catch (IOException e)
+            {
+                if (reDelivered)
+                {
+                    log.info("消息已重复处理失败：{}", message);
+                    channel.basicReject(tag, false);
+                }
+                else
+                {
+                    log.error("消息处理失败", e);
                     //重新入队一次
-                    channel.basicNack(tag,false,true);
+                    channel.basicNack(tag, false, true);
                 }
                 e.printStackTrace();
             }
             log.info("receiver success");
-        } else {
+        }
+        else
+        {
             channel.basicNack(tag, false, false);
             log.error("receiver failed,cause:{}", cosMailSendResponseDTO.getTransactionStatus().getReplyText());
             throw new RuntimeException(cosMailSendResponseDTO.getTransactionStatus().getReplyText());

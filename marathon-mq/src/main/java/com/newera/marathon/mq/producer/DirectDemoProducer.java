@@ -1,14 +1,13 @@
 package com.newera.marathon.mq.producer;
 
-import com.alibaba.fastjson.JSON;
 import com.newera.marathon.common.utils.RandomUtil;
 import com.newera.marathon.mq.config.QueueDemoConfig;
 import com.newera.marathon.mq.pojo.MailSend;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.amqp.AmqpException;
 import org.springframework.amqp.core.Message;
-import org.springframework.amqp.core.MessageBuilder;
 import org.springframework.amqp.core.MessageDeliveryMode;
-import org.springframework.amqp.core.MessageProperties;
+import org.springframework.amqp.core.MessagePostProcessor;
 import org.springframework.amqp.rabbit.connection.CorrelationData;
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -31,16 +30,21 @@ public class DirectDemoProducer extends BaseProducer {
         mailSend.setSubject("subject");
         mailSend.setType(1);
         mailSend.setCc("cc");
-        //消息体
-        String body = JSON.toJSONString(mailSend);
-        log.info("【测试队列生产者】消息体：{}",body);
 
-        Message message = MessageBuilder.withBody(body.getBytes()).build();
-        message.getMessageProperties().setDeliveryMode(MessageDeliveryMode.PERSISTENT);// 消息持久化
-        message.getMessageProperties().setContentType(MessageProperties.CONTENT_TYPE_JSON);
-        //消息唯一ID
-        CorrelationData correlationData = new CorrelationData(mailSend.getMsgId());
-        //指定交换机，指定routing key，发送消息
-        rabbitTemplate.convertAndSend(QueueDemoConfig.DIRECT_EXCHANGE, QueueDemoConfig.DIRECT_ROUTING_KEY, message, correlationData);
+        //用于发送回调的消息ID
+        CorrelationData correlationData = new CorrelationData(msgId);
+        //发送
+        rabbitTemplate.convertAndSend(QueueDemoConfig.DIRECT_EXCHANGE, QueueDemoConfig.DIRECT_ROUTING_KEY, mailSend, new MessagePostProcessor(){
+
+            @Override
+            public Message postProcessMessage(Message message) throws AmqpException
+            {
+                message.getMessageProperties().setHeader("direct", "direct-header");
+                // 消息持久化，当我们对性能要求比较高的情况下，可以设置为NON_PERSISTENT（不持久化），可以接受丢失一些数据
+                message.getMessageProperties().setDeliveryMode(MessageDeliveryMode.PERSISTENT);
+                message.getMessageProperties().setMessageId(msgId);
+                return message;
+            }
+        }, correlationData);
     }
 }
