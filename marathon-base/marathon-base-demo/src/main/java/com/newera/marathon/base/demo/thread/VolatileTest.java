@@ -6,21 +6,23 @@ package com.newera.marathon.base.demo.thread;
  * 而主线程读的又是自己的工作内存，所以flag一直都是false。
  * 解决：volatile boolean flag = false;
  */
-public class VolatileTest extends Thread {
-    boolean flag = false;
-    int i = 0;
-
-    public void run() {
-        while (!flag) {
-            i++;
-        }
-    }
+public class VolatileTest {
+    static boolean flag = false;
 
     public static void main(String[] args) throws Exception {
-        VolatileTest vt = new VolatileTest();
-        vt.start();
-        Thread.sleep(2000);
-        vt.flag = true;
-        System.out.println("stope" + vt.i);
+        new Thread(()->{
+            System.out.println("waiting data......");
+            while (!flag){
+                //System.out.println("8");
+            }
+            System.out.println("success......");
+        }).start();
+        Thread.sleep(1000);
+        new Thread(()->{
+            System.out.println("prepare data......");
+            flag = true;
+            System.out.println("prepare data end......");
+        }).start();
+
     }
 }

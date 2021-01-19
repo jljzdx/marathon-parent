@@ -18,6 +18,7 @@
         <module>marathon-base-dependencies</module>
         <module>marathon-base-gateway</module>
         <module>marathon-base-demo</module>
+        <module>marathon-base-sb</module>
     </modules>
 
 </project>
