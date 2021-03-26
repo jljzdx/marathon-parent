@@ -109,52 +109,40 @@
   |--SingleThreadExecutor
   |--信号量Semaphore
 |-线程池
-  |--新任务进入时线程池的执行策略：
-     |---1、如果运行的线程少于corePoolSize，则 Executor始终首选添加新的线程，而不进行排队。
-     |---2、如果运行的线程大于等于 corePoolSize，则 Executor始终首选将请求加入队列，而不添加新的线程。
-     |---3、如果无法将请求加入队列，则创建新的线程，除非创建此线程超出 maximumPoolSize，在这种情况下，任务将被拒绝。
-     |---举例：counts是同时启动的线程数。
-     counts <= corePoolSize：所有的任务均为核心线程执行，没有任何 Runnable 被添加到 workQueue中
-     corePoolSize < counts <= corePoolSize + workQueue.size()：所有任务均为核心线程执行，当核心线程处于繁忙状态，则将任务添加到 workQueue 中等待
-     corePoolSize + workQueue.size() < counts <= maximumPoolSize + workQueue.size()：corePoolSize 个线程由核心线程执行，超出队列长度 workQueue.size() 的任务，将另启动非核心线程执行
-     counts > maximumPoolSize + workQueue.size()：将会报异常
+  |--执行流程：
+     |---1、向线程池提交任务时，会首先判断线程池中的线程数是否大于设置的核心线程数，如果不大于，就创建一个核心线程来执行任务。
+     |---2、如果大于核心线程数，就会判断缓冲队列是否满了，如果没有满，则放入队列，等待线程空闲时执行任务。
+     |---3、如果队列已经满了，则判断是否达到了线程池设置的最大线程数，如果没有达到，就创建非核心线程来执行任务。
+     |---4、如果已经达到了最大线程数（任务数>最大线程数+队列大小），则执行指定的拒绝策略。
   |--几个重要参数：
      |---corePoolSize：核心线程数量，线程池维护线程的最少数量
          用于设定 thread pool 需要时刻保持的最小core threads的数量，即便这些core threads处于空闲状态啥事都不做也不会将它们回收掉
      |---maximumPoolSize：线程池维护线程的最大数量，放到队列的不算
-     |---keepAliveTime：线程池中非核心线程空闲的存活时间大小，超过该时间的空闲线程会被销毁
-         默认情况下，只有当线程池中的线程数大于corePoolSize时，keepAliveTime才会起作用
+     |---keepAliveTime：线程池中非核心线程空闲的存活时间大小，即当线程池中的线程数大于corePoolSize时，如果一个线程空闲的时间达到keepAliveTime，则销毁线程，直到线程池中的线程数不超过corePoolSize
      |---workQueue：线程池所使用的任务缓冲队列
      |---handler：线程池对拒绝任务的处理策略
   |--丢弃策略：
      |---AbortPolicy（默认）：丢弃任务并抛出RejectedExecutionException异常
      |---DiscardPolicy：丢弃任务，但是不抛出异常
      |---DiscardOldestPolicy：丢弃队列最前面的任务，然后重新尝试提交任务
-     |---CallerRunsPolicy：由调用线程处理该任务，重试添加当前的任务，他会自动重复调用execute()方法
+     |---CallerRunsPolicy：由调用线程（提交任务的线程）处理该任务
      |---可以通过实现RejectedExecutionHandler接口自定义处理方式
   |--队列
-     |---有界队列（ArrayBlockingQueue）：容量固定的有界阻塞队列
-     |---同步移交（SynchronousQueue）：不希望任务在队列中等待而是希望将任务直接移交给工作线程
+     |---有界队列（ArrayBlockingQueue、PriorityBlockingQueue）：线程池较小有界队列较大时可减少内存消耗，降低cpu使用率和上下文切换，但是可能会限制系统吞吐量
      |---无界队列（LinkedBlockingQueue）：newFixedThreadPool
+     |---同步移交（SynchronousQueue）：不希望任务在队列中等待而是希望将任务直接移交给工作线程
      |---延迟队列（DelayQueue）：newScheduledThreadPool
-     |---优先级队列（PriorityBlockingQueue）：newCachedThreadPool
-  |--五个线程池
+     |---优先级队列（）：newCachedThreadPool
+  |--四个线程池
      |---FixedThreadPool：固定大小的线程池，每次提交一个任务就创建一个线程，直到线程达到线程池的最大大小。
-         ExecutorService fixedThreadPool = Executors.newFixedThreadPool(3);
-         public static ExecutorService newFixedThreadPool(int nThreads, ThreadFactory threadFactory) {
-                 return new ThreadPoolExecutor(nThreads, nThreads,
-                                               0L, TimeUnit.MILLISECONDS,
-                                               new LinkedBlockingQueue<Runnable>(),
-                                               threadFactory);
-             }
      |---CachedThreadPool：可缓存线程池，用于并发执行大量短期的小任务。
-         ExecutorService cachedThreadPool = Executors.newCachedThreadPool();
      |---SingleThreadPool：单线程池，也就是该线程池只有一个线程在工作，所有的任务是串行执行的（按照任务的提交顺序执行）。
-         ExecutorService singleThreadExecutor = Executors.newSingleThreadExecutor();
      |---ScheduledThreadpool：大小无限制的线程池，支持定时及周期性任务执行。
-         ScheduledExecutorService scheduledThreadPool = Executors.newScheduledThreadPool(5);
-     |---WorkStealingPool：JDK8引入,具有抢占式（窃取）操作的线程池，并行，适合使用在很耗时的操作
-         ExecutorService workStealingPool = Executors.newWorkStealingPool();
+     |---结论（alibaba尽量不要使用这几种方式创建线程池，有弊端）：
+         FixedThreadPool 和 SingleThreadPool : 允许的请求队列长度为 Integer.MAX_VALUE ，可能会堆积大量的请求，从而导致 OOM 。
+         CachedThreadPool 和 ScheduledThreadPool : 允许的创建线程数量为 Integer.MAX_VALUE ，可能会创建大量的线程，从而导致 OOM 。
+     |---创建线程池正确方式：
+     private static ExecutorService executor = new ThreadPoolExecutor(10, 10, 60L, TimeUnit.SECONDS, new ArrayBlockingQueue(10));
 |-强引用、软引用、弱引用、虚引用的区别？
   |--强引用：Object obj = new Object();
   |--软引用：当内存空间足够，垃圾回收器就不会回收它，当内存空间不足了，就会回收这些对象的内存

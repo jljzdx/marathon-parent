@@ -5,12 +5,12 @@
   |--全文索引
   |--组合索引
 |-分类：
-  |--聚集索引：其实就是主键，每张表只能有一个聚集索引
-  |--非聚集索引：一张表可以有多个非聚集索引
+  |--聚集索引：Innodb（frm、ibd）
+  |--非聚集索引：Myisam（frm、myi、myd）
   |--联合索引（a、b、c做为联合索引）
      |---a,ab,abc最左匹配
      |---where a=3 and c=7（a用到了索引，c没有）
-     |---where a=3 and b>7 and c=3（a和b用到了索引，c没有）
+     |---where a=3 and b>7 and c=3（a和b用到了索引，c没有，因为当遇到范围查询，就会停止索引向下传递）
      |---group by\order by（1、必须在有where的前提才走索引；2、需要和联合索引顺序一致才会走索引）
          |----group by c1 | order by c1（不走索引）
          |----where c1 = '1' group | order by c2（c1,c2都走索引）
@@ -19,21 +19,18 @@
      |---where a=3 order by b（a和b都用到了索引）
      |---where b=3 order by a（a和b都没有用到索引）
   |--覆盖索引：
-     |---就是查询的字段都是索引，如下name,age
+     |---就是查询的字段都是索引，这样就不用回表查询了，如下name,age
      |---select name,age where name>'wang'，index(name,age)
 |-几种数据结构：
   |--算法工具：https://www.cs.usfca.edu/~galles/visualization/Algorithms.html
-  |--哈希表：不支持范围查询
-  |--平衡二叉树：虽然支持范围查询，但效率比较低；磁盘IO次数多；插入需要做旋转
-  |--BTree：不是二叉树，是一种树状数据结构，减少了平衡二叉树的高度，也就是磁盘IO;虽然支持范围查询，但效率比较低；
-  |--B+Tree：
-     |---B+Tree是从最早的平衡二叉树演化而来，也是BTree的升级版，但是B+Tree不是一个二叉树
-     |---B+Tree解决了BTree范围查询效率低的问题，因为叶子节点使用了有序双向链表连接。
-     |---B+Tree分为聚集索引和非聚集索引
-     |---非叶子节点只包含key（也就是索引的值），叶子节点包含key和value（key=索引的值；value=一个地址指针或行数据）
-     |---缺点：在叶子节点冗余了非叶子节点的数据，比较占用硬盘空间
+  |--哈希表：范围查询效率极低
+  |--二叉树：极端情况下会形成线性链表，导致查询复杂度为N
+  |--红黑树：是一种弱平衡二叉树
+  |--自平衡二叉树 AVL：虽然支持范围查询，但效率比较低；磁盘IO次数多；插入需要做旋转
+  |--BTree：减少了平衡二叉树的高度（因为一个节点存储多个键值和数据），也就是减少磁盘IO;虽然支持范围查询，但效率比较低；
+  |--B+Tree：非叶子节点只包含key（也就是索引的值），叶子节点包含key和data（key=索引的值；data=一个地址指针或行数据）。解决了BTree范围查询效率低的问题，因为叶子节点使用了有序双向链表连接。
 |-为什么不使用hash、二叉树、BTree，而采用B+Tree？
-  |--1、磁盘IO次数更少2、叶子节点形成有序链表，执行范围操作效率高（where id<6）
+  |--1、磁盘IO次数更少2、叶子节点形成有序双向链表，执行范围操作效率高
 |-Myisam（非聚集索引）原理：
   |--创建表就会生成这3个文件：user.MYI 索引文件、user.MYD 数据文件、user.frm 创建表语句，所以叫非聚集索引
   |--select * from user where id = 1的执行流程：
@@ -68,11 +65,11 @@
   |--数据量大的时候尽量单表查询，不要做关联查询，这样就需要表结构设计需要适当的冗余字段
   |--字段值尽量不要null值，可以设置默认值，避免null判断
 |-架构优化：高可用（Mycat）、读写分离（一主多从，主写从读）、分库分表（按一定规则存放，查询时也按此规则查询哪个库表）
-|-服务器硬件优化：没有去研究
+|-服务器硬件优化：磁盘-固态硬盘、网络-畅通、足够大的带宽、内存足够大
 |-sql语句优化：
   |--使用explain查看执行情况
   |--避免索引失效：
-     |---or
+     |---or【可以使用union all替代】
      |---like '%a'【可以使用覆盖索引来解决】
      |---函数操作
      |---表达式操作（where num/2=100）
@@ -84,6 +81,9 @@
   |--如果明知道结果只返回一条记录，后面最好加上limit 1
   |--表沒有主键(Primary key), 那么count(1)比count(*)快，有主键的話，那主键作为count的条件时候count(主键)最快
   |--避免在 where 子句中使用 !=或<> 操作符、in 和 not in 也要慎用（exists 代替）
+  |--分页：select id,name from table_name limit 866613, 20 改成 select id,name from table_name where id> 866612 limit 20
+  |--关联表查询，尽量小表驱动大表，减少循环次数
+  |--多使用嵌套子查询
 
 
 4、事务
@@ -115,9 +115,12 @@
                       如果当前事务不存在，则跟PROPAGATION_REQUIRED一样。
 
 5、主从复制:
-|-原理：A：master；B：slave
-create/insert/delete/update ->A(这个时候会将sql语句写入到二进制文件binlog中) ->A开启一个logDump线程把本地binlog二进制文件传给B ->
-B会开启一个IO线程长链接到A获取binlog文件 ->B还会再开启一个sql线程用来执行刚才拿到的binlog二进制文件 ->这样就达到了主从复制
+|-原理：
+  |--当master执行create/insert/delete/update，被写入到binlog
+  |--master开启一个binlog dump thread把本地binlog二进制文件传给slave
+  |--slave启动并发起长连接到master
+  |--slave开启一个I/O线程，读取master过来的binlog内容,并写入到relay log
+  |--slave开启一个SQL线程，从relay log里面读取内容，从Exec_Master_Log_Pos位置开始执行读取到的更新事件，将更新内容写入到数据库
 |-步骤：
 【master】修改my.cnf文件，添加两行
 server_id = 177
@@ -141,55 +144,49 @@ start slave
 检查从服务器复制功能状态：
 show slave status
 
-数据库集群产生的问题：
-|-自增id重复问题
-  |--UUID（Mysql不推荐使用，Oracle可以使用）
-  |--设置数据库步长（缺点：需要确定好集群数量）
-     |---修改自增步长：set @@auto_increment_increment = 2;
-     |---修改起始值：set @@auto_increment_offset = 1;
-|-关联表查询问题
-|-数据同步问题
-|-垂直拆分（分库）
-  |--跨数据库查询、产生分布式事务
-|-水平拆分（分表）
-  |--
-|-Mycat
-|-sharding-jdbc（当当网开源框架）
-
-1,2,3
-4,5,6
-7,8,9
-
-6、连接池
-|-原本我们是通过JDBC进行连接的，但是每次创建一次连接太昂贵了，所以使用连接池
-
-7、Mysql锁
-|-行锁：开销大；加锁慢；会出现死锁；但处理并发的能力强
-|-表锁：开销小；加锁快；无死锁；并发处理能力低，偏向MyISAM存储引擎
-|-共享锁：允许事务读一行数据
-|-排他锁：允许事务删除或更新一行数据
-|-死锁情况（肯定涉及两条数据，但不一定两条sql语句，因为一条sql语句可能锁多行）：
-  |--sessionA：
-    --T1时刻
-    BEGIN;
-    --行级锁 id=1 的记录
-    select * from test1 where id=1 for update ;
-    --T3时刻
-    --更新 id=2 的记录
-    update test1 set id=id where id=2;
-
-  |--sessionB：
-    --T2时刻
-    BEGIN;
-    --行级锁 id=2 的记录
-    select * from test1 where id=2 for update ;
-    --T4时刻
-    --更新 id=1 的记录
-    update test1 set id=id where id=1;
-8、百万数据分页优化
-|-利用覆盖索引+复合索引
-SELECT * FROM product a JOIN (select id from product limit 866613, 20) b ON a.ID = b.id
-9、explain
+6、死锁
+|-同表
+事务A：
+select * from table where id=1;
+update table set token='a' where id=2
+事务B：
+select * from table where id=2;
+update table set token='a' where id=1
+|-不同表
+事务A：
+select * from table1 where id=1;
+update table2 set token='a' where id=2
+事务B：
+select * from table2 where id=2;
+update table1 set token='a' where id=1
+|-索引【如果一条SQL语句用到了主键索引，mysql会锁住主键索引；如果一条语句操作了非主键索引，mysql会先锁住非主键索引，再锁定主键索引】
+KEY `idx_1` (`user_id`,`item_id`,`status`)
+事务A：
+udate table set status=1 where user_id=? and item_id=?;
+1、由于用到了非主键索引，首先需要获取idx_1上的行级锁
+2、紧接着根据主键进行更新，所以需要获取主键上的行级锁；
+3、更新完毕后，提交，并释放所有锁。
+事务B：
+如果在步骤1和2之间突然插入一条语句：
+udate table set name=1 where id=? and user_id=?;【先锁住主键索引，然后锁住idx_1】
+这样就死锁了
+|-gap
+INSERT INTO `test_gap_table` VALUES ('1', 'a');
+INSERT INTO `test_gap_table` VALUES ('3', 'c');
+INSERT INTO `test_gap_table` VALUES ('5', 'd');
+INSERT INTO `test_gap_table` VALUES ('7', 'e');
+事务A：
+update table set index_no='c' where index_no='c';
+insert into table(id,index_no) values(8,'e');
+事务B：
+update table set index_no='e' where index_no='e';
+insert into table(id,index_no) values(2,'b');
+分析：
+因为index_no是非唯一索引，所以执行事务1更新语句时获取了间隙锁，锁定范围是非唯一索引的上下区间，即(a,d)
+执行事务2更新语句获取间隙锁，锁定范围为(d, d后面的无穷大)
+因为事务1锁定了(a,d)范围，所以事务2 insert操作会等待事务1释放间隙锁
+执行事务1 insert语句，恰好插入的数据在事务2锁定的间隙锁范围，这样就导致事务1和事务2循环等待了，死锁发生
+7、explain
 |-select_type
   |--primary：包含子查询的sql中的主查询，最外层
   |--subquery：包含子查询的sql中的子查询
