@@ -1,8 +1,0 @@
-1、身份认证：登录用户名密码
-用户授权：有哪些权限资源
-2、shiro和security区别
-|-shiro适用于简单系统，能独立运行
-|-security功能丰富，比较复杂，依赖于spring，支持Oauth2
-3、AdminLTE
-|-图标fontawesome
-4、security底层有一个过滤器链

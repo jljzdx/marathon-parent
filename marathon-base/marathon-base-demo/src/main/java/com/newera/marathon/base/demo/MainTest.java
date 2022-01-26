@@ -1,13 +1,19 @@
 package com.newera.marathon.base.demo;
 
-import java.util.ArrayList;
-import java.util.List;
+public class MainTest
+{
+    public static void main(String[] args)
+    {
+        test10();
+    }
 
-public class MainTest {
-    public static void main(String[] args) {
-        List<Object> list = new ArrayList<>();
-        //创建n个1M大小的数组，耗尽内存
-        for (int i = 0; i < 10000000; i++)
-            list.add(new byte[1024 * 1024]);
+    public static void test10()
+    {
+        String s1 = "ab";
+
+        String s2 = "abc";
+
+        String s3 = s1 + "c";
+        System.out.println(s3 == s2);
     }
 }

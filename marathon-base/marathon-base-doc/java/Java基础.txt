@@ -1,0 +1,493 @@
+1、jvm
+|-内存模型（运行时数据区）
+  |--程序计数器：记录着当前线程所执行的字节码指令（javap）的行号（说白了，就是线程执行过程中突然挂起，当抢到资源需要知道之前执行到哪个位置了）
+  |--本地方法栈：用来调用C语言的dll库
+  |--虚拟机栈（栈帧组成）
+     |---反汇编看指令：javap -c xxx.class
+     |---局部变量表：存放方法局部变量
+     |---操作数栈：数值的临时存储区域
+     |---动态连接：当前方法如果需要调用其他方法的时候，能够从运行时常量池找到对应的符号引用，然后将符号引用转为直接引用，然后就能直接调用对应方法。
+                  不是所有方法调用都需要动态链接的，有一部分符号引用会在'类加载'解析阶段，将符号引用转换为直接引用，如调用静态方法
+     |---方法出口：返回之前调用它的地方，出栈
+  |--堆：存储对象以及数组
+     |---字符串常量池：存储的可能是字符串对象，也可能是指向堆中字符串对象。
+     |---intern方法：如果池中存在此字符串，直接返回，否则将字符串添加到池中再返回
+  |--元空间（不在虚拟机中）：常量、静态变量、类信息
+     |---class常量池：
+         字面量（文本字符串、基本数据类型的值、声明为final的常量）
+         符号引用（1.类和接口的全限定名2.字段的名称和描述3.方法的名称和描述）
+         在com.demo.Solution类中引用了com.test.Quest，那么我会把com.test.Quest作为符号引用存到class常量池，等类加载完后，拿着这个引用去元空间找这个类的内存地址。
+     |---运行时常量池：在连接-解析阶段，class常量池被加载到内存，字面量可以动态的添加，符号引用可以被解析成直接引用
+|-垃圾回收
+  |--GC Root
+  |--
+|-类加载
+|-生产上cpu 100%
+  |--1、找到消耗cpu最大的进程：top =>10887
+  |--2、打出进程中线程占用情况：top -Hp [10887] =>10901
+  |--3、PID转16进制：printf '0x%x\n' [10901] =>0x2a95
+  |--4.1、查看具体线程堆栈信息：jstack [10887]|grep [0x2a95] -A 30
+  |--4.2、导出整个进程堆栈信息：jstack -l [10887] > test.txt【导出来后，再使用[0x2a95]进行搜索】
+  |--场景：1、死循环；2、大量Full GC【每隔3秒输出（10次）进程GC情况：jstat -gccause 10887 3000 10】；3、线程计算耗时长；4、大量线程上下文切换；5、死锁
+|-OutOfMemoryError
+  |--一般是因为大对象产生的
+  |--项目中怎么解决这种问题？
+     |---查看错误日志
+     |---检查对数据库查询中，是否有一次获得全部数据的查询。
+     |---是否有死循环或递归调用
+     |---检查List、MAP等集合对象是否有使用完后，未清除的问题
+     |---使用内存查看工具（jvisualvm可安装插件Visual GC）动态查看内存使用情况
+         |----生成堆快照（dump）：-XX:+HeapDumpOnOutOfMemoryError  -XX:HeapDumpPath=/Users/microbin/Downloads/test.dump  -XX:+PrintGCDetails -Xms14m -Xmx34m
+         |----使用工具打开test.dump
+         |----找到大对象
+  |--创建的对象太多，可能是死循环，导致超过堆内存大小（可设置参数Xms（初始堆大小）和Xmx（最大堆大小））
+  |--线程创建太多
+|-jvm参数调优
+  |--调优就是减少full GC，因为STW【stop the world】，会停止掉所有用户线程。
+  |--设置使用哪种收集器：-XX:+UseConcMarkSweepGC -XX:-UseParNewGC 新生代：Serial；老年代：CMS
+  |--查看使用哪种收集器：java -XX:+PrintCommandLineFlags -version -> java -XX:+PrintGCDetails -version
+  |--常用参数：【注意：+是启用；-是关闭】
+     |--- -Xms20m:堆初始值20M 、 -Xmx20m:堆最大可用值20M【这两个参数一般设置成一样】
+     |--- -Xss256k:每个线程的栈大小
+     |--- -XX:ParallelGCThreads=n:并行垃圾收集时，使用的线程数
+     |--- -XX:+UseAdaptiveSizePolicy:打开自适应GC策略
+     |--- -XX:NewRatio=3:设置年轻代和年老代的比值；年轻代与年老代比值为1：3
+     |--- -XX:MaxTenuringThreshold=0:年轻代对象不经过Survivor区
+     |--- -XX:SurvivorRatio=3:年轻代中Eden区与两个Survivor区的比值；Eden：Survivor=3：2
+     |--- -XX:MaxMetaspaceSize=20:配置元空间最大内存20M
+  |--例子：java -Xms20m -Xmx20m -XX:+UseAdaptiveSizePolicy -XX:SurvivorRatio=4 -XX:NewRatio=3 -XX:MaxMetaspaceSize=20 -XX:+UseConcMarkSweepGC -XX:-UseParNewGC -XX:+PrintGCDetails
+
+
+GC:
+|-minor gc（Eden）、young gc（Eden+Survivor）、major gc（Old）、full gc（New+Old）
+  |--full GC一般是因为元空间不足或者老年代空间不足
+|-什么时候被移动到年老代呢？
+  |--大对象直接进入老年代
+  |--Survivor区中每熬过一次Minor GC，年龄就会增加1岁，当它的年龄增加到一定程度时
+     （默认-XX:MaxTenuringThreshold=15岁，Parallel Scavenge中默认值为15，CMS中默认值为6，G1中默认值为15），就会被移动到年老代中
+  |--当Eden+From/To要移动到From/To时，如果存活的对象大于From/To的一半空间，就会使用老年代的担保机制复制一部分对象到老年代。
+|-判断哪些内存需要被回收
+  |--引用计数法：每个对象有一个引用计数属性，新增一个引用时计数加1，引用释放时计数减1，计数为0时可以回收
+  |--可达性分析法：当一个对象到GC Roots没有任何引用链（强、软、弱、虚）相连时，则证明此对象是不可用的
+     |---可作为GC Roots：虚拟机栈中引用的对象、静态成员（private static Object obj）、本地方法栈中JNI引用的对象
+|-垃圾收集算法
+  |--标记-清除算法：效率和空间不足，会产生大量不连续的内存碎片，导致以后程序运行过程中在需要分配较大对象时，无法找到足够的连续内存而不得不提前触发一次垃圾收集动作。
+  |--复制算法：因为Eden区的对象大部分都会“朝生暮死”，所以使用复制算法效率高
+     1、当Eden区内存空间不足，会触发第一次Minor GC，把存活的对象复制到From区，并将其年龄设为1
+     2、当Eden区再次内存空间不足，再次触发Minor GC，会扫描Eden和From区，把存活对象直接复制到To区，年龄加1，并清空Eden和From区，存活对象会在From和To区复制来复制去
+     3、如果年龄达到15岁如果还存活，直接存入老年代；如果survivor的From或To区内存空间不足，则使用老年代的担保机制复制一部分对象到老年代。
+  |--标记-整理算法：不是直接对可回收对象进行清理，而是让所有存活对象都向一端移动，然后直接清理掉边界以外的内存。
+  |--分代收集算法：大批对象死去、少量对象存活的（新生代），使用复制算法，复制成本低；对象存活率高、没有额外空间进行分配担保的（老年代），采用标记-清理算法
+|-垃圾收集器【现在基本上都是使用组合收集器：如JDK7默认使用：Parallel Scavenge+Parallel Old】
+  |--Serial收集器：【新生代】
+      |---是一个采用复制算法的单线程的收集器，会暂停所有用户线程。
+  |--ParNew收集器：【新生代，Java8已弃用，Java9已删除】
+     |---其实就是Serial收集器的多线程版本，除了Serial收集器外，目前只有它能与CMS收集器配合工作。
+	 |---适用于多CPU的环境中，新生代并行（ParNew），老年代串行（Serial Old）
+  |--Parallel Scavenge收集器：【新生代】
+     |---也是用复制算法的收集器，也是并行的多线程收集器，Parallel Scavenge收集器的目标则是达到一个可控制的吞吐量。
+	 |---与ParNew收集器最重要的一个区别：GC自适应调节策略
+     |---GC自适应调节策略：它有一个-XX:+UseAdaptiveSizePolicy参数，用来打开自适应调节策略，就不需要手动指定新生代大小、Eden区和Survivor参数等参数了，
+         虚拟机会根据当前系统的运行情况，动态调整这些参数以提供最合适的停顿时间或者最大的吞吐量。
+  |--Serial Old收集器：【老生代】
+     |---是一个使用“标记-整理”算法的单线程收集器，会暂停所有用户线程。
+  |--Parallel Old收集器：【老生代】
+     |---使用多线程和“标记-整理”算法
+  |--CMS收集器：【老生代】
+     |---以最小的停顿时间为目标的收集器，基于标记 - 清除算法，并发收集、低停顿，可结合Serial、ParNew使用。
+     |---缺点：对CPU资源非常敏感【主要是因为并发标记和并发清除阶段】、无法处理浮动垃圾【在重新标记期间，之前已经标记的对象可能变成垃圾了】、产生大量碎片
+     |---注意：不会等到老年代占满的时候才去回收，默认占到92%才去回收
+     |---包括四个步骤：
+	     |----初始标记
+	          |-----需要STW
+	          |-----标记老年代中所有存活的GC Roots对象
+	     |----并发标记
+	          |-----不需要STW
+	          |-----标记老年代中所有存活的GC Roots对象下关联的对象。
+	     |----重新标记
+	          |-----需要STW
+	          |-----标记年轻代中活着的对象引用到的老年代的对象、标记刚刚从年轻代移动到老年代的对象【为了修正并发标记期间因用户程序继续运作而导致标记变动的那一部分对象的标记记录，需要STW】
+	     |----并发清除【回收所有的垃圾对象】
+	 |---参数配置：-XX:+UseConcMarkSweepGC
+  |--G1收集器：【整堆收集器，也就是单独使用在新生代和老年代】
+     |---为解决CMS算法产生空间碎片（标记整理算法）和可预测垃圾回收的停顿时间
+	 |---G1的新生代收集跟ParNew类似；G1的老年代收集跟CMS类似
+     |---参数配置：-XX:+UseG1GC -Xmx32g -XX:MaxGCPauseMillis=200【最大暂停时间】
+	 |---取消了新生代，老年代的物理空间划分，但还保留有新生代和老年代的概念
+	 |---G1算法将堆划分为若干个区域（Eden、Survivor、Old、Humongous），它仍然属于分代收集器。
+	 |---G1完成了堆的压缩（至少是部分堆的压缩），这样也就不会有cms内存碎片问题的存在了
+	 |---G1划分了一个Humongous（巨大的）区，它用来专门存放巨型对象。
+	 |---young gc：触发机制和之前的young gc差不多
+	 |---mixed gc：除了回收整个young region，还会回收一部分的old region。当老年代大小占整个堆大小百分比达到该阈值（-XX:InitiatingHeapOccupancyPercent）时，会触发一次mixed gc。mixed gc的执行过程有点类似cms
+	 |---full gc：当老年代没有足够空间分配时，会出发一次full gc
+|-JDK默认垃圾收集器【查看JDK使用哪种收集器：java -XX:+PrintCommandLineFlags -version】
+  |--jdk1.7 默认垃圾收集器Parallel Scavenge（新生代）+Parallel Old（老年代）
+  |--jdk1.8 默认垃圾收集器Parallel Scavenge（新生代）+Parallel Old（老年代）
+  |--jdk1.9——jdk11 默认垃圾收集器G1
+
+类加载:
+|-类加载过程
+  |--加载：找到类的字节码文件，利用类加载器创建一个Class对象
+  |--连接：
+     |---验证：验证加载的类信息符合JVM规范
+	 |---准备：为静态变量分配内存，并设置默认初始值
+	     |----public static int value = 123;赋给value的值是0
+	     |----public static final int value = 123;赋给value的值是123
+	 |---解析：将常量池的符号引用替换为直接引用
+	 class Worker{
+         ......
+         public void gotoWork(){
+             car.run(); //这段代码在Worker类中的二进制表示为符号引用
+         }
+         ......
+     }
+  |--初始化：主要是对静态变量进行初始化
+|-类变量指定初始值有两种：
+  |--声明类变量时指定初始值
+  |--使用静态代码块指定初始值
+|-初始化步骤
+  |--如果该类还没有被加载和连接，则先加载并连接该类
+  |--如果该类的直接父类还没有被初始化，则先初始化其直接父类。所以JVM最先初始化的总是Object类
+  |--如果类中有初始化语句，则系统依次执行这些初始化语句
+|-初始化时机
+  |--创建类的实例，new Person();
+  |--调用类的静态方法
+  |--访问类的静态变量
+  |--反射创建类Class.forName("");
+  |--初始化某个类的子类，触发父类初始化
+  |--main方法
+  |--特例：
+     class Test{
+		static{
+			System.out.println("Test 静态代码块");//这句不会被打印
+		}
+		static final String json = "json string";//json被称为”宏变量“
+		public static void main(String[] args){
+			System.out.println(Test.json);//在编译时，Test.json就已经被替换成"json string"了，所以不会导致初始化Test类
+		}
+	 }
+     class Test{
+		static{
+			System.out.println("Test 静态代码块");//这句会被打印
+		}
+		static final String json = System.currentTimeMillis()+"";
+		public static void main(String[] args){
+			System.out.println(Test.json);//在编译时，Test.json还不能确定下来，所以会导致初始化Test类
+		}
+	 }
+     public class ClassTest{
+		public static void main(String[] args){
+			ClassLoader cl = ClassLoader.getSystemClassLoader();
+			cl.loadClass("Test");//不会导致初始化Test类
+			Class.forName("Test");//会导致初始化Test类
+		}
+	 }
+|-类加载器
+  |--Bootstrap ClassLoader：启动类加载器（负责加载%JAVA_HOME%/lib路径中的核心类库）
+  |--Extension ClassLoader：扩展类加载器（负责加载%JAVA_HOME%/lib/ext路径中的类库）
+  |--Application ClassLoader：应用程序类加载器（负责加载classpath下的类库）
+  |--自定义类加载器：
+     |---extends ClassLoader:loadClass(String name, boolean resolve);findClass(String name);
+     |---什么场景？
+|-类加载机制
+  |--双亲委派模型：
+     |---如果一个类加载器收到类加载的请求，先判断类是否已经被加载过，它首先不会自己去尝试加载这个类，而是把这个请求委派给父类加载器完成。
+         每个类加载器都是如此，只有当父加载器在自己的搜索范围内找不到指定的类时（即ClassNotFoundException），子加载器才会尝试自己去加载。
+	 |---为什么需要双亲委派模型？
+	 黑客自定义一个java.lang.String类，该String类具有系统的String类一样的功能，只是在某个函数稍作修改。
+	 比如equals函数，这个函数经常使用，如果在这这个函数中，黑客加入一些“病毒代码”。
+	 并且通过自定义类加载器加入到JVM中。此时，如果没有双亲委派模型，
+	 那么JVM就可能误以为黑客自定义的java.lang.String类是系统的String类，导致“病毒代码”被执行。
+	 而有了双亲委派模型，黑客自定义的java.lang.String类永远都不会被加载进内存。因为首先是最顶端的类加载器加载系统的java.lang.String类，最终自定义的类加载器无法加载java.lang.String类。
+	 或许你会想，我在自定义的类加载器里面强制加载自定义的java.lang.String类，不去通过调用父加载器不就好了吗?
+	 确实，这样是可行。但是，在JVM中，判断一个对象是否是某个类型时，如果该对象的实际类型与待比较的类型的类加载器不同，那么会返回false。
+  |--如何打破双亲委派模型？
+     |---比如JDBC通过Thread.currentThread().getContextClassLoader()得到线程上下文加载器来加载Driver实现类
+
+
+2、线程
+|-线程池
+  |--执行流程
+     |---1、向线程池提交任务时，会首先判断线程池中的线程数是否大于设置的核心线程数，如果不大于，就创建一个核心线程来执行任务。
+     |---2、如果大于核心线程数，就会判断缓冲队列是否满了，如果没有满，则放入队列，等待线程空闲时执行任务。
+     |---3、如果队列已经满了，则判断（核心线程数+非核心线程数）是否达到了线程池设置的最大线程数，如果没有达到，就创建非核心线程来执行任务。
+     |---4、如果已经达到了最大线程数（任务数>最大线程数+队列大小），则执行指定的拒绝策略。
+  |--几个重要参数
+     |---corePoolSize：核心线程数，永远不会被销毁
+     |---maximumPoolSize：最大线程数，核心线程数+非核心线程数
+     |---keepAliveTime：线程池中（非核心线程）空闲的存活时间大小
+     |---workQueue：线程池所使用的任务缓冲队列
+     |---handler：线程池对拒绝任务的处理策略
+  |--丢弃策略
+     |---AbortPolicy（默认）：丢弃任务并抛出RejectedExecutionException异常
+     |---DiscardPolicy：丢弃任务，但是不抛出异常
+     |---DiscardOldestPolicy：丢弃队列最前面的任务，然后重新尝试提交任务
+     |---CallerRunsPolicy：由调用线程处理该任务
+  |--队列
+     |---ArrayBlockingQueue：数组型队列
+     |---LinkedBlockingQueue：链表型队列（Integer.MAX_VALUE）
+     |---SynchronousQueue：同步队列（put一个元素，就等着take那个元素）
+     |---DelayQueue：延时队列
+     |---PriorityBlockingQueue：真正的无界队列，会自动扩容，按照元素的权重进行排序
+  |--创建线程池
+     |---Executors.newFixedThreadPool(nThreads)：固定大小的线程池
+     new ThreadPoolExecutor(nThreads, nThreads,0L, TimeUnit.MILLISECONDS,new LinkedBlockingQueue<Runnable>());
+     |---Executors.newSingleThreadPool()：单线程池，线程顺序执行
+     new ThreadPoolExecutor(1, 1, 0L, TimeUnit.MILLISECONDS, new LinkedBlockingQueue<Runnable>());
+     |---Executors.newCachedThreadPool()：可缓存线程池
+     new ThreadPoolExecutor(0, Integer.MAX_VALUE,60L, TimeUnit.SECONDS, new SynchronousQueue<Runnable>());
+     |---Executors.newScheduledThreadPool(corePoolSize)：定时及周期性执行任务。
+     new ThreadPoolExecutor(corePoolSize, Integer.MAX_VALUE, 0, NANOSECONDS,new ScheduledThreadPoolExecutor.DelayedWorkQueue());
+     |---ForkJoinPool：将一个大的任务拆分成多个子任务，两个线程并行去执行子任务（线程执行子任务完成后，会窃取其他线程的任务来执行），然后汇总结果
+     ForkJoinPool forkJoinPool = new ForkJoinPool();
+     |---尽量不要使用这几种方式创建线程池：
+     FixedThreadPool 和 SingleThreadPool : 允许的请求队列长度为 Integer.MAX_VALUE ，可能会堆积大量的请求，从而导致 OOM 。
+     CachedThreadPool 和 ScheduledThreadPool : 允许的创建线程数量为 Integer.MAX_VALUE ，可能会创建大量的线程，从而导致 OOM 。
+     |---创建线程池正确方式：
+     private static ExecutorService executor = new ThreadPoolExecutor(10, 10, 60L, TimeUnit.SECONDS, new ArrayBlockingQueue(10), new AbortPolicy());
+|-volatile：
+  |--轻量级的同步机制。保证成员变量的可见性，禁止指令重排序，但不能保证操作的原子性（i++）。
+     |---可见性：线程对副本变量进行修改后，其他线程能够立刻同步刷新最新的数值。
+     |---指令重排序：int a = 1; boolean flag = true;两条语句不一定谁先执行
+  |--例子（volatile.jpeg）：
+     |---1、子线程t从主内存读取到数据放入其对应的工作内存flag=false
+     |---2、main线程从主内存读取到数据放入其对应的工作内存flag=false
+     |---3、子线程t赋值flag=true
+     |---4、写回主内存中
+     |---5、会使其他线程的副本变量的缓存行失效（底层有监听机制）
+     |---6、main线程只能从主内存中读取flag=true，放入自己的工作内存
+|-ThreadLocal()：
+  |--线程局部变量，保证各个线程之间的变量互相隔离、相互独立
+  |--场景：
+     |---1、Spring中的事务隔离级别的实现
+     |---2、MyBatis分页插件PageHelper的实现
+  |--原理：
+     |---维护了一个ThreadLocalMap，使用ThreadLocal<T>的弱引用（弱引用对象在Java虚拟机进行垃圾回收时，就会被释放）作为Key，T作为value。
+  |--内存泄露：
+     |---因为key是弱饮用，很容易被清理掉，这样就会存在key=null的value，需要用完后手动调用remove()
+     |---导致内存泄露主要原因是大量初始化ThreadLocal之后不再调用get()、set()、remove()方法，或者线程一直处于活跃状态
+  |--初始化赋值
+  private static final ThreadLocal<SimpleDateFormat> SDF = new ThreadLocal<SimpleDateFormat>() {
+      @Override
+      protected SimpleDateFormat initialValue() {
+          return new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+      }
+  };
+  Java8的写法：
+  private static final ThreadLocal<SimpleDateFormat> SDF = ThreadLocal.withInitial(() -> new SimpleDateFormat("yyyy-MM-dd HH:mm:ss"));
+3、设计模式
+|-动态代理模式：
+  |--JDK:拦截器（InvocationHanlder）+反射机制生成一个实现代理接口的匿名类
+  |--Cglib:利用ASM开源包，对代理对象类的class文件加载进来，通过修改其字节码生成子类来处理。
+  |--SpringCloud中的Feign也是使用JDK动态代理实现的
+  |--Mybatis：UserMapper mapper = session.getMapper(UserMapper.class);
+  |--Spring AOP使用哪种代理模式：
+     |---如果目标对象实现了接口，默认情况下会采用JDK动态代理；当然也可以通过配置使用Cglib动态代理（<aop:aspectj-autoproxy proxy-target-class="true"/>）。
+     |---如果目标对象没有实现了接口，必须采用CGLIB动态代理。
+|-适配器模式：
+  |--场景：你定义类一个接口，我也定义了一个接口，我们都不想改，这时就可以写一个适配器来适配这两个接口
+  |--类适配器：使用继承的方式，看ClassAdapter类就懂了
+  |--对象适配器：看ObjectAdapter类就懂了，扩展性好，子类也可以被适配
+|-装饰器模式：
+  |--为什么使用：动态地给一个对象添加一些额外的职责。一般的，我们为了扩展一个类经常使用继承方式实现，并且随着扩展功能的增多，子类会很膨胀。
+     装饰器模式相比生成子类更为灵活，简单的总结（不改变原类文件、不使用继承、动态扩展）。
+  |--类的继承的缺点 ( 高耦合，会产生更多的子类，从而引起类的爆炸 )
+  |--mybatis二级缓存就是使用装饰模式的例子
+  |--项目实战：
+     |---需求：采用sls服务监控项目日志，以Json的格式解析，所以需要将项目中的日志封装成json格式再打印。
+         现有的日志体系采用了log4j + slf4j框架搭建而成。调用起来是这样的:
+         private static final Logger logger = LoggerFactory.getLogger(Component.class);
+         logger.error(string);
+     |---这样打印出来的是毫无规范的一行行字符串。在考虑将其转换成json格式时，我采用了装饰器模式。
+     |---具体实现：
+         public class DecoratorLogger implements Logger{
+            public Logger logger;
+            public DecoratorLogger(Logger logger) {
+                this.logger = logger;
+            }
+             @Override
+             public void error(String str) {}
+
+             @Override
+             public void info(String str) {}
+         }
+         public class JsonLogger extends DecoratorLogger{
+            public JsonLogger(Logger logger) {
+                super(logger);
+            }
+            @Override
+            public void info(String msg) {
+                JSONObject result = composeBasicJsonResult();
+                result.put("MESSAGE", msg);
+                logger.info(result.toString());
+            }
+            @Override
+            public void error(String msg) {
+                JSONObject result = composeBasicJsonResult();
+                result.put("MESSAGE", msg);
+                logger.error(result.toString());
+            }
+            public void error(Exception e) {
+                JSONObject result = composeBasicJsonResult();
+                result.put("EXCEPTION", e.getClass().getName());
+                String exceptionStackTrace = ExceptionUtils.getStackTrace(e);
+                result.put("STACKTRACE", exceptionStackTrace);
+                logger.error(result.toString());
+            }
+            public static class JsonLoggerFactory {
+                @SuppressWarnings("rawtypes")
+                public static JsonLogger getLogger(Class clazz) {
+                    Logger logger = LoggerFactory.getLogger(clazz);
+                    return new JsonLogger(logger);
+                }
+            }
+         }
+     |---最终调用：
+         private static final Logger logger = JsonLoggerFactory.getLogger(Component.class);
+         logger.error(string);
+|-构造者模式：
+  |--用来解决构造函数不便，复杂对象的构建
+  |--将一个复杂的构建与其表示相分离，使得同样的构建过程可以创建不同的表示。一些基本部件不会变，而其组合经常变化的时候。以手机和零件为例。
+  |--与工厂模式的区别是：建造者模式更加关注与零件装配的顺序。
+|-观察者模式
+  |--一个对象（目标对象）的状态发生改变，所有的依赖对象（观察者对象）都将得到通知，进行广播通知
+|-门面模式
+  |--比如：张三（客户端）想建房子，本来需要自己去找会和泥的、会搬砖的、会砌墙的（这三个叫子系统），但现在有了包工头（门面角色），张三直接找包工头，包工头去做所有的事情。
+|-模板模式
+  |--一些方法通用，却在每一个子类都重新写了这一方法，比如：【下单、吃面、付钱；下单、吃烧烤、付钱】
+|-工厂模式：
+  |--
+|-单例模式：
+  |--双检锁：
+  public class Singleton {
+      private static volatile Singleton instance = null;
+      private Singleton() { }
+      public static Singleton getInstance() {
+          if (instance == null) {
+              synchronized(Singleton.class) {
+                  if (instance == null) {
+                      instance = new Singleton();
+                  }
+              }
+          }
+          return instance;
+      }
+  }
+  |--枚举：让JVM来帮我们保证线程安全
+  public enum Singleton {
+      INSTANCE;
+      public void doSomething() {
+          System.out.println("doSomething");
+      }
+  }
+4、Java基础
+|-NIO与BIO区别（看图marathon-base-doc/java/BIO.png、NIO.png）
+  |--NIO非阻塞式IO多路复用；BIO阻塞
+  |--NIO面向缓冲区，可以双向读写；BIO面向流，只能单向读写，出去从输出流通道走，回来从输入流通道走
+  |--BIO 好比是通道传输，一来一回；NIO 好比是管道传输，一堆来一堆回
+  |--BIO 和 NIO 作为 Server 端，当建立了 10 个连接时，分别产生多少个线程？10、1
+  |--应用：Netty组件就是对NIO的包装，Dubbo就是使用Netty
+|-缓存和缓冲的区别
+  |--缓存：把常用数据保存在内存的缓存区中（用来加速读取）
+  |--缓冲：在向硬盘写入数据时，先把数据放入缓冲区，然后再一起向硬盘写入，减少io操作次数，提高效率（类似生活中的垃圾桶和垃圾站）（用来加速写入）
+|-HashMap原理
+  |--采用位桶+链表+红黑树实现（也叫平衡二叉树：当插入一个结点时，如果破坏了树的平衡性，找出最小不平衡树，通过旋转，调整成新的平衡二叉树）
+  |--在HashMap中有两个很重要的参数，容量(Capacity：16)和负载因子(LoadFactor：0.75)
+  |--链表的长度大于8时，采用红黑树(TreeMap)，提高查找效率（因为如果最坏的情况所有的Node都落在一个桶中，这样hashmap就退化成了一个链表——查找时间从O(1)到O(n)，使用红黑树查找时间O(logn)）
+  |--哈希碰撞:就是hash(key)相等，然后使用链表解决
+  |--put
+     |---通过table%hash(key)得到数组index。
+     |---判断index位置有没有节点，如果没有直接添加节点，如果有，判断key是否相等，如果相等，直接覆盖，如果不想等，判断是链表还是红黑树，如果是链表，判断长度是否>8，如果>8，采用红黑树
+     |---判断元素个数时候大于Capacity*loadFactor，如果大于就扩容
+  |--resize
+     |---先创建一个长度为原来2倍的新table，然后通过遍历的方式，将老table的数据，重新计算hash并存储到新table的适当位置，最后使用新的table，并重新计算HashMap的扩容阀值
+  |--get
+     |---1、通过key的hash找到数组的位置
+     |---2、直接判断是不是第一个节点-》判断是不是树节点-》否则就是链表
+  |--JDK1.8 ConcurrentHashMap与HashMap很相似，抛弃Segment分段锁，而采用了CAS算法 + synchronized来保证并发安全性
+  |--JDK1.7 HashTable与ConcurrentHashMap最大的区别：HashTable这个表就一个锁；ConcurrentHashMap采用锁分段技术，默认16个锁
+  |--JDK1.7 ConcurrentHashMap二次hash带来的问题是整个hash的过程比hashmap单次hash要长
+    HashMap:
+    |-数组+单向链表+红黑树
+    |-键值允许为null
+    |-线程不安全
+    |-默认的初始大小为16,扩容2n
+    HashTable:
+    |-数组+单向链表
+    |-键值不允许为null
+    |-线程安全
+    |-默认的初始大小为11,扩容2n+1
+    ConcurrentHashMap:Segment[]->HashEntry[]
+    |-数组+单向链表+红黑树
+    |-键值不允许为null
+    |-线程安全
+    |-默认的初始大小为16,扩容2n
+    |-ConcurrentHashMap不会抛出ConcurrentModificationException
+    线程安全的Map：
+    |-Map<String, String> hashtable = new Hashtable<String, String>();
+    |-Map<String, String> synchronizedHashMap = Collections.synchronizedMap(new HashMap<String, String>());
+    |-Map<String, String> concurrentHashMap = new ConcurrentHashMap<String, String>();
+|-抽象类和接口的区别：
+    1、成员区别：
+    |-抽象类：
+      |--成员变量：变量、常量
+      |--构造方法：有
+      |--成员方法：抽象、非抽象
+    |-接口：
+      |--成员变量：常量
+      |--构造方法：无
+      |--成员方法：抽象
+    2、关系区别：
+    |-类与类：单继承
+    |-类与接口：单实现、多实现
+    |-接口与接口：多继承
+    3、设计理念：
+    抽象类：体现的是"is a"的关系，定义的是共性功能
+    接口：体现的是"like a"的关系，定义的是扩展功能
+10、synchronized和Lock区别
+|-synchronized是Java关键字；Lock是java.util.concurrent.Locks 包下的一个接口
+|-synchronized自动释放锁；Lock需要在finally块中手动释放
+|-synchronized不能响应中断；Lock可响应中断
+|-synchronized是非公平锁；Lock既可以为公平锁，又可以为非公平锁
+|-底层实现：synchronznized映射成字节码指令就是增加两个指令：monitorenter、monitorexit；Lock底层则基于volatile和cas实现
+
+|-Lock和synchronized区别：
+  |--Lock不会自动释放锁；synchronized会自动释放锁;
+  |--Lock是一个接口，而synchronized是Java中的关键字
+  |--Lock可以让等待锁的线程响应中断，而synchronized却不行
+  |--Lock可以知道有没有成功获取锁，而synchronized却无法办到
+  |--使用Lock必须在try{}catch{}块中进行，并且将释放锁的操作放在finally块中进行，以保证锁一定被被释放，防止死锁的发生
+  |--锁概念：
+     |---可重入锁（Lock、synchronized）：例如当一个线程执行到某个synchronized方法时，比如说method1，而在method1中会调用另外一个synchronized方法method2，不必重新去申请锁。
+     |---可中断锁（Lock）：如果某一线程A正在执行锁中的代码，另一线程B正在等待获取该锁，可能由于等待时间过长，线程B不想等待了，想先处理其他事情，我们可以让它中断自己或者在别的线程中中断它，这种就是可中断锁。
+     |---公平锁（Lock可以设置成公平锁，ReentrantLock lock = new ReentrantLock(true);）：以请求锁的顺序来获取锁，等待时间最久的线程（最先请求的线程）会获得该锁。
+     |---读写锁（ReentrantReadWriteLock）：1、获得读锁后，其它线程可获得读锁而不能获取写锁；2、获得写锁后，其它线程既不能获得读锁也不能获得写锁。
+|-如何控制多个线程执行顺序
+  |--join();
+  |--SingleThreadExecutor
+  |--信号量Semaphore
+|-强引用、软引用、弱引用、虚引用的区别？
+  |--强引用：Object obj = new Object();
+  |--软引用：当内存空间足够，垃圾回收器就不会回收它，当内存空间不足了，就会回收这些对象的内存
+            SoftReference<String> softRef=new SoftReference<String>(str);
+  |--弱引用：发生GC时，如果发现了弱引用对象，不管内存空间是否足够，都会回收它的内存
+            WeakReference<String> abcWeakRef = new WeakReference<String>(str);
+  |--虚引用：任何时候都可能被垃圾收集器回收（比如obj=null）
+7、int和Integer的区别
+|-int是基本数据类型，Integer是int的包装类
+|-int的默认值是0，Integer默认值是null
+|-自动拆箱装箱
+  |--Integer integer=1; //装箱   int i=integer; //拆箱
+  |--反编译结果：Integer integer=Integer.valueOf(1);int i=integer.intValue();
+9、==和equals的区别
+==：是一个运算符，对于基本数据类型比较的是变量的值；对于对象类型，比较的是对象的地址
+equals：是Object的方法，比较两个对象内容是否相等，默认比较的也是地址，源码如下：
+public boolean equals(Object obj) {
+    return (this == obj);
+}
+hashCode():
+hashCode()是一个native方法，为对象产生整型的hash值,用作对象的唯一标识；
+两个对象的equals()相等，hashCode()必须相等，反之，hashCode()不一定相等，因为存在hash冲突
+
+
+

@@ -1,0 +1,42 @@
+CREATE TABLE course ( cid INT ( 3 ), cname VARCHAR ( 20 ), tid INT ( 3 ) );
+CREATE TABLE teacher ( tid INT ( 3 ), tname VARCHAR ( 20 ), tcid INT ( 3 ) );
+CREATE TABLE teacher_card ( tcid INT ( 3 ), tcdesc VARCHAR ( 200 ) );
+INSERT INTO course
+VALUES
+	( 1, 'java', 1 );
+INSERT INTO course
+VALUES
+	( 2, 'python', 1 );
+INSERT INTO course
+VALUES
+	( 3, 'c++', 2 );
+INSERT INTO course
+VALUES
+	( 4, 'html', 3 );
+INSERT INTO teacher
+VALUES
+	( 1, 't-a', 1 );
+INSERT INTO teacher
+VALUES
+	( 2, 't-b', 2 );
+INSERT INTO teacher
+VALUES
+	( 3, 't-c', 3 );
+INSERT INTO teacher
+VALUES
+	( 4, 't-d', 4 );
+INSERT INTO teacher
+VALUES
+	( 5, 't-e', 5 );
+INSERT INTO teacher
+VALUES
+	( 6, 't-f', 6 );
+INSERT INTO teacher_card
+VALUES
+	( 1, 't-a-desc' );
+INSERT INTO teacher_card
+VALUES
+	( 2, 't-b-desc' );
+INSERT INTO teacher_card
+VALUES
+	( 3, 't-c-desc' );

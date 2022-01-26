@@ -8,7 +8,7 @@
   |--聚集索引：Innodb（frm、ibd）
   |--非聚集索引：Myisam（frm、myi、myd）
   |--联合索引（a、b、c做为联合索引）
-     |---a,ab,abc最左匹配
+     |---a,ab,abc最左匹配【where c=1 and b=2 and a=3也会走abc三个索引，因为mysql自带优化器】
      |---where a=3 and c=7（a用到了索引，c没有）
      |---where a=3 and b>7 and c=3（a和b用到了索引，c没有，因为当遇到范围查询，就会停止索引向下传递）
      |---group by\order by（1、必须在有where的前提才走索引；2、需要和联合索引顺序一致才会走索引）
@@ -63,7 +63,7 @@
      |---查询条件特别多的不建议把所有字段加索引，可以先通过其中某个字段查询，让记录减少，再通过其他字段查询
      |---如果根据多列排序，尽量创建组合索引
   |--数据量大的时候尽量单表查询，不要做关联查询，这样就需要表结构设计需要适当的冗余字段
-  |--字段值尽量不要null值，可以设置默认值，避免null判断
+  |--字段值尽量不要null值，可以设置默认值，避免null判断，导致索引失效
 |-架构优化：高可用（Mycat）、读写分离（一主多从，主写从读）、分库分表（按一定规则存放，查询时也按此规则查询哪个库表）
 |-服务器硬件优化：磁盘-固态硬盘、网络-畅通、足够大的带宽、内存足够大
 |-sql语句优化：
@@ -71,19 +71,19 @@
   |--避免索引失效：
      |---or【可以使用union all替代】
      |---like '%a'【可以使用覆盖索引来解决】
-     |---函数操作
-     |---表达式操作（where num/2=100）
-     |---!=或<>
-     |---in或not in
-     |---is null或is not null
-     |---类型转换：where name=123
+     |---不要对索引进行操作：函数操作、计算操作（where num/2=100）、类型转换（name=123）
+     |---联合索引尽量不要使用：!=或<>、in或not in、is null或is not null【如果一定要用，放在where最后面】
+     |---联合索引<、>、in是概率事件，但是通常结论是：本身索引有效，后面的索引失效
   |--不要使用select *
   |--如果明知道结果只返回一条记录，后面最好加上limit 1
   |--表沒有主键(Primary key), 那么count(1)比count(*)快，有主键的話，那主键作为count的条件时候count(主键)最快
   |--避免在 where 子句中使用 !=或<> 操作符、in 和 not in 也要慎用（exists 代替）
   |--分页：select id,name from table_name limit 866613, 20 改成 select id,name from table_name where id> 866612 limit 20
-  |--关联表查询，尽量小表驱动大表，减少循环次数
+  |--关联表查询，尽量小表驱动大表（t left join c on t.cid=c.id：t表的数据比较少，left join给左表t.cid加索引，不给c.id加索引）
   |--多使用嵌套子查询
+  |--如果主查询数据量比较大，使用IN；如果子查询数据量比较大，使用exist
+     |---select * from table where exist/in (子查询)
+
 
 
 4、事务
@@ -144,7 +144,26 @@ start slave
 检查从服务器复制功能状态：
 show slave status
 
-6、死锁
+6、锁机制
+|-用来解决因资源共享，导致的并发问题。
+|-分类：
+  |--操作类型：
+     |---读锁（共享锁）：对同一条数据，多个读操作可以同事进行
+     |---写锁（互斥锁）：如果写操作没有完毕，则无法进行其他的读操作、写操作
+  |--操作范围：
+     |---表锁：MyISAM，不会死锁
+         |----加锁：lock table teacher read/write;
+         |----解锁：unlock tables;
+         |----查看表锁命令：show open tables;
+         |----分析表锁程度：show status like 'table%'【Table_locks_immediate：能够立刻获取到的锁数量，Table_locks_waited：需要等待的表锁数量】
+     |---行锁：InnoDB，容易死锁
+         |----加锁：通过事务自动加锁
+         |----解锁：通过commit、rollback解锁
+         |----如果where的索引失效，行锁会升级到表锁：update table set age=3 where name=123;
+         |----间隙锁：update table set name='x' where id>1 and id<9;如果没有id=7的数据，会自动给id=7加间隙锁，别的session想插入，会等待
+         |----行锁分析：show status like '%innodb_raw_lock%';
+     |---页锁：用的比较少
+死锁
 |-同表
 事务A：
 select * from table where id=1;
@@ -186,19 +205,43 @@ insert into table(id,index_no) values(2,'b');
 执行事务2更新语句获取间隙锁，锁定范围为(d, d后面的无穷大)
 因为事务1锁定了(a,d)范围，所以事务2 insert操作会等待事务1释放间隙锁
 执行事务1 insert语句，恰好插入的数据在事务2锁定的间隙锁范围，这样就导致事务1和事务2循环等待了，死锁发生
+
 7、explain
-|-select_type
-  |--primary：包含子查询的sql中的主查询，最外层
+|-id（编号）
+  |--当id相同时，表是从上往下顺序执行
+  |--当id不同时，表是id越大越先执行
+  |--例子
+  EXPLAIN SELECT
+  	t.tname,
+  	tc.tcdesc
+  FROM
+  	teacher t,
+  	teacher_card tc
+  WHERE
+  	tc.tcid = t.tcid
+  	AND t.tid = ( SELECT c.tid FROM course c WHERE c.cname = 'java' )
+|-select_type（查询类型）
+  |--primary：包含子查询的sql中的主查询，通常是最外层
   |--subquery：包含子查询的sql中的子查询
-  |--simple：简单查询。不包含自查询和union
+  |--simple：简单查询。不包含子查询和union就叫简单查询
   |--derived：衍生查询。用到了临时表，比如：
      |---在from子查询中只有一张表
-     |---在from子查询中，如果table1 union table2，则table1就是derived，table2就是union
-|-type
+     |---在from子查询中，如果from (table1 union table2)，则table1就是derived，table2就是union
+  |--union：table1 union table2，table2就是union
+  |--union result：告诉你哪几个表进行了union查询
+  |--例子
+  EXPLAIN SELECT
+  	cr.cname
+  FROM
+  	( SELECT * FROM course WHERE tid = 1 UNION SELECT * FROM course WHERE tid = 2 ) cr
+|-table（表）
+  |--<derived2>：通过衍生表（id=2）查询
+  |--<union2,3>：id=2和id=3进行了union查询
+|-type（类型）
   |--性能：system>const>eq_ref>ref>range>index>all
   |--提示：system、const的性能是最好的，但是在实际开发中很难达到，能优化到ref和range就可以了
-  |--system：只有一条数据的系统表；或衍生表只有一条数据的主查询
-  |--const：仅仅能查出一条数据的sql，并且查询条件是primary key或unique
+  |--system：只有一条数据的系统表；或衍生表只有一条数据的主查询，基本达不到
+  |--const：查询语句只能查出一条数据，并且查询条件是primary key或unique，比如：通过主键id查询
   |--eq_ref：根据某个索引（如：name）条件查询的结果，不能有重复的，并且查出来不能0条数据，常见的比如：根据主键和唯一索引查询就能达到。
              当两个表关联查询，想达到eq_ref，两个表的数据必须一样多，也就是一一对应，所以也很难达到
   |--ref：根据某个索引（如：name）条件查询就行
@@ -208,20 +251,43 @@ insert into table(id,index_no) values(2,'b');
             比如：select id from teacher;就是只扫描id这一列，并且id是索引
   |--all：查询全部表中的数据
             比如：select name from teacher;name不是索引，所以全表扫描
-|-possible_keys：可能用到的索引，是一种预测，可能不准
-|-key：实际使用到的索引
-|-key_len：索引长度，通常用于判断复合索引是否被完全使用，utf-8一个字符占3个字节，如果字段允许为null，会+1
-|-ref：
-  |--select * from course c, teacher t where c.tid=t.tid and name='tx';
-  |--const：因为name='tx'是常量
+|-possible_keys（预测用到的索引）
+  |--可能用到的索引，是一种预测，可能不准
+|-key（实际使用的索引）
+  |--实际使用到的索引
+|-key_len（实际使用索引的长度）
+  |--索引长度，通常用于判断复合索引是否被完全使用，utf-8一个字符占3个字节，如果字段允许为null，会+1，如果是varchar，会+2
+|-ref（表之间索引字段的引用关系）
+  |--select * from course c, teacher t where c.tid=t.tid and t.name='tx';
+  |--const：因为t.name='tx'是常量
   |--myDB.t.tid：也就是说，c表的tid使用到了t表的tid
 |-raws：扫描的行数
-|-Extra
+|-Extra（额外信息）
   |--using filesort：代表额外进行了一次排序，耗性能，所以一般建议，where哪些字段，就order by哪些字段
   select * from teacher where a1='zhang' order by a2;
-  |--using temporary：代表额外使用了临时表，经常出现在group by语句中。所以一般建议，查询哪些字段，就group by哪些字段
+  对比（a1,a2,a3,a4是联合索引）：
+  select * from test where a1=1 and a2=2 and a4=4 order by a3【不会filesort】
+  select * from test where a1=1 and a4=4 order by a2,a3【不会filesort】
+  select * from test where a1=1 and a4=4 order by a3【产生filesort】
+  |--using temporary：代表额外使用了临时表，耗性能，经常出现在group by语句中。所以一般建议，查询哪些字段，where哪些字段，就group by哪些字段
+  sql解析过程：from->on->join->where->group by->having->select->distinct->order by->limit
   select a1 from teacher group by a2
-  |--using index：使用到了索引，性能好了
+  |--using index：使用到了覆盖索引，性能提升了【这个会影响到possible_keys和key；当查询没有where，只有key有值，当查询有where，两个都有值】
+  select name from teacher where name='' and type=''（name和type是联合索引）
   |--using where：回到了原表查
   select age,name from teacher where age=3;【age是索引列，name不是】
   因为age直接查索引表B+Tree，但是name不是索引列，需要回到原表查
+  |--using join buffer：关联表查询的sql写得太差了，mysql底层使用了连接缓存
+
+8、其他
+|-慢查询SQL日志：
+  |--开启慢查询开关：show variables like '%slow_query_log%'; set global slow_query_log=1;
+  |--设置慢查询日志文件位置：show variables like '%slow_query_log_file%'; set global slow_query_log='/var/lib/mysql/localhost-slow.log';
+  |--设置慢查询临界时间：show variables like '%long_query_time%'; set global long_query_time=5;【这个设置完要重新登录才能生效】
+  |--测试：select sleep(4); -> show global status like '%slow_queries%';
+  |--这个只能显示条数，具体哪条sql慢，要看文件：cat /var/lib/mysql/localhost-slow.log。或者使用mysqldumpslow命令查看
+|-分析海量数据：
+  |--show profiles;
+  |--如果没有开启：show variables like '%profiling%'; set profiling on;
+  |--show profiles;只会展示每条sql语句的执行时间。但不精确，只能看到总共消费的时间，不能看到各个硬件消费的时间。
+  |--可以根据查到的Query_ID再查一下：show profile all for query 2;

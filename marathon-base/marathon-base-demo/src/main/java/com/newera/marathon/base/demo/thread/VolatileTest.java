@@ -1,5 +1,7 @@
 package com.newera.marathon.base.demo.thread;
 
+import java.util.concurrent.TimeUnit;
+
 /**
  * 执行结果：程序永远不会跳出循环了。
  * 原因：首先主线程会把flag与i从‘主内存’中拷贝一份到自己的工作内存中，因为vt.flag = true;只是更新了主内存中的flag值，
@@ -7,22 +9,32 @@ package com.newera.marathon.base.demo.thread;
  * 解决：volatile boolean flag = false;
  */
 public class VolatileTest {
-    static boolean flag = false;
+    static class MyTest {
+        public volatile int number = 0;
+        public void changeNumber(){
+            number = 100;
+        }
+    }
+    public static void main(String[] args) throws InterruptedException{
+        MyTest myTest = new MyTest();
 
-    public static void main(String[] args) throws Exception {
-        new Thread(()->{
-            System.out.println("waiting data......");
-            while (!flag){
-                //System.out.println("8");
+        new Thread(() -> {
+            System.out.println(String.format("线程%s开始执行", Thread.currentThread().getName()));
+
+            try {
+                TimeUnit.SECONDS.sleep(3);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
             }
-            System.out.println("success......");
-        }).start();
-        Thread.sleep(1000);
-        new Thread(()->{
-            System.out.println("prepare data......");
-            flag = true;
-            System.out.println("prepare data end......");
-        }).start();
 
+            myTest.changeNumber();
+            System.out.println(String.format("线程%s的number：%d", Thread.currentThread().getName(), myTest.number));
+        }, "NewThread").start();
+
+        while (myTest.number == 0){
+
+        }
+
+        System.out.println("执行完毕");
     }
 }
